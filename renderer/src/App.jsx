@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
 // Importar páginas
@@ -39,8 +39,15 @@ const Navigation = () => {
         alignItems: 'center',
         maxWidth: '1200px',
         margin: '0 auto'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+      }}>        <div 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '15px',
+            cursor: 'pointer'
+          }}
+          onClick={() => navigate(ROUTES.HOME)}
+        >
           <img 
             src="./images/LogoColombiaRaicesNoFondo.png" 
             alt="Colombia Raíces Logo" 
@@ -57,23 +64,8 @@ const Navigation = () => {
             }}
           />
           <h1 style={{ color: '#03222b', margin: 0, fontSize: '1.5rem' }}>Colombia Raíces</h1>
-        </div>
-          {/* Enlaces de navegación centrales */}
+        </div>          {/* Enlaces de navegación centrales */}
         <div style={{ display: 'flex', gap: '20px' }}>
-          <button
-            onClick={() => navigate(ROUTES.HOME)}
-            style={{ 
-              background: 'none',
-              border: 'none',
-              color: '#03222b', 
-              textDecoration: 'none', 
-              fontWeight: '500',
-              cursor: 'pointer',
-              fontSize: '1rem'
-            }}
-          >
-            🏠 Inicio
-          </button>
           <button
             onClick={() => navigate(ROUTES.EXPERIENCES)}
             style={{ 
@@ -175,42 +167,44 @@ const Navigation = () => {
 // Componente HomePage optimizado para escritorio
 const HomePage = () => {
   const navigate = useNavigate();
+  
+  // Estado para experiencias
+  const [experiences, setExperiences] = useState([]);
+  const [experiencesLoading, setExperiencesLoading] = useState(true);
+  const [experiencesError, setExperiencesError] = useState(null);
+  
+  // Cargar experiencias al montar el componente
+  useEffect(() => {
+    const fetchExperiences = async () => {
+      try {
+        setExperiencesLoading(true);
+        const response = await window.electronAPI.experiencesSimple.getAll();
+        
+        if (response.success) {
+          // Tomar solo las primeras 3 experiencias para la landing
+          setExperiences(response.data.slice(0, 3));
+        } else {
+          setExperiencesError(response.error || 'Error al cargar experiencias');
+        }
+      } catch (error) {
+        setExperiencesError('Error al conectar con la base de datos');
+        console.error('Error loading experiences:', error);
+      } finally {
+        setExperiencesLoading(false);
+      }
+    };
 
+    fetchExperiences();
+  }, []);
   return (
     <div style={{ minHeight: '100vh', position: 'relative', backgroundColor: '#f8f9fa' }}>
-      {/* Logo en esquina superior izquierda */}
-      <div 
-        style={{
-          position: 'absolute',
-          top: '16px',
-          left: '16px',
-          zIndex: 20,
-          width: '60px',
-          height: '60px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <img 
-          src="./images/LogoColombiaRaicesNoFondo.png" 
-          alt="Colombia Raíces"
-          style={{
-            width: '60px',
-            height: '60px',
-            objectFit: 'contain',
-            filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))'
-          }}
-          onError={(e) => {
-            console.error('Error loading corner logo:', e);
-            e.target.style.display = 'none';
-          }}
-          onLoad={() => {
-            console.log('Corner logo loaded successfully');
-          }}
-        />
-      </div>
-      
+      {/* Estilos para animación de loading */}
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
       {/* Hero Section - Descripción de la app y botones principales */}
       <section style={{ 
         background: 'linear-gradient(135deg, #03222b 0%, #569079 100%)',
@@ -323,61 +317,186 @@ const HomePage = () => {
             Descubre las experiencias más populares que conectan el turismo 
             con las comunidades locales.
           </p>
-          
-          {/* Cards de experiencias */}
+            {/* Cards de experiencias */}
           <div style={{ 
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '24px',
             marginTop: '40px'
           }}>
-            {[
-              {
-                title: "Tour Histórico Barichara",
-                description: "Descubre la arquitectura colonial y la historia de este pueblo patrimonio.",
-                price: "$45.000",
-                duration: "3h",
-                icon: "🏛️"
-              },
-              {
-                title: "Experiencia Wayuu",
-                description: "Vive la cultura ancestral wayuu con artesanías y tradiciones.",
-                price: "$120.000",
-                duration: "8h",
-                icon: "🏺"
-              },
-              {
-                title: "Ecoturismo Chocó",
-                description: "Explora la biodiversidad única del Chocó biogeográfico.",
-                price: "$180.000",
-                duration: "12h",
-                icon: "🌿"
-              }
-            ].map((exp, index) => (
-              <div key={index} style={{
-                backgroundColor: 'white',
-                padding: '24px',
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                textAlign: 'left',
-                transition: 'transform 0.2s'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-              >
-                <div style={{ fontSize: '2rem', marginBottom: '16px' }}>{exp.icon}</div>
-                <h3 style={{ color: '#03222b', marginBottom: '12px' }}>{exp.title}</h3>
-                <p style={{ color: '#666', marginBottom: '16px', lineHeight: '1.5' }}>{exp.description}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#03222b', fontWeight: 'bold', fontSize: '1.2rem' }}>{exp.price}</span>
-                  <span style={{ color: '#666', fontSize: '0.9rem' }}>⏱️ {exp.duration}</span>
+            {experiencesLoading ? (
+              // Loading state
+              [...Array(3)].map((_, index) => (
+                <div key={index} style={{
+                  backgroundColor: 'white',
+                  padding: '24px',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  textAlign: 'left',
+                  animation: 'pulse 1.5s ease-in-out infinite'
+                }}>
+                  <div style={{ 
+                    height: '2rem', 
+                    backgroundColor: '#f0f0f0', 
+                    borderRadius: '4px',
+                    marginBottom: '16px' 
+                  }}></div>
+                  <div style={{ 
+                    height: '1.5rem', 
+                    backgroundColor: '#f0f0f0', 
+                    borderRadius: '4px',
+                    marginBottom: '12px' 
+                  }}></div>
+                  <div style={{ 
+                    height: '3rem', 
+                    backgroundColor: '#f0f0f0', 
+                    borderRadius: '4px',
+                    marginBottom: '16px' 
+                  }}></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ 
+                      height: '1.2rem', 
+                      width: '80px',
+                      backgroundColor: '#f0f0f0', 
+                      borderRadius: '4px' 
+                    }}></div>
+                    <div style={{ 
+                      height: '1rem', 
+                      width: '60px',
+                      backgroundColor: '#f0f0f0', 
+                      borderRadius: '4px' 
+                    }}></div>
+                  </div>
                 </div>
+              ))
+            ) : experiencesError ? (
+              // Error state
+              <div style={{
+                gridColumn: '1 / -1',
+                textAlign: 'center',
+                padding: '40px',
+                backgroundColor: '#fff5f5',
+                borderRadius: '12px',
+                border: '1px solid #fed7d7'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '16px' }}>⚠️</div>
+                <h3 style={{ color: '#c53030', marginBottom: '8px' }}>Error al cargar experiencias</h3>
+                <p style={{ color: '#718096' }}>{experiencesError}</p>
               </div>
-            ))}
+            ) : experiences.length === 0 ? (
+              // Empty state
+              <div style={{
+                gridColumn: '1 / -1',
+                textAlign: 'center',
+                padding: '40px'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '16px' }}>🌟</div>
+                <h3 style={{ color: '#03222b', marginBottom: '8px' }}>No hay experiencias disponibles</h3>
+                <p style={{ color: '#666' }}>Próximamente tendremos nuevas experiencias para ti</p>
+              </div>
+            ) : (
+              // Data loaded successfully
+              experiences.map((exp) => {
+                // Función para obtener icono basado en el tipo o nombre de experiencia
+                const getExperienceIcon = (experience) => {
+                  const name = experience.nombre?.toLowerCase() || '';
+                  const description = experience.descripcion?.toLowerCase() || '';
+                  
+                  if (name.includes('wayuu') || name.includes('indígena') || description.includes('cultura')) return '🏺';
+                  if (name.includes('histórico') || name.includes('colonial') || name.includes('patrimonio')) return '🏛️';
+                  if (name.includes('eco') || name.includes('naturaleza') || name.includes('biodiversidad')) return '🌿';
+                  if (name.includes('aventura') || name.includes('deportes')) return '🏃‍♂️';
+                  if (name.includes('gastronomía') || name.includes('comida')) return '🍽️';
+                  if (name.includes('artesanía') || name.includes('arte')) return '🎨';
+                  if (name.includes('música') || name.includes('danza')) return '🎵';
+                  return '✨'; // Icono por defecto
+                };
+
+                // Formatear precio
+                const formatPrice = (price) => {
+                  if (!price) return 'Consultar precio';
+                  const numPrice = parseFloat(price);
+                  if (isNaN(numPrice)) return price;
+                  return `$${numPrice.toLocaleString('es-CO')}`;
+                };
+
+                // Formatear duración
+                const formatDuration = (duration) => {
+                  if (!duration) return 'Duración variable';
+                  if (typeof duration === 'number') {
+                    return duration >= 24 ? `${Math.floor(duration/24)}d` : `${duration}h`;
+                  }
+                  return duration;
+                };
+
+                return (
+                  <div key={exp.id} style={{
+                    backgroundColor: 'white',
+                    padding: '24px',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    textAlign: 'left',
+                    transition: 'transform 0.2s',
+                    cursor: 'pointer'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                  onClick={() => navigate(ROUTES.EXPERIENCES)}
+                  >
+                    <div style={{ fontSize: '2rem', marginBottom: '16px' }}>
+                      {getExperienceIcon(exp)}
+                    </div>
+                    <h3 style={{ 
+                      color: '#03222b', 
+                      marginBottom: '12px',
+                      fontSize: '1.25rem',
+                      fontWeight: '600'
+                    }}>
+                      {exp.nombre || 'Experiencia sin nombre'}
+                    </h3>
+                    <p style={{ 
+                      color: '#666', 
+                      marginBottom: '16px', 
+                      lineHeight: '1.5',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}>
+                      {exp.descripcion || 'Descripción no disponible'}
+                    </p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ 
+                        color: '#03222b', 
+                        fontWeight: 'bold', 
+                        fontSize: '1.2rem' 
+                      }}>
+                        {formatPrice(exp.precio)}
+                      </span>
+                      <span style={{ color: '#666', fontSize: '0.9rem' }}>
+                        ⏱️ {formatDuration(exp.duracion_horas)}
+                      </span>
+                    </div>
+                    {exp.ubicacion && (
+                      <div style={{ 
+                        marginTop: '12px',
+                        fontSize: '0.875rem',
+                        color: '#718096',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}>
+                        📍 {exp.ubicacion}
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </section>

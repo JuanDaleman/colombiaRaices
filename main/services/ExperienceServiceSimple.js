@@ -12,10 +12,20 @@ class ExperienceServiceSimple {
       await this.db.connect();
       const result = await this.db.all(`
         SELECT 
-          e.id, e.title, e.description, e.type, e.price, e.duration_hours,
-          e.max_participants, e.image_url,
-          c.name as community_name, c.region as community_region,
-          e.created_at, e.updated_at, e.is_active
+          e.id, 
+          e.title as nombre, 
+          e.description as descripcion, 
+          e.type as tipo, 
+          e.price as precio, 
+          e.duration_hours as duracion_horas,
+          e.max_participants, 
+          e.image_url,
+          c.name as community_name, 
+          c.region as community_region,
+          c.name as ubicacion,
+          e.created_at, 
+          e.updated_at, 
+          e.is_active
         FROM experiences e
         JOIN communities c ON e.community_id = c.id
         WHERE e.is_active = 1
@@ -34,11 +44,23 @@ class ExperienceServiceSimple {
     try {
       const experience = await this.db.connect(); const result = await this.db.all(`
         SELECT 
-          e.id, e.title, e.description, e.type, e.price, e.duration_hours,
-          e.max_participants, e.image_url, e.thumbnail_url, e.image_alt,
-          c.name as community_name, c.region as community_region,
+          e.id, 
+          e.title as nombre, 
+          e.description as descripcion, 
+          e.type as tipo, 
+          e.price as precio, 
+          e.duration_hours as duracion_horas,
+          e.max_participants, 
+          e.image_url, 
+          e.thumbnail_url, 
+          e.image_alt,
+          c.name as community_name, 
+          c.region as community_region,
           c.id as community_id,
-          e.created_at, e.updated_at, e.is_active
+          c.name as ubicacion,
+          e.created_at, 
+          e.updated_at, 
+          e.is_active
         FROM experiences e
         JOIN communities c ON e.community_id = c.id
         WHERE e.id = ? AND e.is_active = 1

@@ -165,55 +165,6 @@ ipcMain.handle('communities:stats', async (event) => {
   }
 });
 
-// IPC Handlers para experiencias simples
-ipcMain.handle('experiences-simple:all', async (event) => {
-  try {
-    return await experienceControllerSimple.getAllExperiences();
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('experiences-simple:by-id', async (event, { id }) => {
-  try {
-    return await experienceControllerSimple.getExperienceById(id);
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('experiences-simple:by-community', async (event, { communityId }) => {
-  try {
-    return await experienceControllerSimple.getExperiencesByCommunity(communityId);
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('experiences-simple:by-type', async (event, { type }) => {
-  try {
-    return await experienceControllerSimple.getExperiencesByType(type);
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('experiences-simple:types', async (event) => {
-  try {
-    return await experienceControllerSimple.getExperienceTypes();
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('experiences-simple:stats', async (event) => {
-  try {
-    return await experienceControllerSimple.getExperienceStats();
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
-
 function createWindow() {
   console.log('🌍 NODE_ENV:', process.env.NODE_ENV);
     // Crear la ventana del navegador

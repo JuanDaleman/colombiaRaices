@@ -73,70 +73,67 @@ class ExperienceControllerSimple {
       return { success: false, error: error.message };
     }
   }
-
   setupEventHandlers() {
     // Obtener todas las experiencias
-    ipcMain.handle('experiences:findAllSimple', async () => {
+    ipcMain.handle('experiences-simple:all', async () => {
       try {
         const experiences = await this.experienceService.findAll();
         return { success: true, data: experiences };
       } catch (error) {
-        console.error('Error in experiences:findAllSimple:', error);
+        console.error('Error in experiences-simple:all:', error);
         return { success: false, error: error.message };
       }
     });
 
     // Obtener experiencia por ID
-    ipcMain.handle('experiences:findByIdSimple', async (event, id) => {
+    ipcMain.handle('experiences-simple:by-id', async (event, id) => {
       try {
         const experience = await this.experienceService.findById(id);
         return { success: true, data: experience };
       } catch (error) {
-        console.error('Error in experiences:findByIdSimple:', error);
+        console.error('Error in experiences-simple:by-id:', error);
         return { success: false, error: error.message };
       }
-    });
-
-    // Obtener experiencias por comunidad
-    ipcMain.handle('experiences:findByCommunitySimple', async (event, communityId) => {
+    });    // Obtener experiencias por comunidad
+    ipcMain.handle('experiences-simple:by-community', async (event, communityId) => {
       try {
         const experiences = await this.experienceService.findByCommunity(communityId);
         return { success: true, data: experiences };
       } catch (error) {
-        console.error('Error in experiences:findByCommunitySimple:', error);
+        console.error('Error in experiences-simple:by-community:', error);
         return { success: false, error: error.message };
       }
     });
 
     // Obtener experiencias por tipo
-    ipcMain.handle('experiences:findByTypeSimple', async (event, type) => {
+    ipcMain.handle('experiences-simple:by-type', async (event, type) => {
       try {
         const experiences = await this.experienceService.findByType(type);
         return { success: true, data: experiences };
       } catch (error) {
-        console.error('Error in experiences:findByTypeSimple:', error);
+        console.error('Error in experiences-simple:by-type:', error);
         return { success: false, error: error.message };
       }
     });
 
     // Obtener tipos de experiencia
-    ipcMain.handle('experiences:getTypesSimple', async () => {
+    ipcMain.handle('experiences-simple:types', async () => {
       try {
         const types = await this.experienceService.getTypes();
         return { success: true, data: types };
       } catch (error) {
-        console.error('Error in experiences:getTypesSimple:', error);
+        console.error('Error in experiences-simple:types:', error);
         return { success: false, error: error.message };
       }
     });
 
     // Obtener estadísticas de experiencias
-    ipcMain.handle('experiences:getStatsSimple', async () => {
+    ipcMain.handle('experiences-simple:stats', async () => {
       try {
         const stats = await this.experienceService.getStats();
         return { success: true, data: stats };
       } catch (error) {
-        console.error('Error in experiences:getStatsSimple:', error);
+        console.error('Error in experiences-simple:stats:', error);
         return { success: false, error: error.message };
       }
     });

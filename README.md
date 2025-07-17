@@ -19,18 +19,21 @@
 ## 🛠️ Tecnologías Utilizadas
 
 ### Frontend
+
 - **React**: Biblioteca de interfaz de usuario
 - **React Router**: Navegación SPA
 - **Tailwind CSS**: Framework de estilos utilitarios
 - **Leaflet**: Mapas interactivos
 
 ### Backend/Desktop
+
 - **Electron**: Framework para aplicaciones de escritorio
 - **Node.js**: Entorno de ejecución
 - **SQLite**: Base de datos local
 - **Knex.js**: Query builder para SQL
 
 ### Herramientas de Desarrollo
+
 - **Webpack**: Bundler de módulos
 - **Jest**: Framework de testing
 - **ESLint**: Linter de código
@@ -68,17 +71,20 @@ colombia-raices/
 ### Pasos de Instalación
 
 1. **Clonar el repositorio**
+
    ```bash
    git clone <repository-url>
    cd colombia-raices
    ```
 
 2. **Instalar dependencias**
+
    ```bash
    npm install
    ```
 
 3. **Configurar la base de datos**
+
    ```bash
    npm run setup:db
    ```
@@ -91,6 +97,7 @@ colombia-raices/
 ## 🎮 Comandos Disponibles
 
 ### Desarrollo
+
 ```bash
 npm start                    # Ejecutar aplicación en modo desarrollo
 npm run dev                  # Modo desarrollo con hot reload
@@ -98,6 +105,7 @@ npm run build:renderer       # Compilar solo el frontend
 ```
 
 ### Testing
+
 ```bash
 npm test                     # Ejecutar todas las pruebas
 npm run test:unit           # Pruebas unitarias
@@ -105,6 +113,7 @@ npm run test:integration    # Pruebas de integración
 ```
 
 ### Producción
+
 ```bash
 npm run build              # Compilar para producción
 npm run dist               # Generar ejecutables
@@ -112,6 +121,7 @@ npm run pack               # Empaquetar sin distribución
 ```
 
 ### Utilidades
+
 ```bash
 npm run clean              # Limpiar archivos temporales
 npm run lint               # Verificar calidad de código
@@ -121,18 +131,21 @@ npm run format             # Formatear código
 ## 👥 Roles de Usuario
 
 ### 🧳 Viajero
+
 - Buscar y filtrar experiencias
 - Ver perfiles de comunidades
 - Generar estimaciones de reservas
 - Gestionar historial de reservas
 
 ### 🏘️ Operador Comunitario
+
 - Publicar experiencias de su comunidad
 - Gestionar reservas recibidas
 - Actualizar información de la comunidad
 - Ver estadísticas de sus experiencias
 
 ### 👨‍💼 Administrador
+
 - Aprobar experiencias publicadas
 - Gestionar usuarios del sistema
 - Ver reportes y estadísticas generales
@@ -141,13 +154,16 @@ npm run format             # Formatear código
 ## 🧪 Testing y Calidad
 
 ### Metodología TDD
+
 Funcionalidades críticas desarrolladas con **Test-Driven Development**:
+
 - Sistema de autenticación
 - Cálculo de estimaciones de reservas
 - Validaciones de datos
 - Gestión de estados de experiencias
 
 ### Cobertura de Pruebas
+
 - **Unitarias**: Servicios y utilidades
 - **Integración**: Flujos completos de usuario
 - **E2E**: Casos de uso principales
@@ -155,11 +171,13 @@ Funcionalidades críticas desarrolladas con **Test-Driven Development**:
 ## 🏗️ Arquitectura y Patrones
 
 ### Patrones de Diseño Implementados
+
 - **Singleton**: Gestión de conexión a base de datos
 - **Observer**: Sistema de eventos y notificaciones
 - **MVC**: Separación de responsabilidades
 
 ### Comunicación IPC
+
 - **Preload Scripts**: API segura entre procesos
 - **Context Bridge**: Exposición controlada de APIs
 - **Event-Driven**: Comunicación asíncrona
@@ -167,6 +185,7 @@ Funcionalidades críticas desarrolladas con **Test-Driven Development**:
 ## 📊 Estado del Desarrollo
 
 ### ✅ Completado (Sprints 1-8)
+
 - [x] Configuración inicial y estructura del proyecto
 - [x] Sistema de autenticación completo
 - [x] Gestión de experiencias turísticas
@@ -176,11 +195,13 @@ Funcionalidades críticas desarrolladas con **Test-Driven Development**:
 - [x] Aplicación de escritorio funcional
 
 ### 🚧 En Progreso (Sprint 8+)
+
 - [ ] Optimizaciones de rendimiento
 - [ ] Testing E2E completo
 - [ ] Distribución multi-plataforma
 
 ### 📋 Próximas Características
+
 - [ ] Sistema de pagos integrado
 - [ ] Chat en tiempo real
 - [ ] Notificaciones push
@@ -189,12 +210,14 @@ Funcionalidades críticas desarrolladas con **Test-Driven Development**:
 ## 🤝 Contribución
 
 ### Metodología de Desarrollo
+
 1. **Sprints de 2 días** con objetivos específicos
 2. **Testing obligatorio** para funcionalidades críticas
 3. **Code Review** en cada commit importante
 4. **Documentación** actualizada continuamente
 
 ### Flujo de Git
+
 1. Crear rama para nueva funcionalidad: `git checkout -b feature/nombre-funcionalidad`
 2. Desarrollar con commits descriptivos
 3. Ejecutar pruebas: `npm test`
