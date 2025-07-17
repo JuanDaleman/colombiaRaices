@@ -163,6 +163,101 @@ class ExperienceServiceSimple {
       throw error;
     }
   }
+
+  // Búsqueda filtrada de experiencias
+  async findFiltered(filters = {}) {
+    try {
+      await this.db.connect();
+      
+      let query = `
+        SELECT 
+          e.id, 
+          e.title as nombre, 
+          e.description as descripcion, 
+          e.type as tipo, 
+          e.price as precio, 
+          e.duration_hours as duracion_horas,
+          e.max_participants, 
+          e.image_url,
+          c.name as community_name, 
+          c.region as community_region,
+          c.name as ubicacion,
+          e.created_at, 
+          e.updated_at, 
+          e.is_active
+        FROM experiences e
+        JOIN communities c ON e.community_id = c.id
+        WHERE e.is_active = 1
+      `;
+      
+      const params = [];
+      
+      // Filtro por tipo
+      if (filters.tipo && filters.tipo !== 'all') {
+        query += ` AND e.type = ?`;
+        params.push(filters.tipo);
+      }
+      
+      // Filtro por región
+      if (filters.region && filters.region !== 'all') {
+        query += ` AND c.region = ?`;
+        params.push(filters.region);
+      }
+      
+      // Filtro por rango de precio
+      if (filters.precioMin) {
+        query += ` AND e.price >= ?`;
+        params.push(parseFloat(filters.precioMin));
+      }
+      
+      if (filters.precioMax) {
+        query += ` AND e.price <= ?`;
+        params.push(parseFloat(filters.precioMax));
+      }
+      
+      query += ` ORDER BY e.title`;
+      
+      const result = await this.db.all(query, params);
+      return result;
+    } catch (error) {
+      console.error('Error filtering experiences:', error);
+      throw error;
+    }
+  }
+
+  // Obtener tipos únicos de experiencias
+  async getTypes() {
+    try {
+      await this.db.connect();
+      const result = await this.db.all(`
+        SELECT DISTINCT type as tipo
+        FROM experiences 
+        WHERE is_active = 1 AND type IS NOT NULL
+        ORDER BY type
+      `);
+      return result;
+    } catch (error) {
+      console.error('Error fetching experience types:', error);
+      throw error;
+    }
+  }
+
+  // Obtener regiones únicas
+  async getRegions() {
+    try {
+      await this.db.connect();
+      const result = await this.db.all(`
+        SELECT DISTINCT region
+        FROM communities 
+        WHERE region IS NOT NULL
+        ORDER BY region
+      `);
+      return result;
+    } catch (error) {
+      console.error('Error fetching regions:', error);
+      throw error;
+    }
+  }
 }
 
 module.exports = ExperienceServiceSimple;

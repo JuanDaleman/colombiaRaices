@@ -136,15 +136,35 @@ class ExperienceControllerSimple {
         console.error('Error in experiences-simple:stats:', error);
         return { success: false, error: error.message };
       }
-    });
-
-    // Formatear precio
+    });    // Formatear precio
     ipcMain.handle('experiences:formatPriceSimple', async (event, price) => {
       try {
         const formattedPrice = this.experienceService.formatPrice(price);
         return { success: true, data: formattedPrice };
       } catch (error) {
         console.error('Error in experiences:formatPriceSimple:', error);
+        return { success: false, error: error.message };
+      }
+    });
+
+    // Búsqueda filtrada de experiencias
+    ipcMain.handle('experiences-simple:search', async (event, filters) => {
+      try {
+        const experiences = await this.experienceService.findFiltered(filters);
+        return { success: true, data: experiences };
+      } catch (error) {
+        console.error('Error in experiences-simple:search:', error);
+        return { success: false, error: error.message };
+      }
+    });
+
+    // Obtener regiones únicas
+    ipcMain.handle('experiences-simple:regions', async () => {
+      try {
+        const regions = await this.experienceService.getRegions();
+        return { success: true, data: regions };
+      } catch (error) {
+        console.error('Error in experiences-simple:regions:', error);
         return { success: false, error: error.message };
       }
     });

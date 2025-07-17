@@ -167,35 +167,99 @@ const Navigation = () => {
 // Componente HomePage optimizado para escritorio
 const HomePage = () => {
   const navigate = useNavigate();
-  
-  // Estado para experiencias
+    // Estado para experiencias
   const [experiences, setExperiences] = useState([]);
   const [experiencesLoading, setExperiencesLoading] = useState(true);
   const [experiencesError, setExperiencesError] = useState(null);
   
-  // Cargar experiencias al montar el componente
+  // Estado para filtros de búsqueda
+  const [searchFilters, setSearchFilters] = useState({
+    tipo: 'all',
+    region: 'all',
+    precioMin: '',
+    precioMax: ''
+  });
+  
+  // Estado para opciones de filtro
+  const [filterOptions, setFilterOptions] = useState({
+    tipos: [],
+    regiones: []
+  });
+  
+  // Cargar opciones de filtros al montar el componente
   useEffect(() => {
-    const fetchExperiences = async () => {
+    const fetchFilterOptions = async () => {
       try {
-        setExperiencesLoading(true);
-        const response = await window.electronAPI.experiencesSimple.getAll();
+        const [tiposResponse, regionesResponse] = await Promise.all([
+          window.electronAPI.experiencesSimple.getTypes(),
+          window.electronAPI.experiencesSimple.getRegions()
+        ]);
         
-        if (response.success) {
-          // Tomar solo las primeras 3 experiencias para la landing
-          setExperiences(response.data.slice(0, 3));
-        } else {
-          setExperiencesError(response.error || 'Error al cargar experiencias');
+        if (tiposResponse.success && regionesResponse.success) {
+          setFilterOptions({
+            tipos: tiposResponse.data || [],
+            regiones: regionesResponse.data || []
+          });
         }
       } catch (error) {
-        setExperiencesError('Error al conectar con la base de datos');
-        console.error('Error loading experiences:', error);
-      } finally {
-        setExperiencesLoading(false);
+        console.error('Error loading filter options:', error);
       }
     };
 
+    fetchFilterOptions();
+  }, []);
+  
+  // Función para cargar experiencias (con filtros o todas)
+  const fetchExperiences = async (filters = null) => {
+    try {
+      setExperiencesLoading(true);
+      let response;
+      
+      if (filters && (filters.tipo !== 'all' || filters.region !== 'all' || filters.precioMin || filters.precioMax)) {
+        // Búsqueda filtrada
+        response = await window.electronAPI.experiencesSimple.search(filters);
+      } else {
+        // Mostrar todas las experiencias
+        response = await window.electronAPI.experiencesSimple.getAll();
+      }
+      
+      if (response.success) {
+        setExperiences(response.data || []);
+        setExperiencesError(null);
+      } else {
+        setExperiencesError(response.error || 'Error al cargar experiencias');
+      }
+    } catch (error) {
+      setExperiencesError('Error al conectar con la base de datos');
+      console.error('Error loading experiences:', error);
+    } finally {
+      setExperiencesLoading(false);
+    }
+  };
+  
+  // Cargar todas las experiencias al montar el componente
+  useEffect(() => {
     fetchExperiences();
   }, []);
+  
+  // Manejar cambios en los filtros
+  const handleFilterChange = (filterType, value) => {
+    const newFilters = { ...searchFilters, [filterType]: value };
+    setSearchFilters(newFilters);
+    fetchExperiences(newFilters);
+  };
+  
+  // Limpiar filtros
+  const clearFilters = () => {
+    const defaultFilters = {
+      tipo: 'all',
+      region: 'all',
+      precioMin: '',
+      precioMax: ''
+    };
+    setSearchFilters(defaultFilters);
+    fetchExperiences();
+  };
   return (
     <div style={{ minHeight: '100vh', position: 'relative', backgroundColor: '#f8f9fa' }}>
       {/* Estilos para animación de loading */}
@@ -299,30 +363,210 @@ const HomePage = () => {
 
       {/* Experiencias Section */}
       <section style={{ padding: '64px 20px' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-          <h2 style={{ 
+        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>          <h2 style={{ 
             fontSize: '2rem',
             fontWeight: 'bold',
             marginBottom: '16px',
             color: '#03222b'
           }}>
-            Experiencias Auténticas
+            🔍 Explora Nuestras Experiencias
           </h2>
           <p style={{ 
             color: '#666',
             maxWidth: '512px',
-            margin: '0 auto 40px auto',
+            margin: '0 auto 30px auto',
             lineHeight: '1.6'
           }}>
-            Descubre las experiencias más populares que conectan el turismo 
-            con las comunidades locales.
+            Encuentra la experiencia perfecta para ti. Filtra por tipo, región y presupuesto.
           </p>
-            {/* Cards de experiencias */}
+          
+          {/* Barra de búsqueda horizontal */}
+          <div style={{
+            backgroundColor: 'white',
+            padding: '24px',
+            borderRadius: '16px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            marginBottom: '40px',
+            border: '1px solid #e2e8f0'
+          }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '16px',
+              alignItems: 'end'
+            }}>
+              {/* Filtro por Tipo */}
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  color: '#03222b'
+                }}>
+                  🎯 Tipo de Experiencia
+                </label>
+                <select
+                  value={searchFilters.tipo}
+                  onChange={(e) => handleFilterChange('tipo', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #d1d5db',
+                    fontSize: '0.9rem',
+                    backgroundColor: '#f9fafb',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="all">Todos los tipos</option>
+                  {filterOptions.tipos.map((tipo) => (
+                    <option key={tipo.tipo} value={tipo.tipo}>
+                      {tipo.tipo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Filtro por Región */}
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  color: '#03222b'
+                }}>
+                  📍 Región
+                </label>
+                <select
+                  value={searchFilters.region}
+                  onChange={(e) => handleFilterChange('region', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #d1d5db',
+                    fontSize: '0.9rem',
+                    backgroundColor: '#f9fafb',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="all">Todas las regiones</option>
+                  {filterOptions.regiones.map((region) => (
+                    <option key={region.region} value={region.region}>
+                      {region.region}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Filtro por Precio Mínimo */}
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  color: '#03222b'
+                }}>
+                  💰 Precio Mínimo
+                </label>
+                <input
+                  type="number"
+                  placeholder="Ej: 50000"
+                  value={searchFilters.precioMin}
+                  onChange={(e) => handleFilterChange('precioMin', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #d1d5db',
+                    fontSize: '0.9rem',
+                    backgroundColor: '#f9fafb'
+                  }}
+                />
+              </div>
+
+              {/* Filtro por Precio Máximo */}
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  color: '#03222b'
+                }}>
+                  💰 Precio Máximo
+                </label>
+                <input
+                  type="number"
+                  placeholder="Ej: 300000"
+                  value={searchFilters.precioMax}
+                  onChange={(e) => handleFilterChange('precioMax', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #d1d5db',
+                    fontSize: '0.9rem',
+                    backgroundColor: '#f9fafb'
+                  }}
+                />
+              </div>
+
+              {/* Botón para limpiar filtros */}
+              <div>
+                <button
+                  onClick={clearFilters}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '2px solid #03222b',
+                    backgroundColor: 'transparent',
+                    color: '#03222b',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.backgroundColor = '#03222b';
+                    e.target.style.color = 'white';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.color = '#03222b';
+                  }}
+                >
+                  🔄 Limpiar Filtros
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Resultados de búsqueda */}
+          <div style={{
+            textAlign: 'left',
+            marginBottom: '20px'
+          }}>
+            <p style={{
+              color: '#666',
+              fontSize: '0.9rem',
+              margin: 0
+            }}>
+              {!experiencesLoading && (
+                `Mostrando ${experiences.length} experiencia${experiences.length === 1 ? '' : 's'}`
+              )}
+            </p>
+          </div>
+            
+          {/* Grid de experiencias */}
           <div style={{ 
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '24px',
-            marginTop: '40px'
+            gap: '24px'
           }}>
             {experiencesLoading ? (
               // Loading state
