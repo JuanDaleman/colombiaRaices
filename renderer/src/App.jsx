@@ -439,11 +439,23 @@ const HomePage = () => {
                   }}
                   onMouseOver={(e) => {
                     e.currentTarget.style.transform = 'translateY(-4px)';
-                  }}
-                  onMouseOut={(e) => {
+                  }}                  onMouseOut={(e) => {
                     e.currentTarget.style.transform = 'translateY(0)';
                   }}
-                  onClick={() => navigate(ROUTES.EXPERIENCES)}
+                  onClick={() => {
+                    // Mostrar detalles de la experiencia específica en lugar de redirigir inseguramente
+                    const experienceInfo = [
+                      `🌟 ${exp.nombre}`,
+                      `📍 ${exp.ubicacion || 'Ubicación por confirmar'}`,
+                      `💰 ${formatPrice(exp.precio)}`,
+                      `⏰ ${formatDuration(exp.duracion_horas)}`,
+                      `📝 ${exp.descripcion?.substring(0, 200)}${exp.descripcion?.length > 200 ? '...' : ''}`,
+                      '',
+                      '💡 Próximamente: página de detalles completa'
+                    ].join('\n');
+                    
+                    alert(experienceInfo);
+                  }}
                   >
                     {/* Imagen de la experiencia */}
                     <div style={{ 

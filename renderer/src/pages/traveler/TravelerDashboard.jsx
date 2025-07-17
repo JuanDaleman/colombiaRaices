@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { COLORS } from '../../constants/colors';
@@ -7,9 +7,66 @@ const TravelerDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  // Estado para experiencias
+  const [experiences, setExperiences] = useState([]);
+  const [experiencesLoading, setExperiencesLoading] = useState(true);
+  const [experiencesError, setExperiencesError] = useState(null);
+
+  // Cargar experiencias al montar el componente
+  useEffect(() => {
+    const fetchExperiences = async () => {
+      try {
+        setExperiencesLoading(true);
+        const response = await window.electronAPI.experiencesSimple.getAll();
+        
+        if (response.success) {
+          setExperiences(response.data);
+        } else {
+          setExperiencesError(response.error || 'Error al cargar experiencias');
+        }
+      } catch (error) {
+        setExperiencesError('Error al conectar con la base de datos');
+        console.error('Error loading experiences:', error);
+      } finally {
+        setExperiencesLoading(false);
+      }
+    };
+
+    fetchExperiences();
+  }, []);
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  // Funciones auxiliares para formatear datos
+  const getExperienceIcon = (experience) => {
+    const name = experience.nombre?.toLowerCase() || '';
+    const description = experience.descripcion?.toLowerCase() || '';
+    
+    if (name.includes('wayuu') || name.includes('indígena') || description.includes('cultura')) return '🏺';
+    if (name.includes('histórico') || name.includes('colonial') || name.includes('patrimonio')) return '🏛️';
+    if (name.includes('eco') || name.includes('naturaleza') || name.includes('biodiversidad')) return '🌿';
+    if (name.includes('aventura') || name.includes('deportes')) return '🏃‍♂️';
+    if (name.includes('gastronomía') || name.includes('comida')) return '🍽️';
+    if (name.includes('artesanía') || name.includes('arte')) return '🎨';
+    if (name.includes('música') || name.includes('danza')) return '🎵';
+    return '✨';
+  };
+
+  const formatPrice = (price) => {
+    if (!price) return 'Consultar precio';
+    const numPrice = parseFloat(price);
+    if (isNaN(numPrice)) return price;
+    return `$${numPrice.toLocaleString('es-CO')}`;
+  };
+
+  const formatDuration = (duration) => {
+    if (!duration) return 'Duración variable';
+    if (typeof duration === 'number') {
+      return duration >= 24 ? `${Math.floor(duration/24)}d` : `${duration}h`;
+    }
+    return duration;
   };
 
   const containerStyle = {
@@ -151,7 +208,164 @@ const TravelerDashboard = () => {
           >
             Actualizar Perfil
           </button>
-        </div>
+        </div>      </div>
+
+      {/* Sección de Experiencias Disponibles */}
+      <div style={{
+        backgroundColor: 'white',
+        padding: '30px',
+        borderRadius: '12px',
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+        marginBottom: '20px'
+      }}>
+        <h2 style={{ 
+          color: COLORS.primary, 
+          marginBottom: '20px',
+          fontSize: '24px',
+          textAlign: 'center'
+        }}>
+          🌟 Experiencias Disponibles
+        </h2>
+        
+        {experiencesLoading ? (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <div style={{ 
+              display: 'inline-block',
+              animation: 'pulse 1.5s ease-in-out infinite'
+            }}>
+              Cargando experiencias...
+            </div>
+          </div>
+        ) : experiencesError ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '40px',
+            backgroundColor: '#fff5f5',
+            borderRadius: '12px',
+            border: '1px solid #fed7d7'
+          }}>
+            <div style={{ fontSize: '2rem', marginBottom: '16px' }}>⚠️</div>
+            <h3 style={{ color: '#c53030', marginBottom: '8px' }}>Error al cargar experiencias</h3>
+            <p style={{ color: '#718096' }}>{experiencesError}</p>
+          </div>
+        ) : experiences.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <div style={{ fontSize: '2rem', marginBottom: '16px' }}>🌟</div>
+            <h3 style={{ color: COLORS.primary, marginBottom: '8px' }}>No hay experiencias disponibles</h3>
+            <p style={{ color: '#666' }}>Próximamente tendremos nuevas experiencias para ti</p>
+          </div>
+        ) : (
+          <div style={{ 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '20px'
+          }}>
+            {experiences.map((exp) => (
+              <div
+                key={exp.id}
+                style={{
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  border: '1px solid #e2e8f0',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  cursor: 'pointer'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.15)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                onClick={() => {
+                  const experienceInfo = [
+                    `🌟 ${exp.nombre}`,
+                    `📍 ${exp.ubicacion || 'Ubicación por confirmar'}`,
+                    `💰 ${formatPrice(exp.precio)}`,
+                    `⏰ ${formatDuration(exp.duracion_horas)}`,
+                    `📝 ${exp.descripcion?.substring(0, 200)}${exp.descripcion?.length > 200 ? '...' : ''}`,
+                    '',
+                    '💡 ¿Te interesa? ¡Contacta al operador para más detalles!'
+                  ].join('\n');
+                  
+                  alert(experienceInfo);
+                }}
+              >
+                {/* Imagen de la experiencia */}
+                <div style={{ 
+                  height: '160px',
+                  backgroundImage: `url(${exp.image_url || `./images/experiences/experience_${exp.id}_thumbnail.jpg`})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  position: 'relative'
+                }}>
+                  {/* Overlay con ícono de categoría */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '8px',
+                    right: '8px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    borderRadius: '16px',
+                    padding: '4px 8px',
+                    fontSize: '1rem'
+                  }}>
+                    {getExperienceIcon(exp)}
+                  </div>
+                </div>
+                
+                {/* Contenido de la card */}
+                <div style={{ padding: '16px' }}>
+                  <h3 style={{ 
+                    color: COLORS.primary, 
+                    marginBottom: '8px',
+                    fontSize: '1.1rem',
+                    fontWeight: '600'
+                  }}>
+                    {exp.nombre || 'Experiencia sin nombre'}
+                  </h3>
+                  <p style={{ 
+                    color: '#666', 
+                    marginBottom: '12px', 
+                    lineHeight: '1.4',
+                    fontSize: '0.9rem',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                  }}>
+                    {exp.descripcion || 'Descripción no disponible'}
+                  </p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ 
+                      color: COLORS.primary, 
+                      fontWeight: 'bold', 
+                      fontSize: '1rem' 
+                    }}>
+                      {formatPrice(exp.precio)}
+                    </span>
+                    <span style={{ color: '#666', fontSize: '0.8rem' }}>
+                      ⏱️ {formatDuration(exp.duracion_horas)}
+                    </span>
+                  </div>
+                  {exp.ubicacion && (
+                    <div style={{ 
+                      marginTop: '8px',
+                      fontSize: '0.8rem',
+                      color: '#718096',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}>
+                      📍 {exp.ubicacion}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div style={cardStyle}>
