@@ -1,8 +1,8 @@
 // Página de Comunidades
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ROUTES, REGIONS } from '../../utils/constants';
-import LoadingSpinner from '../common/LoadingSpinner';
+import { ROUTES, REGIONS } from '../utils/constants';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const CommunitiesPage = () => {
   const { id } = useParams();

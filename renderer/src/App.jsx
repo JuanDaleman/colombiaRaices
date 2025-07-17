@@ -427,17 +427,15 @@ const HomePage = () => {
                     return duration >= 24 ? `${Math.floor(duration/24)}d` : `${duration}h`;
                   }
                   return duration;
-                };
-
-                return (
+                };                return (
                   <div key={exp.id} style={{
                     backgroundColor: 'white',
-                    padding: '24px',
                     borderRadius: '12px',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                     textAlign: 'left',
                     transition: 'transform 0.2s',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    overflow: 'hidden'
                   }}
                   onMouseOver={(e) => {
                     e.currentTarget.style.transform = 'translateY(-4px)';
@@ -447,9 +445,29 @@ const HomePage = () => {
                   }}
                   onClick={() => navigate(ROUTES.EXPERIENCES)}
                   >
-                    <div style={{ fontSize: '2rem', marginBottom: '16px' }}>
-                      {getExperienceIcon(exp)}
+                    {/* Imagen de la experiencia */}
+                    <div style={{ 
+                      height: '200px',
+                      backgroundImage: `url(${exp.image_url || `./images/experiences/experience_${exp.id}_thumbnail.jpg`})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      position: 'relative'
+                    }}>
+                      {/* Overlay con ícono de categoría */}
+                      <div style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        borderRadius: '20px',
+                        padding: '6px 12px',
+                        fontSize: '1.2rem'
+                      }}>
+                        {getExperienceIcon(exp)}
+                      </div>
                     </div>
+                    {/* Contenido de la card */}
+                    <div style={{ padding: '24px' }}>
                     <h3 style={{ 
                       color: '#03222b', 
                       marginBottom: '12px',
@@ -480,8 +498,7 @@ const HomePage = () => {
                       <span style={{ color: '#666', fontSize: '0.9rem' }}>
                         ⏱️ {formatDuration(exp.duracion_horas)}
                       </span>
-                    </div>
-                    {exp.ubicacion && (
+                    </div>                    {exp.ubicacion && (
                       <div style={{ 
                         marginTop: '12px',
                         fontSize: '0.875rem',
@@ -493,6 +510,7 @@ const HomePage = () => {
                         📍 {exp.ubicacion}
                       </div>
                     )}
+                    </div>
                   </div>
                 );
               })
