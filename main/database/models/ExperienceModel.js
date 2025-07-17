@@ -1,0 +1,166 @@
+// Modelo de Experiencia
+const BaseModel = require('./BaseModel');
+
+class ExperienceModel extends BaseModel {
+  constructor() {
+    super('experiences');
+  }
+
+  // Buscar experiencias con información de comunidad
+  async findWithCommunity(conditions = {}) {
+    let sql = `
+      SELECT e.*, c.name as community_name, c.region as community_region
+      FROM ${this.tableName} e
+      INNER JOIN communities c ON e.community_id = c.id
+      WHERE e.is_active = 1 AND c.is_active = 1
+    `;
+    
+    const params = [];
+    
+    if (Object.keys(conditions).length > 0) {
+      const whereClause = Object.keys(conditions).map(key => `e.${key} = ?`).join(' AND ');
+      sql += ` AND ${whereClause}`;
+      params.push(...Object.values(conditions));
+    }
+    
+    sql += ` ORDER BY e.created_at DESC`;
+    
+    return await this.db.all(sql, params);
+  }
+
+  // Buscar experiencias por tipo
+  async findByType(type) {
+    return await this.findWithCommunity({ type });
+  }
+
+  // Buscar experiencias por operador
+  async findByOperator(operatorId) {
+    return await this.findWithCommunity({ operator_id: operatorId });
+  }
+
+  // Buscar experiencias por comunidad
+  async findByCommunity(communityId) {
+    return await this.findWithCommunity({ community_id: communityId });
+  }
+
+  // Buscar experiencias por rango de precio
+  async findByPriceRange(minPrice, maxPrice) {
+    const sql = `
+      SELECT e.*, c.name as community_name, c.region as community_region
+      FROM ${this.tableName} e
+      INNER JOIN communities c ON e.community_id = c.id
+      WHERE e.is_active = 1 
+      AND c.is_active = 1
+      AND e.price >= ? 
+      AND e.price <= ?
+      ORDER BY e.price ASC
+    `;
+    
+    return await this.db.all(sql, [minPrice, maxPrice]);
+  }
+
+  // Buscar experiencias por duración
+  async findByDuration(minHours, maxHours) {
+    const sql = `
+      SELECT e.*, c.name as community_name, c.region as community_region
+      FROM ${this.tableName} e
+      INNER JOIN communities c ON e.community_id = c.id
+      WHERE e.is_active = 1 
+      AND c.is_active = 1
+      AND e.duration_hours >= ? 
+      AND e.duration_hours <= ?
+      ORDER BY e.duration_hours ASC
+    `;
+    
+    return await this.db.all(sql, [minHours, maxHours]);
+  }
+
+  // Buscar experiencias populares (con más reservas)
+  async findPopular(limit = 10) {
+    const sql = `
+      SELECT e.*, c.name as community_name, c.region as community_region,
+             COUNT(r.id) as reservations_count
+      FROM ${this.tableName} e
+      INNER JOIN communities c ON e.community_id = c.id
+      LEFT JOIN reservations r ON e.id = r.experience_id AND r.status = 'confirmed'
+      WHERE e.is_active = 1 AND c.is_active = 1
+      GROUP BY e.id
+      ORDER BY reservations_count DESC
+      LIMIT ?
+    `;
+    
+    return await this.db.all(sql, [limit]);
+  }
+
+  // Buscar experiencias recientes
+  async findRecent(limit = 10) {
+    const sql = `
+      SELECT e.*, c.name as community_name, c.region as community_region
+      FROM ${this.tableName} e
+      INNER JOIN communities c ON e.community_id = c.id
+      WHERE e.is_active = 1 AND c.is_active = 1
+      ORDER BY e.created_at DESC
+      LIMIT ?
+    `;
+    
+    return await this.db.all(sql, [limit]);
+  }
+
+  // Buscar experiencias por región
+  async findByRegion(region) {
+    const sql = `
+      SELECT e.*, c.name as community_name, c.region as community_region
+      FROM ${this.tableName} e
+      INNER JOIN communities c ON e.community_id = c.id
+      WHERE e.is_active = 1 
+      AND c.is_active = 1
+      AND c.region = ?
+      ORDER BY e.created_at DESC
+    `;
+    
+    return await this.db.all(sql, [region]);
+  }
+
+  // Buscar experiencias disponibles en una fecha
+  async findAvailableOn(date) {
+    const sql = `
+      SELECT e.*, c.name as community_name, c.region as community_region,
+             COALESCE(SUM(r.participants), 0) as reserved_participants
+      FROM ${this.tableName} e
+      INNER JOIN communities c ON e.community_id = c.id
+      LEFT JOIN reservations r ON e.id = r.experience_id 
+                               AND DATE(r.reservation_date) = DATE(?)
+                               AND r.status = 'confirmed'
+      WHERE e.is_active = 1 AND c.is_active = 1
+      GROUP BY e.id
+      HAVING (e.max_participants - COALESCE(reserved_participants, 0)) > 0
+      ORDER BY e.title
+    `;
+    
+    return await this.db.all(sql, [date]);
+  }
+
+  // Obtener estadísticas de experiencias
+  async getStats() {
+    const totalSql = `SELECT COUNT(*) as total FROM ${this.tableName} WHERE is_active = 1`;
+    const byTypeSql = `
+      SELECT type, COUNT(*) as count 
+      FROM ${this.tableName} 
+      WHERE is_active = 1 
+      GROUP BY type
+    `;
+    const avgPriceSql = `SELECT AVG(price) as average_price FROM ${this.tableName} WHERE is_active = 1`;
+    
+    const total = await this.db.get(totalSql);
+    const byType = await this.db.all(byTypeSql);
+    const avgPrice = await this.db.get(avgPriceSql);
+    
+    return {
+      total: total.total,
+      byType,
+      averagePrice: avgPrice.average_price
+    };
+  }
+}
+
+module.exports = ExperienceModel;

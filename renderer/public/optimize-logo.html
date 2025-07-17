@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimizador de Logo - Colombia Raíces</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #03222b 0%, #569079 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .optimization-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .logo-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .logo-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .logo-item img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+        }
+        .stats {
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        .btn {
+            background: #fbd338;
+            color: #03222b;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f2c832;
+            transform: scale(1.05);
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #fbd338;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .canvas-container {
+            display: none;
+        }
+        .download-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(40, 167, 69, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Optimizador de Logo - Colombia Raíces</h1>
+        <p>Optimiza y redimensiona el logo para mejorar el rendimiento de la aplicación</p>
+        
+        <div class="optimization-section">
+            <h3>📊 Estado Actual del Logo</h3>
+            <div class="logo-comparison">
+                <div class="logo-item">
+                    <h4>Logo Original</h4>
+                    <img id="originalLogo" src="/images/LogoColombiaRaicesNoFondo.png" alt="Logo Original">
+                    <div class="stats">
+                        <div id="originalStats">⏳ Cargando...</div>
+                    </div>
+                </div>
+                <div class="logo-item">
+                    <h4>Logo Optimizado</h4>
+                    <img id="optimizedLogo" style="display: none;" alt="Logo Optimizado">
+                    <div id="optimizedPreview" style="display: flex; align-items: center; justify-content: center; height: 150px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; margin: 10px 0;">
+                        <span>🎯 Haz clic en "Optimizar" para generar</span>
+                    </div>
+                    <div class="stats">
+                        <div id="optimizedStats">⏳ Esperando optimización...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="optimization-section">
+            <h3>⚙️ Opciones de Optimización</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div>
+                    <label>📏 Tamaño:</label>
+                    <select id="sizeSelect" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        <option value="60">60x60px (Logo pequeño)</option>
+                        <option value="120">120x120px (Logo mediano)</option>
+                        <option value="200">200x200px (Logo grande)</option>
+                        <option value="300">300x300px (Logo extra grande)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>🎨 Calidad:</label>
+                    <select id="qualitySelect" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        <option value="0.6">60% (Más pequeño)</option>
+                        <option value="0.8" selected>80% (Recomendado)</option>
+                        <option value="0.9">90% (Alta calidad)</option>
+                        <option value="1.0">100% (Máxima calidad)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>📄 Formato:</label>
+                    <select id="formatSelect" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        <option value="image/png">PNG (Transparencia)</option>
+                        <option value="image/jpeg">JPEG (Más pequeño)</option>
+                        <option value="image/webp">WebP (Moderno)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button id="optimizeBtn" class="btn" onclick="optimizeLogo()">
+                    🚀 Optimizar Logo
+                </button>
+                <button id="downloadBtn" class="btn btn-success" onclick="downloadOptimized()" style="display: none;">
+                    📥 Descargar Optimizado
+                </button>
+            </div>
+            
+            <div id="progressContainer" style="display: none;">
+                <div>⏳ Optimizando logo...</div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="downloadSection" class="download-section" style="display: none;">
+            <h3>✅ Optimización Completa</h3>
+            <p>El logo ha sido optimizado exitosamente. Puedes descargarlo y reemplazar el archivo original para mejorar el rendimiento.</p>
+            <div id="optimizationResults"></div>
+        </div>
+        
+        <div class="optimization-section">
+            <h3>📝 Instrucciones</h3>
+            <ol>
+                <li>Selecciona las opciones de optimización deseadas</li>
+                <li>Haz clic en "Optimizar Logo"</li>
+                <li>Descarga el logo optimizado</li>
+                <li>Reemplaza el archivo en <code>/renderer/public/images/</code></li>
+                <li>Reinicia el servidor para ver los cambios</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="optimizationCanvas"></canvas>
+    </div>
+
+    <script>
+        let originalSize = 0;
+        let optimizedBlob = null;
+        
+        // Cargar información del logo original
+        const originalLogo = document.getElementById('originalLogo');
+        originalLogo.onload = function() {
+            // Obtener tamaño del archivo (aproximado)
+            fetch('/images/LogoColombiaRaicesNoFondo.png')
+                .then(response => response.blob())
+                .then(blob => {
+                    originalSize = blob.size;
+                    document.getElementById('originalStats').innerHTML = `
+                        📊 Tamaño: ${formatBytes(originalSize)}<br>
+                        📐 Dimensiones: ${this.naturalWidth}x${this.naturalHeight}px
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error loading original logo:', error);
+                    document.getElementById('originalStats').innerHTML = '❌ Error al cargar';
+                });
+        };
+        
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+        
+        function optimizeLogo() {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const optimizeBtn = document.getElementById('optimizeBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            // Mostrar progreso
+            progressContainer.style.display = 'block';
+            optimizeBtn.disabled = true;
+            optimizeBtn.textContent = '⏳ Optimizando...';
+            
+            // Simular progreso
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    processOptimization();
+                }
+            }, 100);
+        }
+        
+        function processOptimization() {
+            const size = parseInt(document.getElementById('sizeSelect').value);
+            const quality = parseFloat(document.getElementById('qualitySelect').value);
+            const format = document.getElementById('formatSelect').value;
+            
+            const canvas = document.getElementById('optimizationCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Configurar canvas
+            canvas.width = size;
+            canvas.height = size;
+            
+            // Crear nueva imagen optimizada
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                // Limpiar canvas
+                ctx.clearRect(0, 0, size, size);
+                
+                // Dibujar imagen redimensionada
+                ctx.drawImage(img, 0, 0, size, size);
+                
+                // Convertir a blob
+                canvas.toBlob(function(blob) {
+                    optimizedBlob = blob;
+                    
+                    // Mostrar resultado
+                    const optimizedLogo = document.getElementById('optimizedLogo');
+                    const optimizedPreview = document.getElementById('optimizedPreview');
+                    const url = URL.createObjectURL(blob);
+                    
+                    optimizedLogo.src = url;
+                    optimizedLogo.style.display = 'block';
+                    optimizedPreview.style.display = 'none';
+                    
+                    // Actualizar estadísticas
+                    const reduction = ((originalSize - blob.size) / originalSize * 100).toFixed(1);
+                    document.getElementById('optimizedStats').innerHTML = `
+                        📊 Tamaño: ${formatBytes(blob.size)}<br>
+                        📐 Dimensiones: ${size}x${size}px<br>
+                        📉 Reducción: ${reduction}%
+                    `;
+                    
+                    // Mostrar sección de descarga
+                    const downloadSection = document.getElementById('downloadSection');
+                    downloadSection.style.display = 'block';
+                    
+                    document.getElementById('optimizationResults').innerHTML = `
+                        <strong>📈 Resultados:</strong><br>
+                        • Tamaño original: ${formatBytes(originalSize)}<br>
+                        • Tamaño optimizado: ${formatBytes(blob.size)}<br>
+                        • Reducción: ${reduction}%<br>
+                        • Formato: ${format.split('/')[1].toUpperCase()}<br>
+                        • Dimensiones: ${size}x${size}px
+                    `;
+                    
+                    // Habilitar descarga
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+                    document.getElementById('optimizeBtn').disabled = false;
+                    document.getElementById('optimizeBtn').textContent = '🚀 Optimizar Logo';
+                    document.getElementById('progressContainer').style.display = 'none';
+                    
+                }, format, quality);
+            };
+            
+            img.src = '/images/LogoColombiaRaicesNoFondo.png';
+        }
+        
+        function downloadOptimized() {
+            if (!optimizedBlob) return;
+            
+            const format = document.getElementById('formatSelect').value;
+            const size = document.getElementById('sizeSelect').value;
+            const extension = format.split('/')[1];
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(optimizedBlob);
+            link.download = `LogoColombiaRaices_${size}x${size}.${extension}`;
+            link.click();
+        }
+        
+        console.log('🎨 Logo Optimizer initialized');
+    </script>
+</body>
+</html>

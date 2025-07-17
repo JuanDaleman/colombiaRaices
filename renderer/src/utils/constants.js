@@ -1,0 +1,42 @@
+// Constantes de la aplicación
+export const ROUTES = {
+  HOME: '/',
+  LOGIN: '/login',
+  REGISTER: '/register',
+  DASHBOARD: '/dashboard',
+  EXPERIENCES: '/experiences',
+  COMMUNITIES: '/communities',
+  RESERVATIONS: '/reservations',
+};
+
+export const USER_TYPES = {
+  TRAVELER: 'viajero',
+  OPERATOR: 'operador',
+  ADMIN: 'admin',
+};
+
+export const EXPERIENCE_TYPES = {
+  CULTURAL: 'cultural',
+  HISTORICAL: 'historica',
+  ECOLOGICAL: 'ecologica',
+};
+
+export const REGIONS = {
+  GUAJIRA: 'La Guajira',
+  CHOCO: 'Chocó',
+  AMAZONIA: 'Amazonía',
+  BARICHARA: 'Barichara',
+  MOMPOX: 'Mompox',
+};
+
+export const COLORS = {
+  COLOMBIA_YELLOW: '#F5D547',
+  COLOMBIA_GOLD: '#F4C430',
+  COLOMBIA_GREEN: '#2C5F2D',
+  COLOMBIA_FOREST: '#1A4F1A',
+  COLOMBIA_BLUE: '#4A90E2',
+  COLOMBIA_ORANGE: '#FF8C00',
+  COLOMBIA_SUNSET: '#FF6B47',
+  COLOMBIA_BROWN: '#8B4513',
+  COLOMBIA_CREAM: '#FFF8DC',
+};

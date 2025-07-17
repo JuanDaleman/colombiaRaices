@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Logo Simple</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #03222b 0%, #569079 100%);
+            min-height: 100vh;
+        }
+        .logo-container {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-container img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+        .test-area {
+            margin-top: 100px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .logo-test {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img 
+            id="main-logo" 
+            src="/images/LogoColombiaRaicesNoFondo.png" 
+            alt="Colombia Raíces"
+            onload="updateStatus('main-status', 'Logo principal cargado', 'success')"
+            onerror="updateStatus('main-status', 'Error cargando logo principal', 'error')"
+        />
+    </div>
+
+    <div class="test-area">
+        <h1 style="color: #03222b; text-align: center;">🧪 Test de Logos</h1>
+        <div id="main-status" class="status info">Cargando logo principal...</div>
+        
+        <div class="logo-test">
+            <div>
+                <h3>Logo Sin Fondo (Fallback)</h3>
+                <img 
+                    id="logo-nofondo" 
+                    src="/images/LogoColombiaRaicesNoFondo.png" 
+                    alt="Sin Fondo"
+                    width="64" height="64"
+                    style="object-fit: contain; border: 1px solid #ddd;"
+                    onload="updateStatus('nofondo-status', 'Cargado exitosamente', 'success')"
+                    onerror="updateStatus('nofondo-status', 'Error de carga', 'error')"
+                />
+                <div id="nofondo-status" class="status info">Cargando...</div>
+            </div>
+            
+            <div>
+                <h3>Logo Circular (Nuevo)</h3>
+                <img 
+                    id="logo-circular" 
+                    src="/images/LogoColombiaRaicesCircular.png" 
+                    alt="Circular"
+                    width="64" height="64"
+                    style="object-fit: contain; border: 1px solid #ddd;"
+                    onload="updateStatus('circular-status', 'Cargado exitosamente', 'success')"
+                    onerror="updateStatus('circular-status', 'Error de carga', 'error')"
+                />
+                <div id="circular-status" class="status info">Cargando...</div>
+            </div>
+            
+            <div>
+                <h3>Logo Con Fondo</h3>
+                <img 
+                    id="logo-fondo" 
+                    src="/images/ColombiaRaicesLogo.png" 
+                    alt="Con Fondo"
+                    width="64" height="64"
+                    style="object-fit: contain; border: 1px solid #ddd;"
+                    onload="updateStatus('fondo-status', 'Cargado exitosamente', 'success')"
+                    onerror="updateStatus('fondo-status', 'Error de carga', 'error')"
+                />
+                <div id="fondo-status" class="status info">Cargando...</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <h3>Información de Red</h3>
+            <div id="network-info" class="status info">Verificando conexión...</div>
+        </div>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <button onclick="window.location.reload()" style="background: #fbd338; color: #03222b; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                🔄 Recargar Test
+            </button>
+            <button onclick="window.location.href='/'" style="background: #03222b; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                🏠 Volver al Home
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+            
+            // Log para debugging
+            console.log(`${elementId}: ${message}`);
+        }
+        
+        // Verificar conectividad
+        fetch('/images/LogoColombiaRaicesNoFondo.png', { method: 'HEAD' })
+            .then(response => {
+                if (response.ok) {
+                    updateStatus('network-info', `✅ Servidor respondiendo correctamente (${response.status})`, 'success');
+                } else {
+                    updateStatus('network-info', `❌ Error del servidor (${response.status})`, 'error');
+                }
+            })
+            .catch(error => {
+                updateStatus('network-info', `❌ Error de conexión: ${error.message}`, 'error');
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colombia Raíces</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="root"></div>    <script>
+        console.log('🔍 HTML template script executing...');
+        console.log('📍 Root element:', document.getElementById('root'));
+        
+        // Debug bundle loading
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 DOM Content Loaded');
+            
+            // Test IPC después de que el DOM esté listo
+            setTimeout(() => {
+                console.log('🧪 Testing IPC Communication...');
+                
+                if (typeof window.electronAPI === 'undefined') {
+                  console.error('❌ electronAPI no está disponible');
+                  return;
+                }
+                
+                console.log('✅ electronAPI está disponible');
+                console.log('API Methods:', Object.keys(window.electronAPI));
+                
+                // Test básico
+                if (window.electronAPI.experiencesSimple) {
+                  console.log('✅ experiencesSimple API disponible');
+                }
+                
+                if (window.electronAPI.communities) {
+                  console.log('✅ communities API disponible');
+                }
+            }, 1000);
+        });
+        
+        window.addEventListener('load', () => {
+            console.log('🌐 Window Load Complete');
+        });
+    </script>
+</body>
+</html>

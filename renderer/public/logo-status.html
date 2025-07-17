@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Status Check - Colombia Raíces</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #03222b 0%, #569079 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .logo-test {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 10px 0;
+        }
+        .logo-small {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .success { background-color: #4CAF50; }
+        .error { background-color: #f44336; }
+        .warning { background-color: #ff9800; }
+        .homepage-simulation {
+            position: relative;
+            height: 200px;
+            background: linear-gradient(135deg, #03222b 0%, #569079 100%);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .homepage-logo {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 60px;
+            height: 60px;
+            z-index: 20;
+        }
+        .homepage-logo img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+        .loading {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Logo Status Check - Colombia Raíces</h1>
+        <p>Verificando el estado del logo en diferentes contextos...</p>
+        
+        <div class="logo-test">
+            <h3>📄 Logo Files Status</h3>
+            <div class="logo-container">
+                <img id="logo1" class="logo-small" src="/images/LogoColombiaRaicesNoFondo.png" alt="Logo No Fondo">
+                <div>
+                    <strong>LogoColombiaRaicesNoFondo.png</strong>
+                    <div id="status1" class="status loading">⏳ Cargando...</div>
+                </div>
+            </div>
+            
+            <div class="logo-container">
+                <img id="logo2" class="logo-small" src="/images/LogoColombiaRaicesCircular.png" alt="Logo Circular">
+                <div>
+                    <strong>LogoColombiaRaicesCircular.png</strong>
+                    <div id="status2" class="status loading">⏳ Cargando...</div>
+                </div>
+            </div>
+            
+            <div class="logo-container">
+                <img id="logo3" class="logo-small" src="/images/ColombiaRaicesLogo.png" alt="Logo Original">
+                <div>
+                    <strong>ColombiaRaicesLogo.png</strong>
+                    <div id="status3" class="status loading">⏳ Cargando...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="logo-test">
+            <h3>🏠 HomePage Logo Simulation</h3>
+            <p>Simulación del logo como aparecería en la HomePage (esquina superior izquierda):</p>
+            <div class="homepage-simulation">
+                <div class="homepage-logo">
+                    <img id="homepage-logo" src="/images/LogoColombiaRaicesNoFondo.png" alt="Colombia Raíces">
+                </div>
+                <div style="padding: 80px 20px; text-align: center;">
+                    <h3>🌟 Simulación de HomePage</h3>
+                    <p>El logo debería aparecer en la esquina superior izquierda</p>
+                </div>
+            </div>
+            <div id="homepage-status" class="status loading">⏳ Verificando...</div>
+        </div>
+        
+        <div class="logo-test">
+            <h3>🌐 Network Status</h3>
+            <div id="network-info">
+                <p>📡 Verificando conectividad de red...</p>
+            </div>
+        </div>
+        
+        <div class="logo-test">
+            <h3>🔧 Quick Actions</h3>
+            <button onclick="location.reload()" style="background: #fbd338; color: #03222b; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px;">
+                🔄 Reload Page
+            </button>
+            <button onclick="window.open('/', '_blank')" style="background: #569079; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px;">
+                🏠 Open HomePage
+            </button>
+            <button onclick="window.open('/logo-debug.html', '_blank')" style="background: #f47d22; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px;">
+                🐛 Debug Page
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Logo load status tracking
+        const logos = ['logo1', 'logo2', 'logo3'];
+        let loadedCount = 0;
+        
+        logos.forEach((logoId, index) => {
+            const img = document.getElementById(logoId);
+            const statusDiv = document.getElementById(`status${index + 1}`);
+            
+            img.onload = () => {
+                statusDiv.textContent = '✅ Loaded Successfully';
+                statusDiv.className = 'status success';
+                loadedCount++;
+                updateNetworkInfo();
+            };
+            
+            img.onerror = () => {
+                statusDiv.textContent = '❌ Failed to Load';
+                statusDiv.className = 'status error';
+                updateNetworkInfo();
+            };
+        });
+        
+        // HomePage logo specific check
+        const homepageLogo = document.getElementById('homepage-logo');
+        const homepageStatus = document.getElementById('homepage-status');
+        
+        homepageLogo.onload = () => {
+            homepageStatus.textContent = '✅ HomePage Logo Working';
+            homepageStatus.className = 'status success';
+        };
+        
+        homepageLogo.onerror = () => {
+            homepageStatus.textContent = '❌ HomePage Logo Failed';
+            homepageStatus.className = 'status error';
+        };
+        
+        // Network info
+        function updateNetworkInfo() {
+            const networkDiv = document.getElementById('network-info');
+            networkDiv.innerHTML = `
+                <p>📊 Status: ${loadedCount}/3 logos loaded</p>
+                <p>🌐 Server: http://localhost:3009</p>
+                <p>📁 Images Path: /images/</p>
+                <p>⏰ Last Check: ${new Date().toLocaleTimeString()}</p>
+            `;
+        }
+        
+        // Console logging for debugging
+        console.log('🔍 Logo Status Check initialized');
+        console.log('📡 Checking logo files...');
+        
+        // Check if we're in the React app context
+        if (window.React) {
+            console.log('⚛️ React detected - running in React context');
+        } else {
+            console.log('📄 Static HTML - running in static context');
+        }
+    </script>
+</body>
+</html>
