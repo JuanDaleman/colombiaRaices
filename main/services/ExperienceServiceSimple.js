@@ -205,14 +205,16 @@ class ExperienceServiceSimple {
       }
       
       // Filtro por rango de precio
-      if (filters.precioMin) {
-        query += ` AND e.price >= ?`;
-        params.push(parseFloat(filters.precioMin));
-      }
-      
-      if (filters.precioMax) {
-        query += ` AND e.price <= ?`;
-        params.push(parseFloat(filters.precioMax));
+      if (filters.priceRange && filters.priceRange !== 'all') {
+        const [minPrice, maxPrice] = filters.priceRange.split('-');
+        if (minPrice) {
+          query += ` AND e.price >= ?`;
+          params.push(parseFloat(minPrice));
+        }
+        if (maxPrice) {
+          query += ` AND e.price <= ?`;
+          params.push(parseFloat(maxPrice));
+        }
       }
       
       query += ` ORDER BY e.title`;
@@ -257,6 +259,79 @@ class ExperienceServiceSimple {
       console.error('Error fetching regions:', error);
       throw error;
     }
+  }
+
+  // Obtener rangos de precios dinámicos
+  async getPriceRanges() {
+    try {
+      await this.db.connect();
+      const result = await this.db.all(`
+        SELECT 
+          MIN(price) as min_price,
+          MAX(price) as max_price,
+          COUNT(*) as total_experiences
+        FROM experiences 
+        WHERE is_active = 1 AND price IS NOT NULL AND price > 0
+      `);
+      
+      if (result.length === 0 || !result[0].min_price || !result[0].max_price) {
+        return {
+          ranges: [
+            { label: 'Económico', min: 0, max: 100000 },
+            { label: 'Medio', min: 100001, max: 200000 },
+            { label: 'Premium', min: 200001, max: 500000 }
+          ]
+        };
+      }
+      
+      const minPrice = parseFloat(result[0].min_price);
+      const maxPrice = parseFloat(result[0].max_price);
+      const range = maxPrice - minPrice;
+      
+      // Calcular los 3 rangos equitativos
+      const firstRangeMax = Math.floor(minPrice + (range * 0.33));
+      const secondRangeMax = Math.floor(minPrice + (range * 0.66));
+      
+      const ranges = [
+        {
+          label: 'Económico',
+          min: minPrice,
+          max: firstRangeMax,
+          displayMin: this.formatPriceSimple(minPrice),
+          displayMax: this.formatPriceSimple(firstRangeMax)
+        },
+        {
+          label: 'Medio',
+          min: firstRangeMax + 1,
+          max: secondRangeMax,
+          displayMin: this.formatPriceSimple(firstRangeMax + 1),
+          displayMax: this.formatPriceSimple(secondRangeMax)
+        },
+        {
+          label: 'Premium',
+          min: secondRangeMax + 1,
+          max: maxPrice,
+          displayMin: this.formatPriceSimple(secondRangeMax + 1),
+          displayMax: this.formatPriceSimple(maxPrice)
+        }
+      ];
+      
+      return { ranges, minPrice, maxPrice };
+    } catch (error) {
+      console.error('Error fetching price ranges:', error);
+      throw error;
+    }
+  }
+
+  // Formatear precio simple
+  formatPriceSimple(price) {
+    if (!price) return '0';
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price);
   }
 }
 

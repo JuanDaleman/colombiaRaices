@@ -128,42 +128,10 @@ ipcMain.handle('experiences:by-community', async (event, { communityId }) => {
   try {
     return await experienceController.getExperiencesByCommunity(communityId);
   } catch (error) {
-    return { success: false, error: error.message };
-  }
+    return { success: false, error: error.message };  }
 });
 
-// IPC Handlers para comunidades
-ipcMain.handle('communities:all', async (event) => {
-  try {
-    return await communityController.getAllCommunities();
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('communities:by-id', async (event, { id }) => {
-  try {
-    return await communityController.getCommunityById(id);
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('communities:by-region', async (event, { region }) => {
-  try {
-    return await communityController.getCommunitiesByRegion(region);
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('communities:stats', async (event) => {
-  try {
-    return await communityController.getCommunityStats();
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
+// Nota: Los handlers de comunidades están registrados automáticamente en CommunityController
 
 function createWindow() {
   console.log('🌍 NODE_ENV:', process.env.NODE_ENV);

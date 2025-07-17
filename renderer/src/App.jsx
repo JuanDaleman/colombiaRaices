@@ -172,33 +172,39 @@ const HomePage = () => {
   const [experiencesLoading, setExperiencesLoading] = useState(true);
   const [experiencesError, setExperiencesError] = useState(null);
   
-  // Estado para filtros de búsqueda
+  // Estado para comunidades
+  const [communities, setCommunities] = useState([]);
+  const [communitiesLoading, setCommunitiesLoading] = useState(true);
+  const [communitiesError, setCommunitiesError] = useState(null);
+    // Estado para filtros de búsqueda
   const [searchFilters, setSearchFilters] = useState({
     tipo: 'all',
     region: 'all',
-    precioMin: '',
-    precioMax: ''
+    priceRange: 'all'
   });
   
   // Estado para opciones de filtro
   const [filterOptions, setFilterOptions] = useState({
     tipos: [],
-    regiones: []
+    regiones: [],
+    priceRanges: []
   });
   
   // Cargar opciones de filtros al montar el componente
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        const [tiposResponse, regionesResponse] = await Promise.all([
+        const [tiposResponse, regionesResponse, priceRangesResponse] = await Promise.all([
           window.electronAPI.experiencesSimple.getTypes(),
-          window.electronAPI.experiencesSimple.getRegions()
+          window.electronAPI.experiencesSimple.getRegions(),
+          window.electronAPI.experiencesSimple.getPriceRanges()
         ]);
         
-        if (tiposResponse.success && regionesResponse.success) {
+        if (tiposResponse.success && regionesResponse.success && priceRangesResponse.success) {
           setFilterOptions({
             tipos: tiposResponse.data || [],
-            regiones: regionesResponse.data || []
+            regiones: regionesResponse.data || [],
+            priceRanges: priceRangesResponse.data?.ranges || []
           });
         }
       } catch (error) {
@@ -208,14 +214,13 @@ const HomePage = () => {
 
     fetchFilterOptions();
   }, []);
-  
-  // Función para cargar experiencias (con filtros o todas)
+    // Función para cargar experiencias (con filtros o todas)
   const fetchExperiences = async (filters = null) => {
     try {
       setExperiencesLoading(true);
       let response;
       
-      if (filters && (filters.tipo !== 'all' || filters.region !== 'all' || filters.precioMin || filters.precioMax)) {
+      if (filters && (filters.tipo !== 'all' || filters.region !== 'all' || filters.priceRange !== 'all')) {
         // Búsqueda filtrada
         response = await window.electronAPI.experiencesSimple.search(filters);
       } else {
@@ -234,12 +239,32 @@ const HomePage = () => {
       console.error('Error loading experiences:', error);
     } finally {
       setExperiencesLoading(false);
+    }  };
+  
+  // Función para cargar comunidades
+  const fetchCommunities = async () => {
+    try {
+      setCommunitiesLoading(true);
+      const response = await window.electronAPI.communities.getAll();
+      
+      if (response.success) {
+        setCommunities(response.data || []);
+        setCommunitiesError(null);
+      } else {
+        setCommunitiesError(response.error || 'Error al cargar comunidades');
+      }
+    } catch (error) {
+      setCommunitiesError('Error al conectar con la base de datos');
+      console.error('Error loading communities:', error);
+    } finally {
+      setCommunitiesLoading(false);
     }
   };
   
-  // Cargar todas las experiencias al montar el componente
+  // Cargar todas las experiencias y comunidades al montar el componente
   useEffect(() => {
     fetchExperiences();
+    fetchCommunities();
   }, []);
   
   // Manejar cambios en los filtros
@@ -248,14 +273,12 @@ const HomePage = () => {
     setSearchFilters(newFilters);
     fetchExperiences(newFilters);
   };
-  
-  // Limpiar filtros
+    // Limpiar filtros
   const clearFilters = () => {
     const defaultFilters = {
       tipo: 'all',
       region: 'all',
-      precioMin: '',
-      precioMax: ''
+      priceRange: 'all'
     };
     setSearchFilters(defaultFilters);
     fetchExperiences();
@@ -380,8 +403,7 @@ const HomePage = () => {
             Encuentra la experiencia perfecta para ti. Filtra por tipo, región y presupuesto.
           </p>
           
-          {/* Barra de búsqueda horizontal */}
-          <div style={{
+          {/* Barra de búsqueda horizontal */}          <div style={{
             backgroundColor: 'white',
             padding: '24px',
             borderRadius: '16px',
@@ -391,8 +413,8 @@ const HomePage = () => {
           }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '16px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '20px',
               alignItems: 'end'
             }}>
               {/* Filtro por Tipo */}
@@ -400,7 +422,7 @@ const HomePage = () => {
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
-                  fontSize: '0.9rem',
+                  fontSize: '0.95rem',
                   fontWeight: '600',
                   color: '#03222b'
                 }}>
@@ -411,13 +433,16 @@ const HomePage = () => {
                   onChange={(e) => handleFilterChange('tipo', e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    border: '1px solid #d1d5db',
-                    fontSize: '0.9rem',
-                    backgroundColor: '#f9fafb',
-                    cursor: 'pointer'
+                    padding: '14px',
+                    borderRadius: '10px',
+                    border: '2px solid #e2e8f0',
+                    fontSize: '0.95rem',
+                    backgroundColor: '#fafafa',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
                   }}
+                  onFocus={(e) => e.target.style.borderColor = '#03222b'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                 >
                   <option value="all">Todos los tipos</option>
                   {filterOptions.tipos.map((tipo) => (
@@ -433,7 +458,7 @@ const HomePage = () => {
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
-                  fontSize: '0.9rem',
+                  fontSize: '0.95rem',
                   fontWeight: '600',
                   color: '#03222b'
                 }}>
@@ -444,13 +469,16 @@ const HomePage = () => {
                   onChange={(e) => handleFilterChange('region', e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    border: '1px solid #d1d5db',
-                    fontSize: '0.9rem',
-                    backgroundColor: '#f9fafb',
-                    cursor: 'pointer'
+                    padding: '14px',
+                    borderRadius: '10px',
+                    border: '2px solid #e2e8f0',
+                    fontSize: '0.95rem',
+                    backgroundColor: '#fafafa',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
                   }}
+                  onFocus={(e) => e.target.style.borderColor = '#03222b'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                 >
                   <option value="all">Todas las regiones</option>
                   {filterOptions.regiones.map((region) => (
@@ -461,58 +489,40 @@ const HomePage = () => {
                 </select>
               </div>
 
-              {/* Filtro por Precio Mínimo */}
+              {/* Filtro por Rango de Precio */}
               <div>
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
-                  fontSize: '0.9rem',
+                  fontSize: '0.95rem',
                   fontWeight: '600',
                   color: '#03222b'
                 }}>
-                  💰 Precio Mínimo
+                  💰 Rango de Precio
                 </label>
-                <input
-                  type="number"
-                  placeholder="Ej: 50000"
-                  value={searchFilters.precioMin}
-                  onChange={(e) => handleFilterChange('precioMin', e.target.value)}
+                <select
+                  value={searchFilters.priceRange}
+                  onChange={(e) => handleFilterChange('priceRange', e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    border: '1px solid #d1d5db',
-                    fontSize: '0.9rem',
-                    backgroundColor: '#f9fafb'
+                    padding: '14px',
+                    borderRadius: '10px',
+                    border: '2px solid #e2e8f0',
+                    fontSize: '0.95rem',
+                    backgroundColor: '#fafafa',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
                   }}
-                />
-              </div>
-
-              {/* Filtro por Precio Máximo */}
-              <div>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '0.9rem',
-                  fontWeight: '600',
-                  color: '#03222b'
-                }}>
-                  💰 Precio Máximo
-                </label>
-                <input
-                  type="number"
-                  placeholder="Ej: 300000"
-                  value={searchFilters.precioMax}
-                  onChange={(e) => handleFilterChange('precioMax', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    border: '1px solid #d1d5db',
-                    fontSize: '0.9rem',
-                    backgroundColor: '#f9fafb'
-                  }}
-                />
+                  onFocus={(e) => e.target.style.borderColor = '#03222b'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                >
+                  <option value="all">Todos los precios</option>
+                  {filterOptions.priceRanges.map((range, index) => (
+                    <option key={index} value={`${range.min}-${range.max}`}>
+                      {range.label}: {range.displayMin} - {range.displayMax}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Botón para limpiar filtros */}
@@ -521,12 +531,12 @@ const HomePage = () => {
                   onClick={clearFilters}
                   style={{
                     width: '100%',
-                    padding: '12px',
-                    borderRadius: '8px',
+                    padding: '14px',
+                    borderRadius: '10px',
                     border: '2px solid #03222b',
                     backgroundColor: 'transparent',
                     color: '#03222b',
-                    fontSize: '0.9rem',
+                    fontSize: '0.95rem',
                     fontWeight: '600',
                     cursor: 'pointer',
                     transition: 'all 0.2s'
@@ -534,10 +544,12 @@ const HomePage = () => {
                   onMouseOver={(e) => {
                     e.target.style.backgroundColor = '#03222b';
                     e.target.style.color = 'white';
+                    e.target.style.transform = 'translateY(-1px)';
                   }}
                   onMouseOut={(e) => {
                     e.target.style.backgroundColor = 'transparent';
                     e.target.style.color = '#03222b';
+                    e.target.style.transform = 'translateY(0)';
                   }}
                 >
                   🔄 Limpiar Filtros
@@ -561,12 +573,12 @@ const HomePage = () => {
               )}
             </p>
           </div>
-            
-          {/* Grid de experiencias */}
+              {/* Grid de experiencias */}
           <div style={{ 
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '24px'
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 350px))',
+            gap: '24px',
+            justifyContent: 'center'
           }}>
             {experiencesLoading ? (
               // Loading state
@@ -766,6 +778,215 @@ const HomePage = () => {
                         📍 {exp.ubicacion}
                       </div>
                     )}
+                    </div>
+                  </div>
+                );
+              })
+            )}          </div>
+        </div>
+      </section>
+
+      {/* Comunidades Section */}
+      <section style={{ padding: '64px 20px', backgroundColor: '#f8f9fa' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{ 
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            marginBottom: '16px',
+            color: '#03222b'
+          }}>
+            🏘️ Descubre Nuestras Comunidades
+          </h2>
+          <p style={{ 
+            color: '#666',
+            maxWidth: '512px',
+            margin: '0 auto 40px auto',
+            lineHeight: '1.6'
+          }}>
+            Conoce las comunidades que hacen posible estas experiencias únicas y auténticas.
+          </p>
+
+          {/* Grid de comunidades */}
+          <div style={{ 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 350px))',
+            gap: '24px',
+            justifyContent: 'center'
+          }}>
+            {communitiesLoading ? (
+              // Loading state
+              [...Array(3)].map((_, index) => (
+                <div key={index} style={{
+                  backgroundColor: 'white',
+                  padding: '24px',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  textAlign: 'left',
+                  animation: 'pulse 1.5s ease-in-out infinite'
+                }}>
+                  <div style={{ 
+                    height: '2rem', 
+                    backgroundColor: '#f0f0f0', 
+                    borderRadius: '4px',
+                    marginBottom: '16px' 
+                  }}></div>
+                  <div style={{ 
+                    height: '1.5rem', 
+                    backgroundColor: '#f0f0f0', 
+                    borderRadius: '4px',
+                    marginBottom: '12px' 
+                  }}></div>
+                  <div style={{ 
+                    height: '3rem', 
+                    backgroundColor: '#f0f0f0', 
+                    borderRadius: '4px',
+                    marginBottom: '16px' 
+                  }}></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ 
+                      height: '1.2rem', 
+                      width: '80px',
+                      backgroundColor: '#f0f0f0', 
+                      borderRadius: '4px' 
+                    }}></div>
+                    <div style={{ 
+                      height: '1rem', 
+                      width: '60px',
+                      backgroundColor: '#f0f0f0', 
+                      borderRadius: '4px' 
+                    }}></div>
+                  </div>
+                </div>
+              ))
+            ) : communitiesError ? (
+              // Error state
+              <div style={{
+                gridColumn: '1 / -1',
+                textAlign: 'center',
+                padding: '40px',
+                backgroundColor: '#fff5f5',
+                borderRadius: '12px',
+                border: '1px solid #fed7d7'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '16px' }}>⚠️</div>
+                <h3 style={{ color: '#c53030', marginBottom: '8px' }}>Error al cargar comunidades</h3>
+                <p style={{ color: '#718096' }}>{communitiesError}</p>
+              </div>
+            ) : communities.length === 0 ? (
+              // Empty state
+              <div style={{
+                gridColumn: '1 / -1',
+                textAlign: 'center',
+                padding: '40px'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '16px' }}>🏘️</div>
+                <h3 style={{ color: '#03222b', marginBottom: '8px' }}>No hay comunidades disponibles</h3>
+                <p style={{ color: '#666' }}>Próximamente tendremos nuevas comunidades para conocer</p>
+              </div>
+            ) : (
+              // Communities grid
+              communities.map((community) => {
+                return (
+                  <div key={community.id} style={{
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    textAlign: 'left',
+                    transition: 'transform 0.2s',
+                    cursor: 'pointer',
+                    overflow: 'hidden'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}                  onClick={() => {
+                    // Mostrar detalles de la comunidad específica
+                    const communityInfo = [
+                      `🏘️ ${community.name}`,
+                      `📍 ${community.region}`,
+                      `📝 ${community.description?.substring(0, 200)}${community.description?.length > 200 ? '...' : ''}`,
+                      '',
+                      '💡 Próximamente: página de detalles completa'
+                    ].join('\n');
+                    
+                    alert(communityInfo);
+                  }}
+                  >
+                    {/* Imagen de la comunidad */}
+                    <div style={{ 
+                      height: '200px',
+                      backgroundImage: `url(./images/communities/community_${community.id}.jpg)`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      position: 'relative'
+                    }}>
+                      {/* Overlay con información de región */}
+                      <div style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        backgroundColor: 'rgba(251, 211, 56, 0.9)',
+                        color: '#03222b',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '0.75rem',
+                        fontWeight: '600'
+                      }}>
+                        {community.region}
+                      </div>
+                    </div>
+
+                    {/* Contenido de la tarjeta */}
+                    <div style={{ padding: '20px' }}>                      <h3 style={{ 
+                        fontSize: '1.25rem',
+                        fontWeight: 'bold',
+                        marginBottom: '8px',
+                        color: '#03222b'
+                      }}>
+                        {community.name}
+                      </h3>
+                      
+                      <p style={{ 
+                        color: '#666',
+                        fontSize: '0.9rem',
+                        lineHeight: '1.5',
+                        marginBottom: '16px'
+                      }}>
+                        {community.description?.substring(0, 100)}
+                        {community.description?.length > 100 ? '...' : ''}
+                      </p>
+
+                      {/* Información adicional */}
+                      <div style={{ 
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        paddingTop: '12px',
+                        borderTop: '1px solid #e2e8f0'
+                      }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '0.875rem',
+                          color: '#718096'
+                        }}>
+                          📍 {community.region}
+                        </div>
+                        
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '0.875rem',
+                          color: '#fbd338',
+                          fontWeight: '600'
+                        }}>
+                          Ver más →
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );

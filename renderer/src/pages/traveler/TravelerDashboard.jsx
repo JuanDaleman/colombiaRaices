@@ -253,12 +253,12 @@ const TravelerDashboard = () => {
             <div style={{ fontSize: '2rem', marginBottom: '16px' }}>🌟</div>
             <h3 style={{ color: COLORS.primary, marginBottom: '8px' }}>No hay experiencias disponibles</h3>
             <p style={{ color: '#666' }}>Próximamente tendremos nuevas experiencias para ti</p>
-          </div>
-        ) : (
+          </div>        ) : (
           <div style={{ 
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '20px'
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 320px))',
+            gap: '20px',
+            justifyContent: 'center'
           }}>
             {experiences.map((exp) => (
               <div

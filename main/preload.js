@@ -33,7 +33,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getByRegion: (data) => ipcRenderer.invoke('communities:by-region', data),
     getStats: () => ipcRenderer.invoke('communities:stats'),
   },
-    // APIs de experiencias simples
+  // APIs de experiencias simples
   experiencesSimple: {
     getAll: () => ipcRenderer.invoke('experiences-simple:all'),
     getById: (data) => ipcRenderer.invoke('experiences-simple:by-id', data),
@@ -41,6 +41,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getByType: (data) => ipcRenderer.invoke('experiences-simple:by-type', data),
     getTypes: () => ipcRenderer.invoke('experiences-simple:types'),
     getRegions: () => ipcRenderer.invoke('experiences-simple:regions'),
+    getPriceRanges: () => ipcRenderer.invoke('experiences-simple:price-ranges'),
     search: (filters) => ipcRenderer.invoke('experiences-simple:search', filters),
     getStats: () => ipcRenderer.invoke('experiences-simple:stats'),
   },

@@ -51,48 +51,45 @@ class CommunityController {
       return { success: false, error: error.message };
     }
   }
-
   setupEventHandlers() {
     // Obtener todas las comunidades
-    ipcMain.handle('communities:findAll', async () => {
+    ipcMain.handle('communities:all', async () => {
       try {
         const communities = await this.communityService.findAll();
         return { success: true, data: communities };
       } catch (error) {
-        console.error('Error in communities:findAll:', error);
+        console.error('Error in communities:all:', error);
         return { success: false, error: error.message };
       }
-    });
-
-    // Obtener comunidad por ID
-    ipcMain.handle('communities:findById', async (event, id) => {
+    });    // Obtener comunidad por ID
+    ipcMain.handle('communities:by-id', async (event, id) => {
       try {
         const community = await this.communityService.findById(id);
         return { success: true, data: community };
       } catch (error) {
-        console.error('Error in communities:findById:', error);
+        console.error('Error in communities:by-id:', error);
         return { success: false, error: error.message };
       }
     });
 
     // Obtener comunidades por región
-    ipcMain.handle('communities:findByRegion', async (event, region) => {
+    ipcMain.handle('communities:by-region', async (event, region) => {
       try {
         const communities = await this.communityService.findByRegion(region);
         return { success: true, data: communities };
       } catch (error) {
-        console.error('Error in communities:findByRegion:', error);
+        console.error('Error in communities:by-region:', error);
         return { success: false, error: error.message };
       }
     });
 
     // Obtener estadísticas de comunidades
-    ipcMain.handle('communities:getStats', async () => {
+    ipcMain.handle('communities:stats', async () => {
       try {
         const stats = await this.communityService.getStats();
         return { success: true, data: stats };
       } catch (error) {
-        console.error('Error in communities:getStats:', error);
+        console.error('Error in communities:stats:', error);
         return { success: false, error: error.message };
       }
     });

@@ -156,15 +156,24 @@ class ExperienceControllerSimple {
         console.error('Error in experiences-simple:search:', error);
         return { success: false, error: error.message };
       }
-    });
-
-    // Obtener regiones únicas
+    });    // Obtener regiones únicas
     ipcMain.handle('experiences-simple:regions', async () => {
       try {
         const regions = await this.experienceService.getRegions();
         return { success: true, data: regions };
       } catch (error) {
         console.error('Error in experiences-simple:regions:', error);
+        return { success: false, error: error.message };
+      }
+    });
+
+    // Obtener rangos de precios dinámicos
+    ipcMain.handle('experiences-simple:price-ranges', async () => {
+      try {
+        const priceRanges = await this.experienceService.getPriceRanges();
+        return { success: true, data: priceRanges };
+      } catch (error) {
+        console.error('Error in experiences-simple:price-ranges:', error);
         return { success: false, error: error.message };
       }
     });

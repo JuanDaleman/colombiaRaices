@@ -56,12 +56,12 @@ const OperatorDashboard = () => {
     backgroundColor: '#ff6b6b',
     color: 'white'
   };
-
   const sectionStyle = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 350px))',
     gap: '20px',
-    marginBottom: '30px'
+    marginBottom: '30px',
+    justifyContent: 'center'
   };
 
   return (
