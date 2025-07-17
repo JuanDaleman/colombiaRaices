@@ -5,6 +5,7 @@
 ### ❌ PROBLEMAS IDENTIFICADOS
 
 #### 1. **ARCHIVOS DE TESTING DISPERSOS (30 archivos!)**
+
 ```
 ❌ test-*.js (30 archivos en la RAÍZ del proyecto)
 - test-app.sh, test-auth.js, test-bundle.html
@@ -20,6 +21,7 @@
 ```
 
 #### 2. **PACKAGE.JSON DUPLICADOS (4 archivos!)**
+
 ```
 ✅ package.json              (PRINCIPAL - mantener)
 ❌ package.json.backup       (backup obsoleto)
@@ -28,6 +30,7 @@
 ```
 
 #### 3. **DOCUMENTACIÓN DISPERSA (8+ archivos .md)**
+
 ```
 ❌ AUTENTICACION_SOLUCIONADA.md        (resultado específico)
 ❌ CONTROLLER_METHODS_ERROR_FIXED.md   (fix específico)
@@ -40,6 +43,7 @@
 ```
 
 #### 4. **ARCHIVOS DE VERIFICACIÓN OBSOLETOS**
+
 ```
 ❌ verify-fix.js, verify-solution.js
 ❌ direct-test*.js (2 archivos)
@@ -50,6 +54,7 @@
 ```
 
 #### 5. **ASSETS/IMÁGENES DUPLICADAS**
+
 ```
 ❌ ColombiaRaicesLogo.png                  (duplicado?)
 ❌ LogoColombiaRaicesNoFondo.png           (¿duplicado?)
@@ -59,6 +64,7 @@
 ## 🎯 ESTRATEGIA DE LIMPIEZA
 
 ### **FASE 1: RESPALDO CRÍTICO**
+
 1. ✅ Crear commit de respaldo (COMPLETADO)
 2. 🔄 Verificar que app funciona
 3. 🔄 Documentar archivos críticos
@@ -66,6 +72,7 @@
 ### **FASE 2: ELIMINACIÓN POR CATEGORÍAS**
 
 #### **ETAPA 2A: Archivos de Testing (ALTA PRIORIDAD)**
+
 ```bash
 # Mover tests útiles a tests/ y eliminar obsoletos
 mkdir -p tests/integration tests/unit tests/scripts
@@ -73,18 +80,21 @@ mkdir -p tests/integration tests/unit tests/scripts
 ```
 
 #### **ETAPA 2B: Package.json Backups**
+
 ```bash
 # Eliminar backups de package.json
 rm package.json.backup package.json.bak package.json.new
 ```
 
 #### **ETAPA 2C: Documentación**
+
 ```bash
 # Consolidar documentación dispersa en docs/
 # Eliminar archivos .md específicos obsoletos
 ```
 
 #### **ETAPA 2D: Verificación y Scripts**
+
 ```bash
 # Eliminar scripts de verificación obsoletos
 # Mantener solo los esenciales
@@ -93,6 +103,7 @@ rm package.json.backup package.json.bak package.json.new
 ### **FASE 3: REORGANIZACIÓN**
 
 #### **ESTRUCTURA OBJETIVO:**
+
 ```
 e:\ColombiaRaices/
 ├── README.md                     (principal)
@@ -118,21 +129,25 @@ e:\ColombiaRaices/
 ## 📋 CHECKLIST DE ELIMINACIÓN
 
 ### **INMEDIATA (Sin verificación):**
+
 - [ ] package.json.backup, .bak, .new
 - [ ] test-bundle.html
-- [ ] verify-*.js, direct-test*.js
-- [ ] simple-*.js, sprint7-completion-summary.js
+- [ ] verify-_.js, direct-test_.js
+- [ ] simple-\*.js, sprint7-completion-summary.js
 
 ### **VERIFICAR ANTES DE ELIMINAR:**
-- [ ] test-*.js (verificar si alguno tiene lógica útil)
-- [ ] *.md específicos (extraer info útil)
-- [ ] initialize-sprint8*.js (verificar dependencias)
+
+- [ ] test-\*.js (verificar si alguno tiene lógica útil)
+- [ ] \*.md específicos (extraer info útil)
+- [ ] initialize-sprint8\*.js (verificar dependencias)
 
 ### **MOVER/REORGANIZAR:**
+
 - [ ] Tests útiles → tests/
 - [ ] Documentación → docs/
 - [ ] Scripts → scripts/
 
 ---
+
 **OBJETIVO**: Reducir de ~100 archivos raíz a ~10 archivos esenciales
 **BENEFICIO**: Proyecto limpio, mantenible y profesional

@@ -4,8 +4,8 @@ import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-d
 // Importar páginas
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
-import ExperiencesPageSimple from './pages/ExperiencesPageSimple';
-import CommunitiesPageSimple from './pages/CommunitiesPageSimple';
+import ExperiencesPage from './pages/ExperiencesPage';
+import CommunitiesPage from './pages/CommunitiesPage';
 import UnderConstructionPage from './components/common/UnderConstructionPage';
 import TravelerDashboard from './pages/traveler/TravelerDashboard';
 import OperatorDashboard from './pages/operator/OperatorDashboard';
@@ -527,9 +527,8 @@ function App() {
         <main>          <Routes>
             <Route path={ROUTES.HOME} element={<HomePage />} />
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-            <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
-            <Route path={ROUTES.EXPERIENCES} element={<ExperiencesPageSimple />} />
-            <Route path={ROUTES.COMMUNITIES} element={<CommunitiesPageSimple />} />
+            <Route path={ROUTES.REGISTER} element={<RegisterPage />} />            <Route path={ROUTES.EXPERIENCES} element={<ExperiencesPage />} />
+            <Route path={ROUTES.COMMUNITIES} element={<CommunitiesPage />} />
             <Route path={ROUTES.RESERVATIONS} element={<UnderConstructionPage pageName="Reservas" />} />
             <Route path={ROUTES.DASHBOARD} element={<UnderConstructionPage pageName="Dashboard" />} />
             <Route path={ROUTES.TRAVELER_DASHBOARD} element={<TravelerDashboard />} />
