@@ -1,6 +1,6 @@
 // Modelo de Usuario
 const BaseModel = require('./BaseModel');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 class UserModel extends BaseModel {
   constructor() {

@@ -4,108 +4,117 @@ import { useParams, Link } from 'react-router-dom';
 import { ROUTES, EXPERIENCE_TYPES, REGIONS } from '../utils/constants';
 import { formatCurrency } from '../utils/helpers';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import SearchFilters from '../components/common/SearchFilters';
+import TravelerHeader from '../components/traveler/TravelerHeader';
+import ExperienceCard from '../components/experiences/ExperienceCard';
 
 const ExperiencesPage = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [experiences, setExperiences] = useState([]);
-  const [selectedType, setSelectedType] = useState('all');
-  const [selectedRegion, setSelectedRegion] = useState('all');
-
+  
+  // Estado para filtros (compatible con SearchFilters)
+  const [searchFilters, setSearchFilters] = useState({
+    tipo: 'all',
+    region: 'all',
+    priceRange: 'all'
+  });
+    // Estado para opciones de filtro
+  const [filterOptions, setFilterOptions] = useState({
+    tipos: [],
+    regiones: [],
+    priceRanges: []
+  });// Cargar opciones de filtros al montar el componente
   useEffect(() => {
-    // Simular carga de datos
-    setTimeout(() => {
-      const mockExperiences = [
-        {
-          id: 1,
-          title: 'Tour Histórico por Barichara',
-          description: 'Descubre la arquitectura colonial y la historia de este pueblo patrimonio.',
-          type: EXPERIENCE_TYPES.HISTORICAL,
-          price: 45000,
-          duration: 3,
-          community: 'Barichara',
-          region: REGIONS.BARICHARA,
-          maxParticipants: 12,
-          rating: 4.8,
-          reviews: 156
-        },
-        {
-          id: 2,
-          title: 'Experiencia Wayuu en La Guajira',
-          description: 'Vive la cultura ancestral wayuu con artesanías y tradiciones.',
-          type: EXPERIENCE_TYPES.CULTURAL,
-          price: 120000,
-          duration: 8,
-          community: 'Comunidad Wayuu',
-          region: REGIONS.GUAJIRA,
-          maxParticipants: 8,
-          rating: 4.9,
-          reviews: 89
-        },
-        {
-          id: 3,
-          title: 'Ecoturismo en el Chocó',
-          description: 'Explora la biodiversidad única del Chocó biogeográfico.',
-          type: EXPERIENCE_TYPES.ECOLOGICAL,
-          price: 180000,
-          duration: 12,
-          community: 'Nuquí',
-          region: REGIONS.CHOCO,
-          maxParticipants: 6,
-          rating: 4.7,
-          reviews: 234
-        },
-        {
-          id: 4,
-          title: 'Artesanías de Mompox',
-          description: 'Aprende el arte de la filigrana y la cerámica tradicional.',
-          type: EXPERIENCE_TYPES.CULTURAL,
-          price: 75000,
-          duration: 4,
-          community: 'Mompox',
-          region: REGIONS.MOMPOX,
-          maxParticipants: 10,
-          rating: 4.6,
-          reviews: 67
-        },
-        {
-          id: 5,
-          title: 'Aventura en el Amazonas',
-          description: 'Explora la selva amazónica con guías nativos.',
-          type: EXPERIENCE_TYPES.ECOLOGICAL,
-          price: 250000,
-          duration: 16,
-          community: 'Leticia',
-          region: REGIONS.AMAZONIA,
-          maxParticipants: 8,
-          rating: 4.9,
-          reviews: 123
+    const fetchFilterOptions = async () => {
+      try {
+        const [tiposResponse, regionesResponse, priceRangesResponse] = await Promise.all([
+          window.electronAPI.experiencesSimple.getTypes(),
+          window.electronAPI.experiencesSimple.getRegions(),
+          window.electronAPI.experiencesSimple.getPriceRanges()
+        ]);
+        
+        if (tiposResponse.success && regionesResponse.success && priceRangesResponse.success) {
+          setFilterOptions({
+            tipos: tiposResponse.data || [],
+            regiones: regionesResponse.data || [],
+            priceRanges: priceRangesResponse.data?.ranges || []
+          });
         }
-      ];
+      } catch (error) {
+        console.error('Error loading filter options:', error);
+      }
+    };
 
-      setExperiences(mockExperiences);
-      setLoading(false);
-    }, 1000);
+    fetchFilterOptions();
   }, []);
 
-  const filteredExperiences = experiences.filter(exp => {
-    const typeMatch = selectedType === 'all' || exp.type === selectedType;
-    const regionMatch = selectedRegion === 'all' || exp.region === selectedRegion;
-    return typeMatch && regionMatch;
-  });
-
-  const getExperienceTypeColor = (type) => {
-    switch (type) {
-      case EXPERIENCE_TYPES.CULTURAL:
-        return 'bg-yellow text-green';
-      case EXPERIENCE_TYPES.HISTORICAL:
-        return 'bg-orange text-white';
-      case EXPERIENCE_TYPES.ECOLOGICAL:
-        return 'bg-green text-white';
-      default:
-        return 'bg-gray-500 text-white';
+  // Función para cargar experiencias (con filtros o todas)
+  const fetchExperiences = async (filters = null) => {
+    try {
+      setLoading(true);
+      let response;
+      
+      if (filters && (filters.tipo !== 'all' || filters.region !== 'all' || filters.priceRange !== 'all')) {
+        // Búsqueda filtrada
+        response = await window.electronAPI.experiencesSimple.search(filters);
+      } else {
+        // Mostrar todas las experiencias
+        response = await window.electronAPI.experiencesSimple.getAll();
+      }
+      
+      if (response.success) {
+        setExperiences(response.data || []);
+      } else {
+        console.error('Error loading experiences:', response.error);
+        setExperiences([]);
+      }
+    } catch (error) {
+      console.error('Error connecting to database:', error);
+      setExperiences([]);
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Cargar experiencias reales de la base de datos
+    const fetchExperiences = async () => {
+      try {
+        setLoading(true);
+        const response = await window.electronAPI.experiencesSimple.getAll();
+        
+        if (response.success) {
+          setExperiences(response.data || []);
+        } else {
+          console.error('Error loading experiences:', response.error);
+          setExperiences([]);
+        }
+      } catch (error) {
+        console.error('Error connecting to database:', error);
+        setExperiences([]);
+      } finally {
+        setLoading(false);
+      }
+    };    fetchExperiences();
+  }, []);
+
+  // Manejar cambios en los filtros
+  const handleFilterChange = (filterType, value) => {
+    const newFilters = { ...searchFilters, [filterType]: value };
+    setSearchFilters(newFilters);
+    fetchExperiences(newFilters);
+  };  // Limpiar filtros
+  const clearFilters = () => {
+    const defaultFilters = {
+      tipo: 'all',
+      region: 'all',
+      priceRange: 'all'
+    };
+    setSearchFilters(defaultFilters);
+    fetchExperiences();
+  };// Como ahora la filtración se hace en el servidor, ya no necesitamos filtrado local
+  // Solo mostramos las experiencias que ya vienen filtradas del backend
 
   if (loading) {
     return (
@@ -113,141 +122,72 @@ const ExperiencesPage = () => {
         <LoadingSpinner size="large" />
       </div>
     );
-  }
-
-  return (
+  }  return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <section className="bg-green text-white py-12">
-        <div className="container">
-          <h1 className="text-4xl font-bold mb-4">Experiencias Turísticas</h1>
-          <p className="text-xl">
-            Descubre experiencias auténticas que conectan con nuestras comunidades
-          </p>
-        </div>
-      </section>
-
-      {/* Filters */}
-      <section className="py-8 bg-white shadow-sm">
-        <div className="container">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1">
-              <label htmlFor="type-filter" className="block text-sm font-medium text-gray-700 mb-2">
-                Tipo de Experiencia
-              </label>
-              <select
-                id="type-filter"
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green"
-              >
-                <option value="all">Todas</option>
-                <option value={EXPERIENCE_TYPES.CULTURAL}>Cultural</option>
-                <option value={EXPERIENCE_TYPES.HISTORICAL}>Histórica</option>
-                <option value={EXPERIENCE_TYPES.ECOLOGICAL}>Ecológica</option>
-              </select>
-            </div>
-
-            <div className="flex-1">
-              <label htmlFor="region-filter" className="block text-sm font-medium text-gray-700 mb-2">
-                Región
-              </label>
-              <select
-                id="region-filter"
-                value={selectedRegion}
-                onChange={(e) => setSelectedRegion(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green"
-              >
-                <option value="all">Todas</option>
-                {Object.values(REGIONS).map(region => (
-                  <option key={region} value={region}>{region}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex items-end">
-              <button
-                onClick={() => {
-                  setSelectedType('all');
-                  setSelectedRegion('all');
-                }}
-                className="btn btn-outline border-green text-green hover:bg-green hover:text-white px-6 py-2"
-              >
-                Limpiar Filtros
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Experiences Grid */}
-      <section className="py-12">
-        <div className="container">
-          <div className="mb-6">
-            <p className="text-gray-600">
-              Mostrando {filteredExperiences.length} experiencias
+      {/* TravelerHeader */}
+      <TravelerHeader currentPage="experiences" />
+      
+      {/* Search Filters */}
+      <SearchFilters
+        searchFilters={searchFilters}
+        filterOptions={filterOptions}
+        onFilterChange={handleFilterChange}
+        onClearFilters={clearFilters}
+        showTitle={false}
+        showDescription={false}
+        layout="horizontal"
+      />      {/* Experiences Grid */}
+      <section style={{ padding: '48px 20px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ marginBottom: '24px' }}>
+            <p style={{ color: '#666', fontSize: '0.9rem', margin: 0 }}>
+              Mostrando {experiences.length} experiencias
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredExperiences.map((experience) => (
-              <div key={experience.id} className="card bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="h-48 bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-500">📸 {experience.title}</span>
-                </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-xl font-semibold text-green">{experience.title}</h3>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getExperienceTypeColor(experience.type)}`}>
-                      {experience.type}
-                    </span>
-                  </div>
-                  <p className="text-gray-600 mb-4">{experience.description}</p>
-                  
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">📍 {experience.community}, {experience.region}</span>
-                      <span className="text-gray-500">⏱️ {experience.duration}h</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">👥 Hasta {experience.maxParticipants} personas</span>
-                      <div className="flex items-center">
-                        <span className="text-yellow-500">⭐</span>
-                        <span className="text-gray-500 ml-1">{experience.rating} ({experience.reviews})</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold text-green">
-                      {formatCurrency(experience.price)}
-                    </span>
-                    <Link
-                      to={`${ROUTES.EXPERIENCES}/${experience.id}`}
-                      className="btn btn-primary bg-yellow text-green hover:bg-yellow-600"
-                    >
-                      Ver Detalles
-                    </Link>
-                  </div>
-                </div>
-              </div>
+          </div>          <div style={{ 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 320px))',
+            gap: '24px',
+            justifyContent: 'center',
+            position: 'relative'
+          }}>
+            {experiences.map((experience) => (
+              <ExperienceCard 
+                key={experience.id} 
+                experience={experience} 
+              />
             ))}
-          </div>
-
-          {filteredExperiences.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No se encontraron experiencias con los filtros seleccionados.</p>
+          </div>{experiences.length === 0 && (
+            <div style={{ 
+              gridColumn: '1 / -1',
+              textAlign: 'center', 
+              padding: '48px 20px' 
+            }}>
+              <p style={{ color: '#666', fontSize: '1.1rem', marginBottom: '16px' }}>
+                No se encontraron experiencias con los filtros seleccionados.
+              </p>
               <button
-                onClick={() => {
-                  setSelectedType('all');
-                  setSelectedRegion('all');
+                onClick={clearFilters}
+                style={{
+                  backgroundColor: '#fbd338',
+                  color: '#03222b',
+                  border: 'none',
+                  padding: '12px 24px',
+                  fontSize: '1rem',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
                 }}
-                className="btn btn-primary bg-yellow text-green hover:bg-yellow-600 mt-4"
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#f2c832';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#fbd338';
+                }}
               >
                 Ver Todas las Experiencias
               </button>
-            </div>
-          )}
+            </div>          )}
         </div>
       </section>
     </div>

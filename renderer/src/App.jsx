@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 // Importar páginas
 import LoginPage from './pages/auth/LoginPage';
@@ -21,6 +21,44 @@ const ROUTES = {
   DASHBOARD: '/dashboard',
   TRAVELER_DASHBOARD: '/traveler-dashboard',
   OPERATOR_DASHBOARD: '/operator-dashboard',
+};
+
+// Función global para navegar a home y hacer scroll a sección
+const navigateAndScroll = (navigate, sectionId) => {
+  // Si ya estamos en la home, solo hacer scroll
+  if (window.location.hash === '#/' || window.location.hash === '') {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  } else {
+    // Si estamos en otra página, navegar a home y luego scroll
+    navigate('/');
+    // Esperar un momento para que la página cargue, luego hacer scroll
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 100);
+  }
+};
+
+// Función global para smooth scroll a secciones (solo cuando ya estás en home)
+const scrollToSection = (sectionId) => {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
 };
 
 // Componente Navigation para escritorio
@@ -65,9 +103,8 @@ const Navigation = () => {
           />
           <h1 style={{ color: '#03222b', margin: 0, fontSize: '1.5rem' }}>Colombia Raíces</h1>
         </div>          {/* Enlaces de navegación centrales */}
-        <div style={{ display: 'flex', gap: '20px' }}>
-          <button
-            onClick={() => navigate(ROUTES.EXPERIENCES)}
+        <div style={{ display: 'flex', gap: '20px' }}>          <button
+            onClick={() => navigateAndScroll(navigate, 'experiencias-section')}
             style={{ 
               background: 'none',
               border: 'none',
@@ -79,9 +116,8 @@ const Navigation = () => {
             }}
           >
             🌟 Experiencias
-          </button>
-          <button
-            onClick={() => navigate(ROUTES.COMMUNITIES)}
+          </button>          <button
+            onClick={() => navigateAndScroll(navigate, 'comunidades-section')}
             style={{ 
               background: 'none',
               border: 'none',
@@ -273,7 +309,7 @@ const HomePage = () => {
     setSearchFilters(newFilters);
     fetchExperiences(newFilters);
   };
-    // Limpiar filtros
+  // Limpiar filtros
   const clearFilters = () => {
     const defaultFilters = {
       tipo: 'all',
@@ -281,8 +317,8 @@ const HomePage = () => {
       priceRange: 'all'
     };
     setSearchFilters(defaultFilters);
-    fetchExperiences();
-  };
+    fetchExperiences();  };
+
   return (
     <div style={{ minHeight: '100vh', position: 'relative', backgroundColor: '#f8f9fa' }}>
       {/* Estilos para animación de loading */}
@@ -327,9 +363,8 @@ const HomePage = () => {
             justifyContent: 'center',
             alignItems: 'center',
             flexWrap: 'wrap'
-          }}>
-            <button
-              onClick={() => navigate(ROUTES.EXPERIENCES)}
+          }}>            <button
+              onClick={() => scrollToSection('experiencias-section')}
               style={{ 
                 backgroundColor: '#fbd338', 
                 color: '#03222b',
@@ -354,7 +389,7 @@ const HomePage = () => {
               🌟 Explorar Experiencias
             </button>
             <button
-              onClick={() => navigate(ROUTES.COMMUNITIES)}
+              onClick={() => scrollToSection('comunidades-section')}
               style={{ 
                 border: '2px solid #fbd338', 
                 color: '#fbd338',
@@ -382,10 +417,8 @@ const HomePage = () => {
             </button>
           </div>
         </div>
-      </section>
-
-      {/* Experiencias Section */}
-      <section style={{ padding: '64px 20px' }}>
+      </section>      {/* Experiencias Section */}
+      <section id="experiencias-section" style={{ padding: '64px 20px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>          <h2 style={{ 
             fontSize: '2rem',
             fontWeight: 'bold',
@@ -784,10 +817,8 @@ const HomePage = () => {
               })
             )}          </div>
         </div>
-      </section>
-
-      {/* Comunidades Section */}
-      <section style={{ padding: '64px 20px', backgroundColor: '#f8f9fa' }}>
+      </section>      {/* Comunidades Section */}
+      <section id="comunidades-section" style={{ padding: '64px 20px', backgroundColor: '#f8f9fa' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
           <h2 style={{ 
             fontSize: '2rem',
@@ -990,8 +1021,35 @@ const HomePage = () => {
                     </div>
                   </div>
                 );
-              })
-            )}
+              })            )}
+          </div>
+          
+          {/* Botón para ver todas las experiencias */}
+          <div style={{ textAlign: 'center', marginTop: '40px' }}>
+            <button
+              onClick={() => navigate(ROUTES.EXPERIENCES)}
+              style={{
+                backgroundColor: '#03222b',
+                color: 'white',
+                border: 'none',
+                padding: '12px 24px',
+                fontSize: '1rem',
+                borderRadius: '8px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = '#2a5a6b';
+                e.target.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = '#03222b';
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
+              Ver todas las experiencias →
+            </button>
           </div>
         </div>
       </section>
@@ -1014,12 +1072,42 @@ const HomePage = () => {
   );
 };
 
-function App() {
-  return (
+// Componente que condicionalmente renderiza Navigation
+const ConditionalNavigation = () => {
+  const location = useLocation();
+  
+  // Rutas que NO deben mostrar el header genérico
+  const dashboardRoutes = [
+    ROUTES.TRAVELER_DASHBOARD,
+    ROUTES.OPERATOR_DASHBOARD,
+    ROUTES.EXPERIENCES,
+    ROUTES.COMMUNITIES
+  ];
+  
+  // Para HashRouter, verificar tanto pathname como hash
+  const currentPath = location.pathname;
+  const currentHash = location.hash;
+  
+  // Verificar si estamos en una ruta de dashboard
+  const shouldHideNavigation = dashboardRoutes.some(route => {
+    return currentPath === route || 
+           currentPath.endsWith(route) ||
+           currentHash === `#${route}` ||
+           currentHash.endsWith(route);
+  });
+  
+  if (shouldHideNavigation) {
+    return null;
+  }
+  
+  return <Navigation />;
+};
+
+function App() {  return (
     <Router>
       <div className="App">
-        <Navigation />
-        <main>          <Routes>
+        <ConditionalNavigation />
+        <main><Routes>
             <Route path={ROUTES.HOME} element={<HomePage />} />
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
             <Route path={ROUTES.REGISTER} element={<RegisterPage />} />            <Route path={ROUTES.EXPERIENCES} element={<ExperiencesPage />} />

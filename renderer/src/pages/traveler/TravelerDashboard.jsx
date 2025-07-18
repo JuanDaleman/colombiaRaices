@@ -120,17 +120,34 @@ const TravelerDashboard = () => {
     gap: '20px',
     marginBottom: '30px'
   };
-
   return (
     <div style={containerStyle}>
       <div style={headerStyle}>
-        <div>
-          <h1 style={{ margin: 0, color: COLORS.primary, fontSize: '28px' }}>
-            🧳 Dashboard - Viajero
-          </h1>
-          <p style={{ margin: '5px 0 0 0', color: '#666' }}>
-            Bienvenido, {user?.name}
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          {/* Logo de Colombia Raíces */}
+          <img
+            src="./images/LogoColombiaRaicesNoFondo.png"
+            alt="Colombia Raíces Logo"
+            style={{
+              height: '50px',
+              width: 'auto'
+            }}
+            onError={(e) => {
+              console.error('Error loading dashboard logo:', e);
+              e.target.style.display = 'none';
+            }}
+            onLoad={() => {
+              console.log('Dashboard logo loaded successfully');
+            }}
+          />          {/* Texto del Dashboard */}
+          <div>
+            <h1 style={{ margin: 0, color: COLORS.primary, fontSize: '28px' }}>
+              Dashboard - Viajero 🧳
+            </h1>
+            <p style={{ margin: '5px 0 0 0', color: '#666' }}>
+              Bienvenido, {user?.name}
+            </p>
+          </div>
         </div>
         <button 
           style={logoutButtonStyle}

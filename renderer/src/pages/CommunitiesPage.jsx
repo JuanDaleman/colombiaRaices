@@ -1,98 +1,122 @@
 // Página de Comunidades
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ROUTES, REGIONS } from '../utils/constants';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import TravelerHeader from '../components/traveler/TravelerHeader';
+import CommunitySearchFilters from '../components/communities/CommunitySearchFilters';
+import CommunityCard from '../components/communities/CommunityCard';
 
 const CommunitiesPage = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [communities, setCommunities] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState('all');
+  
+  // Estado para filtros de comunidades
+  const [searchFilters, setSearchFilters] = useState({
+    nombre: '',
+    region: 'all'
+  });
+
+  // Función para cargar comunidades (con filtros o todas)
+  const fetchCommunities = async (filters = null) => {
+    try {
+      setLoading(true);
+      let response;
+      
+      if (filters && (filters.nombre || (filters.region && filters.region !== 'all'))) {
+        // Búsqueda filtrada por nombre o región
+        const filteredCommunities = communities.filter(community => {
+          const matchesName = !filters.nombre || 
+            community.name?.toLowerCase().includes(filters.nombre.toLowerCase()) ||
+            community.nombre?.toLowerCase().includes(filters.nombre.toLowerCase());
+          
+          const matchesRegion = !filters.region || filters.region === 'all' || 
+            community.region === filters.region;
+          
+          return matchesName && matchesRegion;
+        });
+        
+        setCommunities(filteredCommunities);
+        setLoading(false);
+        return;
+      } else {
+        // Cargar todas las comunidades de la base de datos
+        response = await window.electronAPI.communities.getAll();
+      }
+      
+      if (response.success) {
+        setCommunities(response.data || []);
+      } else {
+        console.error('Error loading communities:', response.error);
+        setCommunities([]);
+      }
+    } catch (error) {
+      console.error('Error connecting to database:', error);
+      setCommunities([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Simular carga de datos
-    setTimeout(() => {
-      const mockCommunities = [
-        {
-          id: 1,
-          name: 'Barichara',
-          region: REGIONS.BARICHARA,
-          description: 'Pueblo patrimonio con arquitectura colonial perfectamente preservada. Conocido como el pueblo más bonito de Colombia.',
-          experiencesCount: 5,
-          population: 7000,
-          founded: 1705,
-          highlights: ['Arquitectura colonial', 'Artesanías', 'Camino Real'],
-          contact: {
-            email: 'turismo@barichara.gov.co',
-            phone: '+57 300 123 4567'
-          }
-        },
-        {
-          id: 2,
-          name: 'Comunidad Wayuu',
-          region: REGIONS.GUAJIRA,
-          description: 'Cultura ancestral wayuu con tradiciones milenarias. Pueblo indígena que preserva sus costumbres y lengua.',
-          experiencesCount: 3,
-          population: 400000,
-          founded: 'Ancestral',
-          highlights: ['Artesanías wayuu', 'Ranchería tradicional', 'Ceremonias ancestrales'],
-          contact: {
-            email: 'wayuu@laguajira.gov.co',
-            phone: '+57 315 987 6543'
-          }
-        },
-        {
-          id: 3,
-          name: 'Nuquí',
-          region: REGIONS.CHOCO,
-          description: 'Biodiversidad única en el Pacífico colombiano. Punto de encuentro entre selva y océano.',
-          experiencesCount: 4,
-          population: 8500,
-          founded: 1942,
-          highlights: ['Avistamiento de ballenas', 'Selva tropical', 'Playas vírgenes'],
-          contact: {
-            email: 'turismo@nuqui.gov.co',
-            phone: '+57 321 456 7890'
-          }
-        },
-        {
-          id: 4,
-          name: 'Mompox',
-          region: REGIONS.MOMPOX,
-          description: 'Ciudad colonial patrimonio mundial con tradiciones artesanales únicas.',
-          experiencesCount: 6,
-          population: 42000,
-          founded: 1537,
-          highlights: ['Filigrana', 'Arquitectura colonial', 'Río Magdalena'],
-          contact: {
-            email: 'cultura@mompox.gov.co',
-            phone: '+57 310 234 5678'
-          }
-        },
-        {
-          id: 5,
-          name: 'Leticia',
-          region: REGIONS.AMAZONIA,
-          description: 'Puerta de entrada al Amazonas colombiano con comunidades indígenas.',
-          experiencesCount: 8,
-          population: 50000,
-          founded: 1867,
-          highlights: ['Selva amazónica', 'Comunidades indígenas', 'Río Amazonas'],
-          contact: {
-            email: 'turismo@leticia.gov.co',
-            phone: '+57 318 765 4321'
-          }
+    // Cargar comunidades reales de la base de datos
+    const loadInitialCommunities = async () => {
+      try {
+        setLoading(true);
+        const response = await window.electronAPI.communities.getAll();
+        
+        if (response.success) {
+          setCommunities(response.data || []);
+        } else {
+          console.error('Error loading communities:', response.error);
+          setCommunities([]);
         }
-      ];
+      } catch (error) {
+        console.error('Error connecting to database:', error);
+        setCommunities([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      setCommunities(mockCommunities);
-      setLoading(false);
-    }, 1000);
+    loadInitialCommunities();
   }, []);
 
+  // Manejar cambios en los filtros
+  const handleFilterChange = (filterType, value) => {
+    const newFilters = { ...searchFilters, [filterType]: value };
+    setSearchFilters(newFilters);
+    
+    // Filtrar comunidades en tiempo real
+    if (value === '' && filterType === 'nombre') {
+      // Si se limpia el nombre, recargar todas las comunidades
+      fetchCommunities({ ...newFilters, nombre: '' });
+    } else {
+      fetchCommunities(newFilters);
+    }
+  };
+
+  // Limpiar filtros
+  const clearFilters = () => {
+    const defaultFilters = {
+      nombre: '',
+      region: 'all'
+    };
+    setSearchFilters(defaultFilters);
+    fetchCommunities(); // Recargar todas las comunidades
+  };
+
+  // Filtrar comunidades localmente para los resultados en tiempo real
   const filteredCommunities = communities.filter(community => {
-    return selectedRegion === 'all' || community.region === selectedRegion;
+    const matchesName = !searchFilters.nombre || 
+      community.name?.toLowerCase().includes(searchFilters.nombre.toLowerCase()) ||
+      community.nombre?.toLowerCase().includes(searchFilters.nombre.toLowerCase());
+    
+    const matchesRegion = !searchFilters.region || searchFilters.region === 'all' || 
+      community.region === searchFilters.region;
+    
+    return matchesName && matchesRegion;
   });
 
   if (loading) {
@@ -105,122 +129,71 @@ const CommunitiesPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <section className="bg-green text-white py-12">
-        <div className="container">
-          <h1 className="text-4xl font-bold mb-4">Comunidades</h1>
-          <p className="text-xl">
-            Conoce las comunidades que preservan la cultura y tradiciones colombianas
-          </p>
-        </div>
-      </section>
-
-      {/* Filters */}
-      <section className="py-8 bg-white shadow-sm">
-        <div className="container">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1">
-              <label htmlFor="region-filter" className="block text-sm font-medium text-gray-700 mb-2">
-                Región
-              </label>
-              <select
-                id="region-filter"
-                value={selectedRegion}
-                onChange={(e) => setSelectedRegion(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green"
-              >
-                <option value="all">Todas las regiones</option>
-                {Object.values(REGIONS).map(region => (
-                  <option key={region} value={region}>{region}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex items-end">
-              <button
-                onClick={() => setSelectedRegion('all')}
-                className="btn btn-outline border-green text-green hover:bg-green hover:text-white px-6 py-2"
-              >
-                Limpiar Filtros
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* TravelerHeader con Comunidades activo */}
+      <TravelerHeader currentPage="communities" />
+      
+      {/* Community Search Filters */}
+      <CommunitySearchFilters
+        searchFilters={searchFilters}
+        onFilterChange={handleFilterChange}
+        onClearFilters={clearFilters}
+        showTitle={false}
+        showDescription={false}
+        layout="horizontal"
+      />
 
       {/* Communities Grid */}
-      <section className="py-12">
-        <div className="container">
-          <div className="mb-6">
-            <p className="text-gray-600">
+      <section style={{ padding: '48px 20px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ marginBottom: '24px' }}>
+            <p style={{ color: '#666', fontSize: '0.9rem', margin: 0 }}>
               Mostrando {filteredCommunities.length} comunidades
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div style={{ 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 320px))',
+            gap: '24px',
+            justifyContent: 'center',
+            position: 'relative'
+          }}>
             {filteredCommunities.map((community) => (
-              <div key={community.id} className="card bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="h-48 bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-500">🏘️ {community.name}</span>
-                </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-xl font-semibold text-green">{community.name}</h3>
-                    <span className="px-2 py-1 bg-green text-white rounded-full text-xs font-medium">
-                      {community.region}
-                    </span>
-                  </div>
-                  <p className="text-gray-600 mb-4">{community.description}</p>
-                  
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">👥 Población:</span>
-                      <span className="text-gray-700">{community.population.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">📅 Fundada:</span>
-                      <span className="text-gray-700">{community.founded}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">🌟 Experiencias:</span>
-                      <span className="text-gray-700">{community.experiencesCount}</span>
-                    </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <h4 className="font-medium text-green mb-2">Destacados:</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {community.highlights.map((highlight, index) => (
-                        <span key={index} className="px-2 py-1 bg-yellow text-green rounded-full text-xs">
-                          {highlight}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm text-gray-500">
-                      <p>📧 {community.contact.email}</p>
-                      <p>📞 {community.contact.phone}</p>
-                    </div>
-                    <Link
-                      to={`${ROUTES.COMMUNITIES}/${community.id}`}
-                      className="btn btn-primary bg-yellow text-green hover:bg-yellow-600"
-                    >
-                      Explorar
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <CommunityCard 
+                key={community.id} 
+                community={community} 
+              />
             ))}
           </div>
 
           {filteredCommunities.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No se encontraron comunidades en la región seleccionada.</p>
+            <div style={{ 
+              gridColumn: '1 / -1',
+              textAlign: 'center', 
+              padding: '48px 20px' 
+            }}>
+              <p style={{ color: '#666', fontSize: '1.1rem', marginBottom: '16px' }}>
+                No se encontraron comunidades con los filtros seleccionados.
+              </p>
               <button
-                onClick={() => setSelectedRegion('all')}
-                className="btn btn-primary bg-yellow text-green hover:bg-yellow-600 mt-4"
+                onClick={clearFilters}
+                style={{
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  padding: '12px 24px',
+                  fontSize: '1rem',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#059669';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#10b981';
+                }}
               >
                 Ver Todas las Comunidades
               </button>
@@ -228,8 +201,7 @@ const CommunitiesPage = () => {
           )}
         </div>
       </section>
-    </div>
-  );
+    </div>  );
 };
 
 export default CommunitiesPage;
