@@ -34,9 +34,7 @@ class ExperienceModel extends BaseModel {
   // Buscar experiencias por operador
   async findByOperator(operatorId) {
     return await this.findWithCommunity({ operator_id: operatorId });
-  }
-
-  // Buscar TODAS las experiencias por operador (incluyendo pendientes)
+  }  // Buscar TODAS las experiencias por operador (incluyendo pendientes)
   async findAllByOperator(operatorId) {
     let sql = `
       SELECT e.*, c.name as community_name, c.region as community_region

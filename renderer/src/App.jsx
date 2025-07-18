@@ -10,6 +10,10 @@ import ReservationsPage from './pages/ReservationsPage';
 import UnderConstructionPage from './components/common/UnderConstructionPage';
 import TravelerDashboard from './pages/traveler/TravelerDashboard';
 import OperatorDashboard from './pages/operator/OperatorDashboard';
+import PublishExperiencePage from './pages/operator/PublishExperiencePage';
+import ManageExperiencesPage from './pages/operator/ManageExperiencesPage';
+import EditExperiencePage from './pages/operator/EditExperiencePage';
+import OperatorReservationsPage from './pages/operator/OperatorReservationsPage';
 
 // Importar constantes centralizadas
 import { ROUTES } from './utils/constants';
@@ -1065,10 +1069,15 @@ const HomePage = () => {
 // Componente que condicionalmente renderiza Navigation
 const ConditionalNavigation = () => {
   const location = useLocation();
-    // Rutas que NO deben mostrar el header genérico
+  
+  // Rutas que NO deben mostrar el header genérico
   const dashboardRoutes = [
     ROUTES.TRAVELER_DASHBOARD,
     ROUTES.OPERATOR_DASHBOARD,
+    ROUTES.PUBLISH_EXPERIENCE,
+    ROUTES.MANAGE_EXPERIENCES,
+    ROUTES.EDIT_EXPERIENCE,
+    ROUTES.OPERATOR_RESERVATIONS,
     ROUTES.EXPERIENCES,
     ROUTES.COMMUNITIES,
     ROUTES.RESERVATIONS
@@ -1102,10 +1111,12 @@ function App() {  return (
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
             <Route path={ROUTES.REGISTER} element={<RegisterPage />} />            <Route path={ROUTES.EXPERIENCES} element={<ExperiencesPage />} />
             <Route path={ROUTES.COMMUNITIES} element={<CommunitiesPage />} />
-            <Route path={ROUTES.RESERVATIONS} element={<ReservationsPage />} />
-            <Route path={ROUTES.DASHBOARD} element={<UnderConstructionPage pageName="Dashboard" />} />
-            <Route path={ROUTES.TRAVELER_DASHBOARD} element={<TravelerDashboard />} />
+            <Route path={ROUTES.RESERVATIONS} element={<ReservationsPage />} />            <Route path={ROUTES.DASHBOARD} element={<UnderConstructionPage pageName="Dashboard" />} />            <Route path={ROUTES.TRAVELER_DASHBOARD} element={<TravelerDashboard />} />
             <Route path={ROUTES.OPERATOR_DASHBOARD} element={<OperatorDashboard />} />
+            <Route path={ROUTES.PUBLISH_EXPERIENCE} element={<PublishExperiencePage />} />
+            <Route path={ROUTES.MANAGE_EXPERIENCES} element={<ManageExperiencesPage />} />
+            <Route path={`${ROUTES.EDIT_EXPERIENCE}/:experienceId`} element={<EditExperiencePage />} />
+            <Route path={ROUTES.OPERATOR_RESERVATIONS} element={<OperatorReservationsPage />} />
           </Routes>
         </main>
       </div>

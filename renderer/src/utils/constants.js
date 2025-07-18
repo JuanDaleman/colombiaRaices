@@ -11,6 +11,7 @@ export const ROUTES = {
   OPERATOR_DASHBOARD: '/operator-dashboard',
   PUBLISH_EXPERIENCE: '/publish-experience',
   MANAGE_EXPERIENCES: '/manage-experiences',
+  EDIT_EXPERIENCE: '/edit-experience',
   OPERATOR_RESERVATIONS: '/operator-reservations',
   PROFILE: '/profile',
   COMMUNITY_PROFILE: '/community-profile',

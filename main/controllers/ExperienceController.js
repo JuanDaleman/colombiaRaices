@@ -177,9 +177,8 @@ class ExperienceController {
       };
     }
   }
-
   /**
-   * Eliminar experiencia (soft delete)
+   * Eliminar experiencia (hard delete)
    * @param {number} experienceId - ID de la experiencia
    * @param {number} operatorId - ID del operador
    * @param {boolean} isAdmin - Si el usuario es administrador
@@ -193,13 +192,13 @@ class ExperienceController {
         isAdmin
       });
       
-      const result = await this.experienceService.updateExperience(
+      // Usar el nuevo método de hard delete
+      const deleted = await this.experienceService.deleteExperience(
         experienceId,
-        { is_active: 0 },
         operatorId,
         isAdmin
       );
-      console.log('✅ Experience deleted successfully:', experienceId);
+      console.log('✅ Experience permanently deleted:', experienceId);
       
       // Notificar evento de eliminación
       this.authObserver.notify(AUTH_EVENTS.EXPERIENCE_DELETED, {
@@ -210,7 +209,7 @@ class ExperienceController {
       
       return {
         success: true,
-        message: 'Experience deleted successfully'
+        message: 'Experience permanently deleted'
       };
     } catch (error) {
       console.error('❌ Delete experience failed:', error.message);
@@ -344,7 +343,6 @@ class ExperienceController {
       };
     }
   }
-
   /**
    * Obtener experiencias por operador
    * @param {number} operatorId - ID del operador
@@ -354,9 +352,8 @@ class ExperienceController {
     try {
       console.log('👤 ExperienceController.getExperiencesByOperator called with:', operatorId);
       
-      const experiences = await this.experienceService.searchExperiences({
-        operatorId: operatorId
-      });
+      // Usar el nuevo método que incluye experiencias pendientes
+      const experiences = await this.experienceService.getOperatorExperiences(operatorId);
       console.log('✅ Operator experiences retrieved:', experiences.length);
       
       return {

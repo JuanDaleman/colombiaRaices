@@ -203,15 +203,63 @@ class ExperienceService {
       discountReason: discountReason
     };
   }
-
   // ============================================
   // 5. TRANSFORMACIÓN DE DATOS
   // ============================================
+  
+  /**
+   * Formatea los datos de experiencia para respuesta de operadores (sin cambiar nombres de campos)
+   * @param {Object} rawExperience - Datos raw de la base de datos
+   * @returns {Object} - Datos formateados para operadores
+   */
+  formatExperienceForOperator(rawExperience) {
+    // Para operadores, mantener los nombres originales de los campos de la BD
+    const specificLocation = rawExperience.specific_location;
+    const communityLocation = rawExperience.community_name && rawExperience.community_region 
+      ? `${rawExperience.community_name}, ${rawExperience.community_region}`
+      : null;
+    
+    return {
+      id: rawExperience.id,
+      title: rawExperience.title,
+      description: rawExperience.description,
+      type: rawExperience.type,
+      price: rawExperience.price,
+      // Mantener nombres originales para compatibilidad con formularios
+      duration_hours: rawExperience.duration_hours,
+      max_participants: rawExperience.max_participants,
+      specific_location: rawExperience.specific_location,
+      latitude: rawExperience.latitude,
+      longitude: rawExperience.longitude,
+      image_url: rawExperience.image_url,
+      // Información adicional
+      community_id: rawExperience.community_id,
+      operator_id: rawExperience.operator_id,
+      is_active: rawExperience.is_active,
+      created_at: rawExperience.created_at,
+      updated_at: rawExperience.updated_at,
+      // Información de comunidad para display
+      community_name: rawExperience.community_name,
+      community_region: rawExperience.community_region
+    };
+  }
+
+  /**
+   * Formatea múltiples experiencias para operadores
+   * @param {Array} rawExperiences - Array de experiencias raw
+   * @returns {Array} - Array de experiencias formateadas para operadores
+   */
+  formatMultipleExperiencesForOperator(rawExperiences) {
+    return rawExperiences.map(experience => 
+      this.formatExperienceForOperator(experience)
+    );
+  }
   /**
    * Formatea los datos de experiencia para la respuesta
    * @param {Object} rawExperience - Datos raw de la base de datos
    * @returns {Object} - Datos formateados
-   */  formatExperienceForResponse(rawExperience) {
+   */
+  formatExperienceForResponse(rawExperience) {
     // Implementar lógica de ubicación híbrida
     const specificLocation = rawExperience.specific_location;
     const communityLocation = rawExperience.community_name && rawExperience.community_region 
@@ -499,9 +547,7 @@ class ExperienceService {
     } catch (error) {
       throw new Error(`Error getting experience stats: ${error.message}`);
     }
-  }
-
-  /**
+  }  /**
    * Obtiene todas las experiencias de un operador (incluyendo pendientes)
    * @param {number} operatorId - ID del operador
    * @returns {Promise<Array>} - Experiencias del operador
@@ -509,9 +555,42 @@ class ExperienceService {
   async getOperatorExperiences(operatorId) {
     try {
       const experiences = await this.experienceModel.findAllByOperator(operatorId);
-      return this.formatMultipleExperiences(experiences);
+      return this.formatMultipleExperiencesForOperator(experiences);
     } catch (error) {
       throw new Error(`Error getting operator experiences: ${error.message}`);
+    }
+  }
+
+  /**
+   * Elimina permanentemente una experiencia (hard delete)
+   * @param {number} experienceId - ID de la experiencia
+   * @param {number} operatorId - ID del operador
+   * @param {boolean} isAdmin - Si el usuario es administrador
+   * @returns {Promise<boolean>} - True si se eliminó correctamente
+   */
+  async deleteExperience(experienceId, operatorId, isAdmin = false) {
+    try {
+      // Obtener experiencia existente para validar permisos
+      const existingExperience = await this.experienceModel.findById(experienceId);
+      if (!existingExperience) {
+        throw new Error('Experience not found');
+      }
+
+      // Validar permisos
+      const permissions = this.validateOperatorPermissions(operatorId, existingExperience, isAdmin);
+      if (!permissions.allowed) {
+        throw new Error(`Permission denied: ${permissions.reason}`);
+      }
+
+      // Realizar hard delete
+      const deleted = await this.experienceModel.hardDelete(experienceId);
+      if (!deleted) {
+        throw new Error('Failed to delete experience');
+      }
+
+      return true;
+    } catch (error) {
+      throw new Error(`Error deleting experience: ${error.message}`);
     }
   }
 }

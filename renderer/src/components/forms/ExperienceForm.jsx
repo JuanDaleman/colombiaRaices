@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { EXPERIENCE_TYPES } from '../../utils/constants';
+import './ExperienceForm.css';
 
 const ExperienceForm = ({ 
   onSubmit, 
   onCancel, 
   initialData = null,
   isLoading = false 
-}) => {  const [formData, setFormData] = useState({
+}) => {
+  // Ref para el primer input del formulario
+  const firstInputRef = useRef(null);
+  
+  const [formData, setFormData] = useState({
     title: initialData?.title || '',
     description: initialData?.description || '',
     type: initialData?.type || '',
@@ -14,10 +19,69 @@ const ExperienceForm = ({
     duration_hours: initialData?.duration_hours || '',
     max_participants: initialData?.max_participants || '',
     specific_location: initialData?.specific_location || '',
+    latitude: initialData?.latitude || '',
+    longitude: initialData?.longitude || '',
     image_url: initialData?.image_url || ''
   });
-
   const [errors, setErrors] = useState({});
+
+  // useEffect para actualizar el formulario cuando lleguen los datos iniciales
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        title: initialData.title || '',
+        description: initialData.description || '',
+        type: initialData.type || '',
+        price: initialData.price || '',
+        duration_hours: initialData.duration_hours || '',
+        max_participants: initialData.max_participants || '',
+        specific_location: initialData.specific_location || '',
+        latitude: initialData.latitude || '',
+        longitude: initialData.longitude || '',
+        image_url: initialData.image_url || ''
+      });
+    }
+  }, [initialData]);
+
+  // useEffect para manejar el foco y preparar el formulario cuando se monta
+  useEffect(() => {
+    // Timeout para asegurar que el DOM está completamente renderizado
+    const focusTimer = setTimeout(() => {
+      // Si hay datos iniciales (modo edición), enfocar el primer campo
+      if (initialData && firstInputRef.current) {
+        firstInputRef.current.focus();
+        // Opcional: seleccionar todo el texto para facilitar la edición
+        firstInputRef.current.select();
+      }
+      
+      // Asegurar que todos los campos sean interactivos
+      const inputs = document.querySelectorAll('input, textarea, select');
+      inputs.forEach(input => {
+        // Remover cualquier atributo que pueda estar bloqueando la interacción
+        input.removeAttribute('readonly');
+        input.removeAttribute('disabled');
+        // Forzar el tabIndex para asegurar que sea focuseable
+        if (input.tabIndex < 0) {
+          input.tabIndex = 0;
+        }
+      });
+    }, 100);
+
+    return () => clearTimeout(focusTimer);
+  }, [initialData]);
+
+  // useEffect adicional para re-habilitar campos después de cambios de estado
+  useEffect(() => {
+    const enableInputsTimer = setTimeout(() => {
+      const inputs = document.querySelectorAll('input, textarea, select');
+      inputs.forEach(input => {
+        input.style.pointerEvents = 'auto';
+        input.style.userSelect = 'text';
+      });
+    }, 50);
+
+    return () => clearTimeout(enableInputsTimer);
+  }, [formData, errors]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -79,6 +143,28 @@ const ExperienceForm = ({
     }    // Validación ubicación específica (opcional pero recomendada)
     if (formData.specific_location.trim() && formData.specific_location.length < 10) {
       newErrors.specific_location = 'Si proporcionas ubicación, debe ser específica (mín. 10 caracteres)';
+    }    // Validación coordenadas (opcionales, pero si se proporcionan deben ser válidas)
+    const latValue = String(formData.latitude || '').trim();
+    const lngValue = String(formData.longitude || '').trim();
+    
+    if (latValue) {
+      const lat = parseFloat(latValue);
+      if (isNaN(lat) || lat < -90 || lat > 90) {
+        newErrors.latitude = 'La latitud debe estar entre -90 y 90 grados';
+      }
+    }
+
+    if (lngValue) {
+      const lng = parseFloat(lngValue);
+      if (isNaN(lng) || lng < -180 || lng > 180) {
+        newErrors.longitude = 'La longitud debe estar entre -180 y 180 grados';
+      }
+    }
+
+    // Validación de consistencia: si hay una coordenada, debe haber la otra
+    if ((latValue && !lngValue) || (!latValue && lngValue)) {
+      newErrors.latitude = newErrors.latitude || 'Si proporcionas coordenadas, debes incluir latitud y longitud';
+      newErrors.longitude = newErrors.longitude || 'Si proporcionas coordenadas, debes incluir latitud y longitud';
     }
 
     // Validación imagen URL (opcional, pero si se proporciona debe ser válida)
@@ -138,14 +224,22 @@ const ExperienceForm = ({
     fontWeight: 'bold',
     color: '#03222b'
   };
-
   const inputStyle = {
     width: '100%',
     padding: '12px',
     border: '1px solid #ddd',
     borderRadius: '5px',
     fontSize: '16px',
-    transition: 'border-color 0.3s ease'
+    transition: 'border-color 0.3s ease',
+    // Asegurar que los campos sean completamente interactivos
+    pointerEvents: 'auto',
+    userSelect: 'text',
+    backgroundColor: 'white',
+    outline: 'none',
+    ':focus': {
+      borderColor: '#fbd338',
+      boxShadow: '0 0 0 2px rgba(251, 211, 56, 0.2)'
+    }
   };
 
   const errorStyle = {
@@ -153,9 +247,9 @@ const ExperienceForm = ({
     fontSize: '12px',
     marginTop: '5px'
   };
-
   return (
-    <form onSubmit={handleSubmit} style={formStyle}>
+    <div className="experience-form-container">
+      <form onSubmit={handleSubmit} style={formStyle}>
       <h2 style={{ 
         color: '#03222b', 
         marginBottom: '30px',
@@ -164,17 +258,16 @@ const ExperienceForm = ({
         paddingBottom: '10px'
       }}>
         {initialData ? 'Editar Experiencia' : 'Nueva Experiencia'}
-      </h2>
-
-      <div style={fieldStyle}>
+      </h2>      <div style={fieldStyle}>
         <label style={labelStyle}>
           Título de la experiencia *
-        </label>
-        <input
+        </label>        <input
+          ref={firstInputRef}
           type="text"
           name="title"
           value={formData.title}
           onChange={handleChange}
+          className="experience-form-input"
           style={{
             ...inputStyle,
             borderColor: errors.title ? '#dc3545' : '#ddd'
@@ -187,11 +280,11 @@ const ExperienceForm = ({
       <div style={fieldStyle}>
         <label style={labelStyle}>
           Descripción *
-        </label>
-        <textarea
+        </label>        <textarea
           name="description"
           value={formData.description}
           onChange={handleChange}
+          className="experience-form-textarea"
           rows={4}
           style={{
             ...inputStyle,
@@ -209,11 +302,11 @@ const ExperienceForm = ({
       <div style={fieldStyle}>
         <label style={labelStyle}>
           Tipo de experiencia *
-        </label>
-        <select
+        </label>        <select
           name="type"
           value={formData.type}
           onChange={handleChange}
+          className="experience-form-select"
           style={{
             ...inputStyle,
             borderColor: errors.type ? '#dc3545' : '#ddd'
@@ -231,12 +324,12 @@ const ExperienceForm = ({
         <div style={fieldStyle}>
           <label style={labelStyle}>
             Precio por persona (COP) *
-          </label>
-          <input
+          </label>          <input
             type="number"
             name="price"
             value={formData.price}
             onChange={handleChange}
+            className="experience-form-input"
             min="0"
             step="1000"
             style={{
@@ -251,12 +344,12 @@ const ExperienceForm = ({
         <div style={fieldStyle}>
           <label style={labelStyle}>
             Duración (horas) *
-          </label>
-          <input
+          </label>          <input
             type="number"
             name="duration_hours"
             value={formData.duration_hours}
             onChange={handleChange}
+            className="experience-form-input"
             min="1"
             step="1"
             style={{
@@ -272,12 +365,12 @@ const ExperienceForm = ({
       <div style={fieldStyle}>
         <label style={labelStyle}>
           Número máximo de participantes *
-        </label>
-        <input
+        </label>        <input
           type="number"
           name="max_participants"
           value={formData.max_participants}
           onChange={handleChange}
+          className="experience-form-input"
           min="1"
           step="1"
           style={{
@@ -290,12 +383,12 @@ const ExperienceForm = ({
       </div>      <div style={fieldStyle}>
         <label style={labelStyle}>
           Ubicación específica (opcional)
-        </label>
-        <input
+        </label>        <input
           type="text"
           name="specific_location"
           value={formData.specific_location}
           onChange={handleChange}
+          className="experience-form-input"
           style={{
             ...inputStyle,
             borderColor: errors.specific_location ? '#dc3545' : '#ddd'
@@ -308,15 +401,81 @@ const ExperienceForm = ({
         {errors.specific_location && <div style={errorStyle}>{errors.specific_location}</div>}
       </div>
 
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>        <div style={fieldStyle}>
+          <label style={labelStyle}>
+            Latitud (opcional)
+          </label>          <input
+            type="number"
+            name="latitude"
+            value={formData.latitude}
+            onChange={handleChange}
+            className="experience-form-input"
+            min="-90"
+            max="90"
+            step="any"
+            style={{
+              ...inputStyle,
+              borderColor: errors.latitude ? '#dc3545' : '#ddd'
+            }}
+            placeholder="Ej: 4.7110 o -73.716666666667"
+          />
+          <div style={{ fontSize: '12px', color: '#666', marginTop: '2px' }}>
+            Entre -90 y 90 grados (acepta cualquier precisión decimal)
+          </div>
+          {errors.latitude && <div style={errorStyle}>{errors.latitude}</div>}
+        </div>
+
+        <div style={fieldStyle}>
+          <label style={labelStyle}>
+            Longitud (opcional)
+          </label>          <input
+            type="number"
+            name="longitude"
+            value={formData.longitude}
+            onChange={handleChange}
+            className="experience-form-input"
+            min="-180"
+            max="180"
+            step="any"
+            style={{
+              ...inputStyle,
+              borderColor: errors.longitude ? '#dc3545' : '#ddd'
+            }}
+            placeholder="Ej: -74.0721 o -73.716666666667"
+          />
+          <div style={{ fontSize: '12px', color: '#666', marginTop: '2px' }}>
+            Entre -180 y 180 grados (acepta cualquier precisión decimal)
+          </div>
+          {errors.longitude && <div style={errorStyle}>{errors.longitude}</div>}
+        </div>
+      </div>
+
+      <div style={{ 
+        backgroundColor: '#f8f9fa', 
+        padding: '15px', 
+        borderRadius: '5px', 
+        marginBottom: '20px',
+        fontSize: '14px',
+        color: '#495057'
+      }}>
+        <strong>📍 Información de ubicación:</strong>
+        <ul style={{ margin: '5px 0 0 20px', paddingLeft: '0' }}>
+          <li>Las coordenadas son opcionales pero ayudan a mostrar tu experiencia en mapas</li>
+          <li>Si proporcionas coordenadas, debes incluir tanto latitud como longitud</li>
+          <li>Puedes obtener coordenadas desde Google Maps o GPS de tu teléfono</li>
+          <li>Futuras versiones incluirán integración con mapas interactivos</li>
+        </ul>
+      </div>
+
       <div style={fieldStyle}>
         <label style={labelStyle}>
           URL de imagen (opcional)
-        </label>
-        <input
+        </label>        <input
           type="url"
           name="image_url"
           value={formData.image_url}
           onChange={handleChange}
+          className="experience-form-input"
           style={{
             ...inputStyle,
             borderColor: errors.image_url ? '#dc3545' : '#ddd'
@@ -366,10 +525,10 @@ const ExperienceForm = ({
             fontWeight: 'bold'
           }}
         >
-          {isLoading ? 'Guardando...' : 'Guardar Experiencia'}
-        </button>
+          {isLoading ? 'Guardando...' : 'Guardar Experiencia'}        </button>
       </div>
     </form>
+    </div>
   );
 };
 
