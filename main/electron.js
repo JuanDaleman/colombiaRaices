@@ -68,6 +68,14 @@ ipcMain.handle('experiences:recent', async (event, { limit = 10 }) => {
   }
 });
 
+ipcMain.handle('experiences:pending', async (event) => {
+  try {
+    return await experienceController.getPendingExperiences();
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
 ipcMain.handle('experiences:create', async (event, experienceData) => {
   try {
     return await experienceController.createExperience(experienceData);

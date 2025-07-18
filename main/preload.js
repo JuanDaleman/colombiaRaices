@@ -16,6 +16,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     search: (filters) => ipcRenderer.invoke('experiences:search', filters),
     getPopular: (options) => ipcRenderer.invoke('experiences:popular', options),
     getRecent: (options) => ipcRenderer.invoke('experiences:recent', options),
+    getPending: () => ipcRenderer.invoke('experiences:pending'),
     create: (experienceData) => ipcRenderer.invoke('experiences:create', experienceData),
     update: (data) => ipcRenderer.invoke('experiences:update', data),
     delete: (data) => ipcRenderer.invoke('experiences:delete', data),

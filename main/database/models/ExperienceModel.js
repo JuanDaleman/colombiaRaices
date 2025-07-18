@@ -170,6 +170,20 @@ class ExperienceModel extends BaseModel {
       averagePrice: avgPrice.average_price
     };
   }
+  // Buscar experiencias pendientes (para aprobación de administrador)
+  async findPendingExperiences() {
+    const sql = `
+      SELECT e.*, c.name as community_name, c.region as community_region,
+             u.name as operator_name, u.email as operator_email
+      FROM ${this.tableName} e
+      INNER JOIN communities c ON e.community_id = c.id
+      INNER JOIN users u ON e.operator_id = u.id
+      WHERE e.is_active = 0 AND c.is_active = 1 AND u.is_active = 1 AND u.user_type = 'operador'
+      ORDER BY e.created_at DESC
+    `;
+    
+    return await this.db.all(sql);
+  }
 }
 
 module.exports = ExperienceModel;

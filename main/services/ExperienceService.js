@@ -421,6 +421,19 @@ class ExperienceService {
     }
   }
 
+  /**
+   * Obtiene experiencias pendientes de aprobación (para administradores)
+   * @returns {Promise<Array>} - Experiencias pendientes
+   */
+  async getPendingExperiences() {
+    try {
+      const experiences = await this.experienceModel.findPendingExperiences();
+      return this.formatMultipleExperiences(experiences);
+    } catch (error) {
+      throw new Error(`Error getting pending experiences: ${error.message}`);
+    }
+  }
+
   // ============================================
   // 8. MÉTODOS DE GESTIÓN
   // ============================================

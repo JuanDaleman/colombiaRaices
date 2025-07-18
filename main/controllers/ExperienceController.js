@@ -93,6 +93,31 @@ class ExperienceController {
     }
   }
 
+  /**
+   * Obtener experiencias pendientes de aprobación (para administradores)
+   * @returns {Promise<Object>} - Experiencias pendientes
+   */
+  async getPendingExperiences() {
+    try {
+      console.log('⏳ ExperienceController.getPendingExperiences called');
+      
+      const experiences = await this.experienceService.getPendingExperiences();
+      console.log('✅ Pending experiences retrieved:', experiences.length);
+      
+      return {
+        success: true,
+        experiences: experiences
+      };
+    } catch (error) {
+      console.error('❌ Get pending experiences failed:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        experiences: []
+      };
+    }
+  }
+
   // ============================================
   // 2. GESTIÓN DE EXPERIENCIAS
   // ============================================
