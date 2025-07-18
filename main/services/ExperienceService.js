@@ -207,13 +207,17 @@ class ExperienceService {
   // ============================================
   // 5. TRANSFORMACIÓN DE DATOS
   // ============================================
-
   /**
    * Formatea los datos de experiencia para la respuesta
    * @param {Object} rawExperience - Datos raw de la base de datos
    * @returns {Object} - Datos formateados
-   */
-  formatExperienceForResponse(rawExperience) {
+   */  formatExperienceForResponse(rawExperience) {
+    // Implementar lógica de ubicación híbrida
+    const specificLocation = rawExperience.specific_location;
+    const communityLocation = rawExperience.community_name && rawExperience.community_region 
+      ? `${rawExperience.community_name}, ${rawExperience.community_region}`
+      : null;
+    
     return {
       id: rawExperience.id,
       title: rawExperience.title,
@@ -222,13 +226,22 @@ class ExperienceService {
       price: rawExperience.price,
       duration: rawExperience.duration_hours,
       maxParticipants: rawExperience.max_participants,
+      imageUrl: rawExperience.image_url,
+      // Ubicación híbrida: usar específica si existe, sino usar comunidad
+      location: specificLocation || communityLocation || 'Ubicación no especificada',
+      specificLocation: specificLocation,
+      latitude: rawExperience.latitude,
+      longitude: rawExperience.longitude,
       community: {
         id: rawExperience.community_id,
         name: rawExperience.community_name,
         region: rawExperience.community_region
       },
       operatorId: rawExperience.operator_id,
-      isActive: rawExperience.is_active === 1
+      isActive: rawExperience.is_active === 1,
+      status: rawExperience.is_active === 1 ? 'approved' : 'pending',
+      createdAt: rawExperience.created_at,
+      updatedAt: rawExperience.updated_at
     };
   }
 
@@ -363,7 +376,6 @@ class ExperienceService {
   // ============================================
   // 8. MÉTODOS DE GESTIÓN
   // ============================================
-
   /**
    * Crea una nueva experiencia
    * @param {Object} experienceData - Datos de la experiencia
@@ -377,8 +389,18 @@ class ExperienceService {
         throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
       }
 
+      // Preparar datos con flujo de aprobación
+      const experienceToCreate = {
+        ...experienceData,
+        // Nuevas experiencias inician inactivas hasta aprobación del admin
+        is_active: 0,
+        // Asegurar timestamps
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
       // Crear experiencia
-      const experience = await this.experienceModel.create(experienceData);
+      const experience = await this.experienceModel.create(experienceToCreate);
       return this.formatExperienceForResponse(experience);
     } catch (error) {
       throw new Error(`Error creating experience: ${error.message}`);
@@ -462,7 +484,6 @@ class ExperienceService {
       discountReason: discountReason
     };
   }
-
   /**
    * Obtiene estadísticas de experiencias
    * @returns {Promise<Object>} - Estadísticas
@@ -477,6 +498,20 @@ class ExperienceService {
       };
     } catch (error) {
       throw new Error(`Error getting experience stats: ${error.message}`);
+    }
+  }
+
+  /**
+   * Obtiene todas las experiencias de un operador (incluyendo pendientes)
+   * @param {number} operatorId - ID del operador
+   * @returns {Promise<Array>} - Experiencias del operador
+   */
+  async getOperatorExperiences(operatorId) {
+    try {
+      const experiences = await this.experienceModel.findAllByOperator(operatorId);
+      return this.formatMultipleExperiences(experiences);
+    } catch (error) {
+      throw new Error(`Error getting operator experiences: ${error.message}`);
     }
   }
 }

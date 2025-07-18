@@ -12,13 +12,13 @@ class Migration {
       await this.db.connect();
       
       // Crear tabla de migraciones si no existe
-      await this.createMigrationsTable();
-        // Ejecutar migraciones pendientes
+      await this.createMigrationsTable();      // Ejecutar migraciones pendientes
       await this.migration_001_create_users_table();
       await this.migration_002_create_communities_table();
       await this.migration_003_create_experiences_table();
       await this.migration_004_create_reservations_table();
       await this.migration_005_add_image_fields();
+      await this.migration_006_add_location_fields_to_experiences();
       
       console.log('All migrations completed successfully');
     } catch (error) {
@@ -187,8 +187,7 @@ class Migration {
       await this.db.run('ALTER TABLE communities ADD COLUMN image_alt TEXT');
       
       // Agregar campos de imagen a experiences
-      await this.db.run('ALTER TABLE experiences ADD COLUMN image_url TEXT');
-      await this.db.run('ALTER TABLE experiences ADD COLUMN thumbnail_url TEXT');
+      await this.db.run('ALTER TABLE experiences ADD COLUMN image_url TEXT');      await this.db.run('ALTER TABLE experiences ADD COLUMN thumbnail_url TEXT');
       await this.db.run('ALTER TABLE experiences ADD COLUMN image_alt TEXT');
       
       await this.markMigrationExecuted(migrationName);
@@ -196,6 +195,35 @@ class Migration {
     } catch (error) {
       if (error.message.includes('duplicate column name')) {
         console.log('Migration 005: Image fields already exist');
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  // Migración 006: Agregar campos de ubicación específica a experiences
+  async migration_006_add_location_fields_to_experiences() {
+    const migrationName = '006_add_location_fields_to_experiences';
+    
+    if (await this.isMigrationExecuted(migrationName)) {
+      return;
+    }
+
+    try {
+      // Ubicación específica (texto libre)
+      await this.db.run('ALTER TABLE experiences ADD COLUMN specific_location TEXT');
+      console.log('Added specific_location field to experiences table');
+      
+      // Coordenadas específicas para mapas futuros
+      await this.db.run('ALTER TABLE experiences ADD COLUMN latitude REAL');
+      await this.db.run('ALTER TABLE experiences ADD COLUMN longitude REAL');
+      console.log('Added latitude/longitude fields to experiences table');
+      
+      await this.markMigrationExecuted(migrationName);
+      console.log('Migration 006 completed: location fields added to experiences');
+    } catch (error) {
+      if (error.message.includes('duplicate column name')) {
+        console.log('Migration 006: Location fields already exist');
       } else {
         throw error;
       }

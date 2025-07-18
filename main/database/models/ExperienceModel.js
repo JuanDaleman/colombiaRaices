@@ -5,7 +5,6 @@ class ExperienceModel extends BaseModel {
   constructor() {
     super('experiences');
   }
-
   // Buscar experiencias con información de comunidad
   async findWithCommunity(conditions = {}) {
     let sql = `
@@ -32,10 +31,22 @@ class ExperienceModel extends BaseModel {
   async findByType(type) {
     return await this.findWithCommunity({ type });
   }
-
   // Buscar experiencias por operador
   async findByOperator(operatorId) {
     return await this.findWithCommunity({ operator_id: operatorId });
+  }
+
+  // Buscar TODAS las experiencias por operador (incluyendo pendientes)
+  async findAllByOperator(operatorId) {
+    let sql = `
+      SELECT e.*, c.name as community_name, c.region as community_region
+      FROM ${this.tableName} e
+      INNER JOIN communities c ON e.community_id = c.id
+      WHERE e.operator_id = ? AND c.is_active = 1
+      ORDER BY e.created_at DESC
+    `;
+    
+    return await this.db.all(sql, [operatorId]);
   }
 
   // Buscar experiencias por comunidad

@@ -20,6 +20,9 @@ class ExperienceServiceSimple {
           e.duration_hours as duracion_horas,
           e.max_participants, 
           e.image_url,
+          e.specific_location,
+          e.latitude,
+          e.longitude,
           c.name as community_name, 
           c.region as community_region,
           c.name as ubicacion,
@@ -54,6 +57,9 @@ class ExperienceServiceSimple {
           e.image_url, 
           e.thumbnail_url, 
           e.image_alt,
+          e.specific_location,
+          e.latitude,
+          e.longitude,
           c.name as community_name, 
           c.region as community_region,
           c.id as community_id,
@@ -80,6 +86,7 @@ class ExperienceServiceSimple {
         SELECT 
           e.id, e.title, e.description, e.type, e.price, e.duration_hours,
           e.max_participants, e.image_url, e.thumbnail_url, e.image_alt,
+          e.specific_location, e.latitude, e.longitude,
           c.name as community_name, c.region as community_region,
           e.created_at, e.updated_at, e.is_active
         FROM experiences e
@@ -102,6 +109,7 @@ class ExperienceServiceSimple {
         SELECT 
           e.id, e.title, e.description, e.type, e.price, e.duration_hours,
           e.max_participants, e.image_url, e.thumbnail_url, e.image_alt,
+          e.specific_location, e.latitude, e.longitude,
           c.name as community_name, c.region as community_region,
           e.created_at, e.updated_at, e.is_active
         FROM experiences e
@@ -179,6 +187,9 @@ class ExperienceServiceSimple {
           e.duration_hours as duracion_horas,
           e.max_participants, 
           e.image_url,
+          e.specific_location,
+          e.latitude,
+          e.longitude,
           c.name as community_name, 
           c.region as community_region,
           c.name as ubicacion,
