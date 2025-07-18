@@ -7,6 +7,13 @@ export const ROUTES = {
   EXPERIENCES: '/experiences',
   COMMUNITIES: '/communities',
   RESERVATIONS: '/reservations',
+  TRAVELER_DASHBOARD: '/traveler-dashboard',
+  OPERATOR_DASHBOARD: '/operator-dashboard',
+  PUBLISH_EXPERIENCE: '/publish-experience',
+  MANAGE_EXPERIENCES: '/manage-experiences',
+  OPERATOR_RESERVATIONS: '/operator-reservations',
+  PROFILE: '/profile',
+  COMMUNITY_PROFILE: '/community-profile',
 };
 
 export const USER_TYPES = {

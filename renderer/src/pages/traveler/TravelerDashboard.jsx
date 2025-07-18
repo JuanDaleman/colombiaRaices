@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { COLORS } from '../../constants/colors';
+import { ROUTES } from '../../utils/constants';
 
 const TravelerDashboard = () => {
   const { user, logout } = useAuth();
@@ -33,10 +34,9 @@ const TravelerDashboard = () => {
     };
 
     fetchExperiences();
-  }, []);
-  const handleLogout = () => {
+  }, []);  const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate(ROUTES.HOME);
   };
 
   // Funciones auxiliares para formatear datos
@@ -94,10 +94,9 @@ const TravelerDashboard = () => {
     marginBottom: '20px',
     textAlign: 'center'
   };
-
   const buttonStyle = {
     backgroundColor: COLORS.primary,
-    color: '#03222b',
+    color: 'white',
     border: 'none',
     padding: '12px 24px',
     borderRadius: '8px',
@@ -165,10 +164,9 @@ const TravelerDashboard = () => {
             🔍 Buscar Experiencias
           </h2>          <p style={{ color: '#666', marginBottom: '20px' }}>
             Explora experiencias auténticas en comunidades colombianas
-          </p>
-          <button 
+          </p>          <button 
             style={buttonStyle}
-            onClick={() => navigate('/experiences')}
+            onClick={() => navigate(ROUTES.EXPERIENCES)}
             onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
             onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
           >
@@ -182,10 +180,9 @@ const TravelerDashboard = () => {
           </h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>
             Genera estimaciones y gestiona tus reservas
-          </p>
-          <button 
+          </p>          <button 
             style={buttonStyle}
-            onClick={() => navigate('/reservations')}
+            onClick={() => navigate(ROUTES.RESERVATIONS)}
             onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
             onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
           >
@@ -199,10 +196,9 @@ const TravelerDashboard = () => {
           </h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>
             Conoce los perfiles de las comunidades locales
-          </p>
-          <button 
+          </p>          <button 
             style={buttonStyle}
-            onClick={() => navigate('/communities')}
+            onClick={() => navigate(ROUTES.COMMUNITIES)}
             onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
             onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
           >
@@ -216,10 +212,9 @@ const TravelerDashboard = () => {
           </h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>
             Actualiza tu información personal y contraseña
-          </p>
-          <button 
+          </p>          <button 
             style={buttonStyle}
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate(ROUTES.PROFILE)}
             onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
             onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
           >

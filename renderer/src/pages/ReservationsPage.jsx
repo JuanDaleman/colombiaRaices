@@ -1,9 +1,10 @@
 // Página de Reservas
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ROUTES } from '../../utils/constants';
-import { formatCurrency, formatDate } from '../../utils/helpers';
-import LoadingSpinner from '../common/LoadingSpinner';
+import { ROUTES } from '../utils/constants';
+import { formatCurrency, formatDate } from '../utils/helpers';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import TravelerHeader from '../components/traveler/TravelerHeader';
 
 const ReservationsPage = () => {
   const [loading, setLoading] = useState(true);
@@ -114,19 +115,11 @@ const ReservationsPage = () => {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <section className="bg-green text-white py-12">
-        <div className="container">
-          <h1 className="text-4xl font-bold mb-4">Mis Reservas</h1>
-          <p className="text-xl">
-            Gestiona tus reservas y experiencias turísticas
-          </p>
-        </div>
-      </section>
-
+      {/* TravelerHeader con Reservas activo */}
+      <TravelerHeader currentPage="reservations" />
+      
       {/* Filters */}
       <section className="py-8 bg-white shadow-sm">
         <div className="container">

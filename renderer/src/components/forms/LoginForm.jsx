@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
+import { ROUTES } from '../../utils/constants';
 
 const LoginForm = ({ onSuccess, onCancel }) => {
   const { login, loading, error, clearError } = useAuth();
@@ -65,13 +66,12 @@ const LoginForm = ({ onSuccess, onCancel }) => {
 
     try {
       const result = await login(formData.email, formData.password);
-      
-      if (result.success) {
+        if (result.success) {
         // Redirect based on user type
         if (result.user.userType === 'operador') {
-          navigate('/operator-dashboard');
+          navigate(ROUTES.OPERATOR_DASHBOARD);
         } else {
-          navigate('/traveler-dashboard');
+          navigate(ROUTES.TRAVELER_DASHBOARD);
         }
         
         // Call onSuccess callback if provided

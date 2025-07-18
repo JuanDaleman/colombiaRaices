@@ -3,6 +3,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { COLORS } from '../../constants/colors';
+import { ROUTES } from '../../utils/constants';
+import { validateCurrentPage } from '../../utils/validation';
 
 const TravelerHeader = ({ 
   currentPage = 'experiences', 
@@ -12,25 +14,25 @@ const TravelerHeader = ({
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  // Validar currentPage en desarrollo
+  validateCurrentPage(currentPage);
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate(ROUTES.HOME);
   };
-
   const handleDashboardRedirect = () => {
-    navigate('/traveler-dashboard');
+    navigate(ROUTES.TRAVELER_DASHBOARD);
   };
-
   const handleNavigation = (page) => {
     switch (page) {
       case 'experiences':
-        navigate('/experiences');
+        navigate(ROUTES.EXPERIENCES);
         break;
       case 'communities':
-        navigate('/communities');
+        navigate(ROUTES.COMMUNITIES);
         break;
       case 'reservations':
-        navigate('/reservations');
+        navigate(ROUTES.RESERVATIONS);
         break;
       default:
         break;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { COLORS } from '../../constants/colors';
 import useAuth from '../../hooks/useAuth';
+import { ROUTES } from '../../utils/constants';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -89,13 +90,12 @@ const RegisterForm = () => {
         password: formData.password,
         userType: formData.userType // Agregar tipo de usuario
       });
-      
-      if (result.success) {
+        if (result.success) {
         // Redirect based on user type
         if (result.user.userType === 'operador') {
-          navigate('/operator-dashboard');
+          navigate(ROUTES.OPERATOR_DASHBOARD);
         } else {
-          navigate('/traveler-dashboard');
+          navigate(ROUTES.TRAVELER_DASHBOARD);
         }
       }
     } catch (error) {

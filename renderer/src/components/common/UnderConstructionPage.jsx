@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../utils/constants';
 
 const UnderConstructionPage = ({ pageName }) => {
   const navigate = useNavigate();
@@ -28,9 +29,8 @@ const UnderConstructionPage = ({ pageName }) => {
         </h1>
         <p style={{ color: '#666', marginBottom: '24px', lineHeight: '1.6' }}>
           Esta página está siendo desarrollada y estará disponible pronto.
-        </p>
-        <button
-          onClick={() => navigate('/')}
+        </p>        <button
+          onClick={() => navigate(ROUTES.HOME)}
           style={{
             backgroundColor: '#fbd338',
             color: '#03222b',

@@ -17,14 +17,14 @@ const CommunitySearchFilters = ({
     borderBottom: '1px solid #e5e7eb',
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
   };
-
   const gridStyle = layout === 'horizontal' ? {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '20px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 280px))',
+    gap: '16px',
     maxWidth: '1200px',
     margin: '0 auto',
-    alignItems: 'end'
+    alignItems: 'end',
+    justifyContent: 'center'
   } : {
     display: 'flex',
     flexDirection: 'column',

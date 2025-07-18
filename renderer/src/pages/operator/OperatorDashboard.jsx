@@ -2,14 +2,14 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { COLORS } from '../../constants/colors';
+import { ROUTES } from '../../utils/constants';
 
 const OperatorDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate(ROUTES.HOME);
   };
 
   const containerStyle = {
@@ -37,10 +37,9 @@ const OperatorDashboard = () => {
     marginBottom: '20px',
     textAlign: 'center'
   };
-
   const buttonStyle = {
     backgroundColor: COLORS.primary,
-    color: '#03222b',
+    color: 'white',
     border: 'none',
     padding: '12px 24px',
     borderRadius: '8px',
@@ -92,10 +91,9 @@ const OperatorDashboard = () => {
           </h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>
             Comparte las experiencias auténticas de tu comunidad
-          </p>
-          <button 
+          </p>          <button 
             style={buttonStyle}
-            onClick={() => navigate('/publish-experience')}
+            onClick={() => navigate(ROUTES.PUBLISH_EXPERIENCE)}
             onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
             onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
           >
@@ -109,10 +107,9 @@ const OperatorDashboard = () => {
           </h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>
             Gestiona y actualiza tus experiencias publicadas
-          </p>
-          <button 
+          </p>          <button 
             style={buttonStyle}
-            onClick={() => navigate('/manage-experiences')}
+            onClick={() => navigate(ROUTES.MANAGE_EXPERIENCES)}
             onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
             onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
           >
@@ -126,10 +123,9 @@ const OperatorDashboard = () => {
           </h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>
             Revisa las reservas de viajeros interesados
-          </p>
-          <button 
+          </p>          <button 
             style={buttonStyle}
-            onClick={() => navigate('/operator-reservations')}
+            onClick={() => navigate(ROUTES.OPERATOR_RESERVATIONS)}
             onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
             onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
           >
@@ -143,10 +139,9 @@ const OperatorDashboard = () => {
           </h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>
             Actualiza tu información personal y contraseña
-          </p>
-          <button 
+          </p>          <button 
             style={buttonStyle}
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate(ROUTES.PROFILE)}
             onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
             onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
           >
@@ -161,10 +156,9 @@ const OperatorDashboard = () => {
         </h2>
         <p style={{ color: '#666', marginBottom: '20px' }}>
           Información sobre tu comunidad y cómo conectar con los visitantes
-        </p>
-        <button 
+        </p>        <button 
           style={buttonStyle}
-          onClick={() => navigate('/community-profile')}
+          onClick={() => navigate(ROUTES.COMMUNITY_PROFILE)}
           onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
           onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
         >

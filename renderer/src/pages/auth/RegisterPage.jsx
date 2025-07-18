@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import RegisterForm from '../../components/forms/RegisterForm';
 import { COLORS } from '../../constants/colors';
+import { ROUTES } from '../../utils/constants';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -70,13 +71,12 @@ const RegisterPage = () => {
     fontWeight: 'bold',
     cursor: 'pointer'
   };
-
   const handleLoginClick = () => {
-    navigate('/login');
+    navigate(ROUTES.LOGIN);
   };
 
   const handleBackClick = () => {
-    navigate('/');
+    navigate(ROUTES.HOME);
   };
 
   return (

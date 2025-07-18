@@ -6,22 +6,13 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ExperiencesPage from './pages/ExperiencesPage';
 import CommunitiesPage from './pages/CommunitiesPage';
+import ReservationsPage from './pages/ReservationsPage';
 import UnderConstructionPage from './components/common/UnderConstructionPage';
 import TravelerDashboard from './pages/traveler/TravelerDashboard';
 import OperatorDashboard from './pages/operator/OperatorDashboard';
 
-// Constantes locales
-const ROUTES = {
-  HOME: '/',
-  EXPERIENCES: '/experiences',
-  COMMUNITIES: '/communities',
-  RESERVATIONS: '/reservations',
-  LOGIN: '/login',
-  REGISTER: '/register',
-  DASHBOARD: '/dashboard',
-  TRAVELER_DASHBOARD: '/traveler-dashboard',
-  OPERATOR_DASHBOARD: '/operator-dashboard',
-};
+// Importar constantes centralizadas
+import { ROUTES } from './utils/constants';
 
 // Función global para navegar a home y hacer scroll a sección
 const navigateAndScroll = (navigate, sectionId) => {
@@ -33,10 +24,9 @@ const navigateAndScroll = (navigate, sectionId) => {
         behavior: 'smooth',
         block: 'start'
       });
-    }
-  } else {
+    }  } else {
     // Si estamos en otra página, navegar a home y luego scroll
-    navigate('/');
+    navigate(ROUTES.HOME);
     // Esperar un momento para que la página cargue, luego hacer scroll
     setTimeout(() => {
       const element = document.getElementById(sectionId);
@@ -1075,13 +1065,13 @@ const HomePage = () => {
 // Componente que condicionalmente renderiza Navigation
 const ConditionalNavigation = () => {
   const location = useLocation();
-  
-  // Rutas que NO deben mostrar el header genérico
+    // Rutas que NO deben mostrar el header genérico
   const dashboardRoutes = [
     ROUTES.TRAVELER_DASHBOARD,
     ROUTES.OPERATOR_DASHBOARD,
     ROUTES.EXPERIENCES,
-    ROUTES.COMMUNITIES
+    ROUTES.COMMUNITIES,
+    ROUTES.RESERVATIONS
   ];
   
   // Para HashRouter, verificar tanto pathname como hash
@@ -1112,7 +1102,7 @@ function App() {  return (
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
             <Route path={ROUTES.REGISTER} element={<RegisterPage />} />            <Route path={ROUTES.EXPERIENCES} element={<ExperiencesPage />} />
             <Route path={ROUTES.COMMUNITIES} element={<CommunitiesPage />} />
-            <Route path={ROUTES.RESERVATIONS} element={<UnderConstructionPage pageName="Reservas" />} />
+            <Route path={ROUTES.RESERVATIONS} element={<ReservationsPage />} />
             <Route path={ROUTES.DASHBOARD} element={<UnderConstructionPage pageName="Dashboard" />} />
             <Route path={ROUTES.TRAVELER_DASHBOARD} element={<TravelerDashboard />} />
             <Route path={ROUTES.OPERATOR_DASHBOARD} element={<OperatorDashboard />} />
