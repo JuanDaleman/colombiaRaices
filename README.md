@@ -1,6 +1,6 @@
 # 🇨🇴 Colombia Raíces - Turismo Comunitario
 
-![Colombia Raíces Logo](LogoColombiaRaicesNoFondo.png)
+![Colombia Raíces Logo](assets/images/LogoColombiaRaicesNoFondo.png)
 
 > _"Conectando viajeros con la Colombia auténtica, empoderarando comunidades locales"_
 
