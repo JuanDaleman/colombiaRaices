@@ -22,8 +22,7 @@ const TravelerHeader = ({
   };
   const handleDashboardRedirect = () => {
     navigate(ROUTES.TRAVELER_DASHBOARD);
-  };
-  const handleNavigation = (page) => {
+  };  const handleNavigation = (page) => {
     switch (page) {
       case 'experiences':
         navigate(ROUTES.EXPERIENCES);
@@ -32,7 +31,7 @@ const TravelerHeader = ({
         navigate(ROUTES.COMMUNITIES);
         break;
       case 'reservations':
-        navigate(ROUTES.RESERVATIONS);
+        navigate(ROUTES.RESERVATION_HISTORY);
         break;
       default:
         break;

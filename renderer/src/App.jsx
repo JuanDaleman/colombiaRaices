@@ -22,6 +22,7 @@ import ApproveExperiencesPage from './pages/admin/ApproveExperiencesPage';
 // Importar páginas de reservas directamente (temporalmente sin lazy loading)
 import MakeReservationPage from './pages/traveler/MakeReservationPage';
 import ReservationHistoryPage from './pages/traveler/ReservationHistoryPage';
+import UserProfilePage from './pages/traveler/UserProfilePage';
 
 // Importar constantes centralizadas
 import { ROUTES } from './utils/constants';
@@ -133,9 +134,10 @@ const Navigation = () => {
             }}
           >
             🏘️ Comunidades
-          </button>
-          <button
-            onClick={() => navigate(ROUTES.RESERVATIONS)}
+          </button>          <button
+            onClick={() => {
+              alert('🔐 Inicia sesión o regístrate para poder hacer reservas');
+            }}
             style={{ 
               background: 'none',
               border: 'none',
@@ -1131,8 +1133,8 @@ function App() {  return (
             <Route path={ROUTES.RESERVATION_HISTORY} element={<ReservationHistoryPage />} />
             
             <Route path={ROUTES.DASHBOARD} element={<UnderConstructionPage pageName="Dashboard" />} />
-            
-            <Route path={ROUTES.TRAVELER_DASHBOARD} element={<TravelerDashboard />} />
+              <Route path={ROUTES.TRAVELER_DASHBOARD} element={<TravelerDashboard />} />
+            <Route path={ROUTES.PROFILE} element={<UserProfilePage />} />
             <Route path={ROUTES.OPERATOR_DASHBOARD} element={<OperatorDashboard />} />
             <Route path={ROUTES.PUBLISH_EXPERIENCE} element={<PublishExperiencePage />} />
             <Route path={ROUTES.MANAGE_EXPERIENCES} element={<ManageExperiencesPage />} />

@@ -8,6 +8,11 @@ const TravelerDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  // DEBUG: Verificar que las rutas están disponibles
+  console.log('🔍 DEBUG - ROUTES disponibles:', ROUTES);
+  console.log('🔍 DEBUG - MAKE_RESERVATION:', ROUTES.MAKE_RESERVATION);
+  console.log('🔍 DEBUG - RESERVATION_HISTORY:', ROUTES.RESERVATION_HISTORY);
+
   // Estado para experiencias
   const [experiences, setExperiences] = useState([]);
   const [experiencesLoading, setExperiencesLoading] = useState(true);
@@ -172,22 +177,51 @@ const TravelerDashboard = () => {
           >
             Explorar Experiencias
           </button>
-        </div>
-
-        <div style={cardStyle}>
+        </div>        <div style={cardStyle}>
           <h2 style={{ color: COLORS.primary, marginBottom: '20px' }}>
             📅 Mis Reservas
           </h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>
-            Genera estimaciones y gestiona tus reservas
-          </p>          <button 
-            style={buttonStyle}
-            onClick={() => navigate(ROUTES.RESERVATIONS)}
-            onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
-            onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
-          >
-            Ver Reservas
-          </button>
+            Gestiona tus reservas de experiencias turísticas
+          </p>
+          
+          <div style={{ 
+            display: 'flex', 
+            gap: '15px', 
+            flexWrap: 'wrap'
+          }}>
+            <button 
+              style={{
+                ...buttonStyle, 
+                flex: '1', 
+                minWidth: '180px',
+                backgroundColor: '#28a745'
+              }}
+              onClick={() => {
+                navigate(ROUTES.MAKE_RESERVATION);
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#218838'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#28a745'}
+            >
+              📝 Generar Reserva
+            </button>
+            
+            <button 
+              style={{
+                ...buttonStyle, 
+                flex: '1', 
+                minWidth: '180px', 
+                backgroundColor: '#dc3545'
+              }}
+              onClick={() => {
+                navigate(ROUTES.RESERVATION_HISTORY);
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#c82333'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#dc3545'}
+            >
+              📋 Ver Historial
+            </button>
+          </div>
         </div>
 
         <div style={cardStyle}>
