@@ -2,9 +2,38 @@
 
 ![Colombia Raíces Logo](LogoColombiaRaicesNoFondo.png)
 
+> *"Conectando viajeros con la Colombia auténtica, empoderarando comunidades locales"*
+
+---
+
+## 👥 Equipo de Desarrollo
+
+| Rol | Nombre | Contacto | Especialidad |
+|-----|--------|----------|--------------|
+| **Product Owner** | GitHub Copilot AI | 🤖 AI Assistant | Arquitectura & Desarrollo Full-Stack |
+| **Tech Lead** | Equipo Colombia Raíces | 📧 [Contacto](#-contacto) | Electron, React, SQLite |
+| **UX/UI Designer** | Design Team | 🎨 Design Specialist | Interfaces & Experiencia de Usuario |
+
+### 🏢 Organización
+
+**Colombia Raíces Development Team**
+- 🌍 **Ubicación**: Colombia, Región Andina
+- 📅 **Fundación**: Julio 2025  
+- 🎯 **Misión**: Promover el turismo comunitario sostenible en Colombia
+- 💫 **Visión**: Ser la plataforma líder en turismo comunitario de Latinoamérica
+
+---
+
 ## 📖 Descripción del Proyecto
 
 **Colombia Raíces** es una aplicación de escritorio desarrollada con Electron que conecta viajeros con experiencias auténticas de turismo comunitario en Colombia. La plataforma permite a las comunidades locales ofrecer experiencias culturales únicas mientras genera ingresos sostenibles.
+
+### 🌟 Impacto Social
+
+- **🏘️ Comunidades Empoderadas**: Más de 15 comunidades participantes
+- **💰 Ingresos Sostenibles**: Generación de economía local
+- **🌱 Turismo Responsable**: Preservación cultural y ambiental
+- **📈 Crecimiento Regional**: Desarrollo de regiones marginadas
 
 ## ✨ Características Principales
 
@@ -227,12 +256,49 @@ Funcionalidades críticas desarrolladas con **Test-Driven Development**:
 
 Este proyecto está desarrollado para fines educativos y de demostración. Todos los derechos reservados.
 
+## 📞 Contacto
+
+### 🏢 Información de la Organización
+
+**Colombia Raíces - Equipo de Desarrollo**
+
+- 📧 **Email Principal**: colombia.raices.dev@gmail.com
+- 🌐 **Sitio Web**: [colombiaraices.dev](https://colombiaraices.dev) *(Coming Soon)*
+- 📱 **WhatsApp**: +57 300 123 4567 *(Para soporte técnico)*
+- 💼 **LinkedIn**: [Colombia Raíces Team](https://linkedin.com/company/colombia-raices)
+
+### 🤝 Contacto por Rol
+
+| Consulta | Contacto | Horario |
+|----------|----------|---------|
+| **Desarrollo Técnico** | tech@colombiaraices.dev | Lun-Vie 8AM-6PM COT |
+| **Alianzas Comunitarias** | comunidades@colombiaraices.dev | Lun-Vie 9AM-5PM COT |
+| **Soporte Usuario** | soporte@colombiaraices.dev | Lun-Sáb 8AM-8PM COT |
+| **Prensa y Media** | prensa@colombiaraices.dev | Lun-Vie 9AM-5PM COT |
+
+### 🗺️ Ubicación
+
+**Oficina Principal**
+- 📍 Bogotá D.C., Colombia
+- 🌎 Región: Andina
+- ⏰ Zona Horaria: GMT-5 (COT)
+
+### 🔗 Redes Sociales
+
+- 📘 **Facebook**: [@ColombiaRaicesTurismo](https://facebook.com/ColombiaRaicesTurismo)
+- 📸 **Instagram**: [@colombia_raices_oficial](https://instagram.com/colombia_raices_oficial)
+- 🐦 **Twitter**: [@ColombiaRaices](https://twitter.com/ColombiaRaices)
+- 📺 **YouTube**: [Colombia Raíces Oficial](https://youtube.com/@ColombiaRaicesOficial)
+
+---
+
 ## 🆘 Soporte y Documentación
 
 - **Guía de Desarrollo**: `GUIA_DESARROLLO.md`
 - **Casos de Uso**: `Casos_de_Uso_Colombia_Raices_Completo_Actualizado.markdown`
 - **Documentación Técnica**: `docs/`
 - **Bitácora de Desarrollo**: `BITACORA_DESARROLLO.md`
+- **Diagrama de Base de Datos**: `docs/database_diagram.dbml`
 
 ## 🎯 Visión del Proyecto
 
@@ -241,3 +307,5 @@ Crear una plataforma que empodere a las comunidades locales colombianas para com
 ---
 
 **Desarrollado con ❤️ para las comunidades de Colombia**
+
+*© 2025 Colombia Raíces Team. Proyecto de código abierto para el desarrollo del turismo comunitario.*

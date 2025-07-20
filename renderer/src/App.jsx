@@ -269,9 +269,7 @@ const HomePage = () => {
       } else {
         // Mostrar todas las experiencias
         response = await window.electronAPI.experiencesSimple.getAll();
-      }
-      
-      if (response.success) {
+      }      if (response.success) {
         setExperiences(response.data || []);
         setExperiencesError(null);
       } else {

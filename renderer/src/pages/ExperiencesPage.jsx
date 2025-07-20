@@ -81,8 +81,7 @@ const ExperiencesPage = () => {
     // Cargar experiencias reales de la base de datos
     const fetchExperiences = async () => {
       try {
-        setLoading(true);
-        const response = await window.electronAPI.experiencesSimple.getAll();
+        setLoading(true);        const response = await window.electronAPI.experiencesSimple.getAll();
         
         if (response.success) {
           setExperiences(response.data || []);
