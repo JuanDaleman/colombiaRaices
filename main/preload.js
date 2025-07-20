@@ -46,7 +46,22 @@ contextBridge.exposeInMainWorld('electronAPI', {
     search: (filters) => ipcRenderer.invoke('experiences-simple:search', filters),
     getStats: () => ipcRenderer.invoke('experiences-simple:stats'),
   },
-  
-  // Placeholder para otras APIs
-  reservations: {},
+    // APIs de reservas - Sprint 11
+  reservations: {
+    validateData: (reservationData) => ipcRenderer.invoke('reservations:validate-data', reservationData),
+    validateAvailability: (data) => ipcRenderer.invoke('reservations:validate-availability', data),
+    calculateEstimate: (reservationData) => ipcRenderer.invoke('reservations:calculate-estimate', reservationData),
+    createEstimate: (reservationData) => ipcRenderer.invoke('reservations:create-estimate', reservationData),
+    confirm: (data) => ipcRenderer.invoke('reservations:confirm', data),
+    cancel: (data) => ipcRenderer.invoke('reservations:cancel', data),
+    validateCancellation: (data) => ipcRenderer.invoke('reservations:validate-cancellation', data),
+    complete: (data) => ipcRenderer.invoke('reservations:complete', data),
+    getByUser: (data) => ipcRenderer.invoke('reservations:by-user', data),
+    getDetails: (data) => ipcRenderer.invoke('reservations:details', data),
+    getByStatus: (data) => ipcRenderer.invoke('reservations:by-status', data),
+    getByExperience: (data) => ipcRenderer.invoke('reservations:by-experience', data),
+    getStats: () => ipcRenderer.invoke('reservations:stats'),
+    calculateServicePrice: (data) => ipcRenderer.invoke('reservations:calculate-service-price', data),
+    calculateAdditionalServices: (data) => ipcRenderer.invoke('reservations:calculate-additional-services', data),
+  },
 });

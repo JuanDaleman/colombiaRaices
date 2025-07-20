@@ -23,6 +23,7 @@ import ApproveExperiencesPage from './pages/admin/ApproveExperiencesPage';
 import MakeReservationPage from './pages/traveler/MakeReservationPage';
 import ReservationHistoryPage from './pages/traveler/ReservationHistoryPage';
 import UserProfilePage from './pages/traveler/UserProfilePage';
+import OperatorProfilePage from './pages/operator/OperatorProfilePage';
 
 // Importar constantes centralizadas
 import { ROUTES } from './utils/constants';
@@ -1081,7 +1082,6 @@ const HomePage = () => {
 // Componente que condicionalmente renderiza Navigation
 const ConditionalNavigation = () => {
   const location = useLocation();
-  
   // Rutas que NO deben mostrar el header genérico
   const dashboardRoutes = [
     ROUTES.TRAVELER_DASHBOARD,
@@ -1095,6 +1095,8 @@ const ConditionalNavigation = () => {
     ROUTES.RESERVATIONS,
     ROUTES.MAKE_RESERVATION,
     ROUTES.RESERVATION_HISTORY,
+    ROUTES.PROFILE,
+    ROUTES.OPERATOR_PROFILE,
     // Rutas de admin
     ROUTES.ADMIN_DASHBOARD,
     ROUTES.APPROVE_EXPERIENCES
@@ -1132,10 +1134,10 @@ function App() {  return (
             <Route path={ROUTES.RESERVATIONS} element={<ReservationsPage />} />            {/* Rutas específicas de reservas con lazy loading y error boundary */}            <Route path={ROUTES.MAKE_RESERVATION} element={<MakeReservationPage />} />
             <Route path={ROUTES.RESERVATION_HISTORY} element={<ReservationHistoryPage />} />
             
-            <Route path={ROUTES.DASHBOARD} element={<UnderConstructionPage pageName="Dashboard" />} />
-              <Route path={ROUTES.TRAVELER_DASHBOARD} element={<TravelerDashboard />} />
+            <Route path={ROUTES.DASHBOARD} element={<UnderConstructionPage pageName="Dashboard" />} />            <Route path={ROUTES.TRAVELER_DASHBOARD} element={<TravelerDashboard />} />
             <Route path={ROUTES.PROFILE} element={<UserProfilePage />} />
             <Route path={ROUTES.OPERATOR_DASHBOARD} element={<OperatorDashboard />} />
+            <Route path={ROUTES.OPERATOR_PROFILE} element={<OperatorProfilePage />} />
             <Route path={ROUTES.PUBLISH_EXPERIENCE} element={<PublishExperiencePage />} />
             <Route path={ROUTES.MANAGE_EXPERIENCES} element={<ManageExperiencesPage />} />
             <Route path={`${ROUTES.EDIT_EXPERIENCE}/:experienceId`} element={<EditExperiencePage />} />

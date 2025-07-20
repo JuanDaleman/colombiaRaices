@@ -225,7 +225,7 @@ colombia_raices/
 
 ### **SPRINT 13: MAPAS INTERACTIVOS (Días 25-26)**
 
-**Objetivo:** Integrar mapas con    
+**Objetivo:** Integrar mapas con OpenStreetMap
 
 - [ ] Componente de mapa interactivo
 - [ ] Marcadores de ubicaciones

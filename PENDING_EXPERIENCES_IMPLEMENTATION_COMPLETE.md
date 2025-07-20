@@ -26,12 +26,13 @@ async findPendingExperiences() {
     WHERE e.is_active = 0 AND c.is_active = 1 AND o.is_active = 1
     ORDER BY e.created_at DESC
   `;
-  
+
   return await this.db.all(sql);
 }
 ```
 
 **Características**:
+
 - ✅ Consulta específica para `is_active = 0`
 - ✅ Incluye información del operador (nombre, email)
 - ✅ Incluye información de la comunidad
@@ -62,6 +63,7 @@ async getPendingExperiences() {
 ```
 
 **Características**:
+
 - ✅ Usa el modelo `findPendingExperiences()`
 - ✅ Formatea las experiencias para la respuesta
 - ✅ Manejo de errores robusto
@@ -83,10 +85,10 @@ async getPendingExperiences() {
 async getPendingExperiences() {
   try {
     console.log('⏳ ExperienceController.getPendingExperiences called');
-    
+
     const experiences = await this.experienceService.getPendingExperiences();
     console.log('✅ Pending experiences retrieved:', experiences.length);
-    
+
     return {
       success: true,
       experiences: experiences
@@ -103,6 +105,7 @@ async getPendingExperiences() {
 ```
 
 **Características**:
+
 - ✅ Logging detallado para debugging
 - ✅ Estructura de respuesta consistente
 - ✅ Manejo de errores con fallback
@@ -117,7 +120,7 @@ async getPendingExperiences() {
 ✅ **Nuevo handler IPC `experiences:pending`** - comunicación frontend-backend
 
 ```javascript
-ipcMain.handle('experiences:pending', async (event) => {
+ipcMain.handle("experiences:pending", async (event) => {
   try {
     return await experienceController.getPendingExperiences();
   } catch (error) {
@@ -127,6 +130,7 @@ ipcMain.handle('experiences:pending', async (event) => {
 ```
 
 **Características**:
+
 - ✅ Handler IPC específico para experiencias pendientes
 - ✅ Manejo de errores a nivel de IPC
 - ✅ Integración con el controlador existente
@@ -148,6 +152,7 @@ experiences: {
 ```
 
 **Características**:
+
 - ✅ Método simple sin parámetros
 - ✅ Integración con el sistema IPC existente
 - ✅ Consistente con otros métodos de la API
@@ -164,25 +169,30 @@ experiences: {
 const loadPendingExperiences = async () => {
   setLoading(true);
   setError(null);
-  
+
   try {
     if (window.electronAPI && window.electronAPI.experiences) {
       // Usar la nueva API dedicada para obtener experiencias pendientes
       const result = await window.electronAPI.experiences.getPending();
-      
+
       if (result.success) {
         setPendingExperiences(result.experiences || []);
-        console.log('Experiencias pendientes cargadas:', result.experiences?.length || 0);
+        console.log(
+          "Experiencias pendientes cargadas:",
+          result.experiences?.length || 0
+        );
       } else {
-        throw new Error(result.error || 'Error al cargar experiencias pendientes');
+        throw new Error(
+          result.error || "Error al cargar experiencias pendientes"
+        );
       }
     } else {
       // Fallback para desarrollo
-      console.warn('ElectronAPI no disponible, usando datos mock');
+      console.warn("ElectronAPI no disponible, usando datos mock");
       setPendingExperiences([]);
     }
   } catch (error) {
-    console.error('Error cargando experiencias pendientes:', error);
+    console.error("Error cargando experiencias pendientes:", error);
     setError(error.message);
   } finally {
     setLoading(false);
@@ -191,6 +201,7 @@ const loadPendingExperiences = async () => {
 ```
 
 **Cambios implementados**:
+
 - ✅ **ANTES**: `window.electronAPI.experiences.search({})` + filtrado frontend
 - ✅ **DESPUÉS**: `window.electronAPI.experiences.getPending()` directo
 - ✅ Mejor performance (no trae todas las experiencias)
@@ -202,6 +213,7 @@ const loadPendingExperiences = async () => {
 ## 📊 FLUJO COMPLETO DE LA FUNCIONALIDAD
 
 ### **1. Base de Datos → Modelo**
+
 ```
 DB Query: SELECT * FROM experiences WHERE is_active = 0
 ↓
@@ -209,6 +221,7 @@ ExperienceModel.findPendingExperiences()
 ```
 
 ### **2. Modelo → Servicio**
+
 ```
 Raw DB data with operator + community info
 ↓
@@ -218,6 +231,7 @@ Formatted response data
 ```
 
 ### **3. Servicio → Controlador**
+
 ```
 Formatted experiences array
 ↓
@@ -227,6 +241,7 @@ ExperienceController.getPendingExperiences()
 ```
 
 ### **4. Controlador → Frontend**
+
 ```
 IPC Handler: experiences:pending
 ↓
@@ -240,21 +255,25 @@ ApproveExperiencesPage.jsx displays pending experiences
 ## 🧪 CARACTERÍSTICAS PRINCIPALES
 
 ### **✅ Consulta Optimizada**
+
 - Consulta específica para `is_active = 0`
 - Incluye información del operador y comunidad
 - Filtrado a nivel de base de datos (no frontend)
 
 ### **✅ Información Completa**
+
 - Nombre y email del operador
 - Información de la comunidad
 - Datos formateados para la interfaz
 
 ### **✅ Integración Perfecta**
+
 - Usa la misma arquitectura que otros endpoints
 - Manejo de errores consistente
 - Logging detallado para debugging
 
 ### **✅ Performance Mejorada**
+
 - No trae todas las experiencias
 - Consulta específica y eficiente
 - Menos procesamiento en el frontend
@@ -264,6 +283,7 @@ ApproveExperiencesPage.jsx displays pending experiences
 ## 🎯 FUNCIONALIDAD PARA EL ADMIN
 
 ### **Panel de Aprobación**
+
 1. **Ver experiencias pendientes** - Lista específica de `is_active = 0`
 2. **Información del operador** - Nombre y email visible
 3. **Información de la comunidad** - Contexto geográfico
@@ -271,6 +291,7 @@ ApproveExperiencesPage.jsx displays pending experiences
 5. **Rechazar experiencia** - Eliminar experiencia permanentemente
 
 ### **Casos de Uso**
+
 - ✅ **Operador "Holi2"** crea experiencia → `is_active = 0`
 - ✅ **Admin** ve experiencia en lista de pendientes
 - ✅ **Admin** aprueba → `is_active = 1` → Visible para viajeros
@@ -294,6 +315,7 @@ ApproveExperiencesPage.jsx displays pending experiences
 **✅ PROBLEMA RESUELTO**
 
 El administrador ahora puede:
+
 - Ver **todas las experiencias pendientes** (is_active = 0)
 - Obtener **información completa del operador** (nombre, email)
 - **Aprobar experiencias** de forma eficiente
@@ -302,6 +324,7 @@ El administrador ahora puede:
 **✅ ARQUITECTURA SÓLIDA**
 
 La implementación sigue las mejores prácticas:
+
 - Separación de responsabilidades (Modelo → Servicio → Controlador)
 - Consultas optimizadas a base de datos
 - Manejo de errores robusto

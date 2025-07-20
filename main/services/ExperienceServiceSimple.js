@@ -13,10 +13,15 @@ class ExperienceServiceSimple {
       const result = await this.db.all(`
         SELECT 
           e.id, 
-          e.title as nombre, 
-          e.description as descripcion, 
-          e.type as tipo, 
-          e.price as precio, 
+          e.title, 
+          e.title as nombre,
+          e.description, 
+          e.description as descripcion,
+          e.type, 
+          e.type as tipo,
+          e.price, 
+          e.price as precio,
+          e.duration_hours,
           e.duration_hours as duracion_horas,
           e.max_participants, 
           e.image_url,
@@ -25,6 +30,8 @@ class ExperienceServiceSimple {
           e.longitude,
           c.name as community_name, 
           c.region as community_region,
+          c.latitude as community_latitude,
+          c.longitude as community_longitude,
           c.name as ubicacion,
           e.created_at, 
           e.updated_at, 
@@ -45,13 +52,19 @@ class ExperienceServiceSimple {
   // Obtener experiencia por ID
   async findById(id) {
     try {
-      const experience = await this.db.connect(); const result = await this.db.all(`
+      await this.db.connect();
+      const result = await this.db.all(`
         SELECT 
           e.id, 
-          e.title as nombre, 
-          e.description as descripcion, 
-          e.type as tipo, 
-          e.price as precio, 
+          e.title, 
+          e.title as nombre,
+          e.description, 
+          e.description as descripcion,
+          e.type, 
+          e.type as tipo,
+          e.price, 
+          e.price as precio,
+          e.duration_hours,
           e.duration_hours as duracion_horas,
           e.max_participants, 
           e.image_url, 
@@ -62,6 +75,8 @@ class ExperienceServiceSimple {
           e.longitude,
           c.name as community_name, 
           c.region as community_region,
+          c.latitude as community_latitude,
+          c.longitude as community_longitude,
           c.id as community_id,
           c.name as ubicacion,
           e.created_at, 
@@ -72,7 +87,7 @@ class ExperienceServiceSimple {
         WHERE e.id = ? AND e.is_active = 1
       `, [id]);
       
-      return result[0] || null;
+      return result;
     } catch (error) {
       console.error('Error fetching experience:', error);
       throw error;
@@ -82,13 +97,35 @@ class ExperienceServiceSimple {
   // Obtener experiencias por comunidad
   async findByCommunity(communityId) {
     try {
-      const experiences = await this.db.connect(); const result = await this.db.all(`
+      await this.db.connect();
+      const result = await this.db.all(`
         SELECT 
-          e.id, e.title, e.description, e.type, e.price, e.duration_hours,
-          e.max_participants, e.image_url, e.thumbnail_url, e.image_alt,
-          e.specific_location, e.latitude, e.longitude,
-          c.name as community_name, c.region as community_region,
-          e.created_at, e.updated_at, e.is_active
+          e.id, 
+          e.title, 
+          e.title as nombre,
+          e.description, 
+          e.description as descripcion,
+          e.type, 
+          e.type as tipo,
+          e.price, 
+          e.price as precio,
+          e.duration_hours,
+          e.duration_horas as duracion_horas,
+          e.max_participants, 
+          e.image_url, 
+          e.thumbnail_url, 
+          e.image_alt,
+          e.specific_location, 
+          e.latitude, 
+          e.longitude,
+          c.name as community_name, 
+          c.region as community_region,
+          c.latitude as community_latitude,
+          c.longitude as community_longitude,
+          c.name as ubicacion,
+          e.created_at, 
+          e.updated_at, 
+          e.is_active
         FROM experiences e
         JOIN communities c ON e.community_id = c.id
         WHERE e.community_id = ? AND e.is_active = 1
@@ -105,13 +142,35 @@ class ExperienceServiceSimple {
   // Obtener experiencias por tipo
   async findByType(type) {
     try {
-      const experiences = await this.db.connect(); const result = await this.db.all(`
+      await this.db.connect();
+      const result = await this.db.all(`
         SELECT 
-          e.id, e.title, e.description, e.type, e.price, e.duration_hours,
-          e.max_participants, e.image_url, e.thumbnail_url, e.image_alt,
-          e.specific_location, e.latitude, e.longitude,
-          c.name as community_name, c.region as community_region,
-          e.created_at, e.updated_at, e.is_active
+          e.id, 
+          e.title, 
+          e.title as nombre,
+          e.description, 
+          e.description as descripcion,
+          e.type, 
+          e.type as tipo,
+          e.price, 
+          e.price as precio,
+          e.duration_hours,
+          e.duration_hours as duracion_horas,
+          e.max_participants, 
+          e.image_url, 
+          e.thumbnail_url, 
+          e.image_alt,
+          e.specific_location, 
+          e.latitude, 
+          e.longitude,
+          c.name as community_name, 
+          c.region as community_region,
+          c.latitude as community_latitude,
+          c.longitude as community_longitude,
+          c.name as ubicacion,
+          e.created_at, 
+          e.updated_at, 
+          e.is_active
         FROM experiences e
         JOIN communities c ON e.community_id = c.id
         WHERE e.type = ? AND e.is_active = 1
@@ -137,7 +196,8 @@ class ExperienceServiceSimple {
   // Obtener tipos de experiencia únicos
   async getTypes() {
     try {
-      const types = await this.db.connect(); const result = await this.db.all(`
+      await this.db.connect();
+      const result = await this.db.all(`
         SELECT DISTINCT type 
         FROM experiences 
         WHERE is_active = 1
@@ -154,7 +214,8 @@ class ExperienceServiceSimple {
   // Obtener estadísticas de experiencias
   async getStats() {
     try {
-      const stats = await this.db.connect(); const result = await this.db.all(`
+      await this.db.connect();
+      const result = await this.db.all(`
         SELECT 
           COUNT(*) as total_experiences,
           COUNT(DISTINCT type) as total_types,
@@ -180,10 +241,15 @@ class ExperienceServiceSimple {
       let query = `
         SELECT 
           e.id, 
-          e.title as nombre, 
-          e.description as descripcion, 
-          e.type as tipo, 
-          e.price as precio, 
+          e.title, 
+          e.title as nombre,
+          e.description, 
+          e.description as descripcion,
+          e.type, 
+          e.type as tipo,
+          e.price, 
+          e.price as precio,
+          e.duration_hours,
           e.duration_hours as duracion_horas,
           e.max_participants, 
           e.image_url,
@@ -192,6 +258,8 @@ class ExperienceServiceSimple {
           e.longitude,
           c.name as community_name, 
           c.region as community_region,
+          c.latitude as community_latitude,
+          c.longitude as community_longitude,
           c.name as ubicacion,
           e.created_at, 
           e.updated_at, 
@@ -243,7 +311,7 @@ class ExperienceServiceSimple {
     try {
       await this.db.connect();
       const result = await this.db.all(`
-        SELECT DISTINCT type as tipo
+        SELECT DISTINCT type
         FROM experiences 
         WHERE is_active = 1 AND type IS NOT NULL
         ORDER BY type

@@ -5,7 +5,7 @@ const CommunityService = require('../services/CommunityService');
 class CommunityController {
   constructor() {
     this.communityService = new CommunityService();
-    this.setupEventHandlers();
+    // NO llamar setupEventHandlers aquí - se llamará después
   }
 
   // Método para obtener todas las comunidades (usado por electron.js)

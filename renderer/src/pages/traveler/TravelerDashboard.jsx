@@ -189,19 +189,18 @@ const TravelerDashboard = () => {
             display: 'flex', 
             gap: '15px', 
             flexWrap: 'wrap'
-          }}>
-            <button 
+          }}>            <button 
               style={{
                 ...buttonStyle, 
                 flex: '1', 
                 minWidth: '180px',
-                backgroundColor: '#28a745'
+                backgroundColor: COLORS.primary
               }}
               onClick={() => {
                 navigate(ROUTES.MAKE_RESERVATION);
               }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#218838'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#28a745'}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
+              onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
             >
               📝 Generar Reserva
             </button>
@@ -211,13 +210,13 @@ const TravelerDashboard = () => {
                 ...buttonStyle, 
                 flex: '1', 
                 minWidth: '180px', 
-                backgroundColor: '#dc3545'
+                backgroundColor: COLORS.primary
               }}
               onClick={() => {
                 navigate(ROUTES.RESERVATION_HISTORY);
               }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#c82333'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#dc3545'}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
+              onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
             >
               📋 Ver Historial
             </button>

@@ -2,10 +2,9 @@
 const { ipcMain } = require('electron');
 const ExperienceServiceSimple = require('../services/ExperienceServiceSimple');
 
-class ExperienceControllerSimple {
-  constructor() {
+class ExperienceControllerSimple {  constructor() {
     this.experienceService = new ExperienceServiceSimple();
-    this.setupEventHandlers();
+    // NO llamar setupEventHandlers aquí - se llamará después
   }
 
   // Método para obtener todas las experiencias (usado por electron.js)

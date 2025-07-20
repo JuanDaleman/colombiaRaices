@@ -5,14 +5,17 @@
 ### ❌ PROBLEMAS IDENTIFICADOS:
 
 1. **ReservationsPage.jsx mal ubicada:**
+
    - Actual: Está usando imports `'../../utils/constants'` (sugiere subdirectorio)
    - Debería: Estar en `pages/` usando `'../utils/constants'`
 
 2. **Ruta incorrecta en App.jsx:**
+
    - Actual: `<Route path={ROUTES.RESERVATIONS} element={<UnderConstructionPage pageName="Reservas" />} />`
    - Debería: `<Route path={ROUTES.RESERVATIONS} element={<ReservationsPage />} />`
 
 3. **ROUTES.RESERVATIONS no en dashboardRoutes:**
+
    - Actual: Solo tiene `[EXPERIENCES, COMMUNITIES]`
    - Debería: Incluir `ROUTES.RESERVATIONS`
 
@@ -23,15 +26,18 @@
 ## PLAN DE IMPLEMENTACIÓN
 
 ### PASO 1: Verificar ubicación actual de ReservationsPage
+
 - Verificar dónde está ubicado físicamente el archivo
 - Confirmar la estructura de directorios
 
 ### PASO 2: Corregir imports en ReservationsPage
+
 - Cambiar `'../../utils/constants'` a `'../utils/constants'`
 - Cambiar `'../common/LoadingSpinner'` a `'../components/common/LoadingSpinner'`
 - Agregar import de TravelerHeader
 
 ### PASO 3: Eliminar header genérico actual
+
 - Remover la sección `{/* Header */}` que contiene:
   ```jsx
   <section className="bg-green text-white py-12">
@@ -43,17 +49,20 @@
   ```
 
 ### PASO 4: Implementar TravelerHeader
+
 - Reemplazar header genérico con:
   ```jsx
   <TravelerHeader currentPage="reservations" />
   ```
 
 ### PASO 5: Actualizar App.jsx
+
 - Agregar import de ReservationsPage
 - Cambiar ruta de UnderConstructionPage a ReservationsPage
 - Agregar ROUTES.RESERVATIONS a dashboardRoutes
 
 ### PASO 6: Verificar navegación condicional
+
 - Confirmar que ConditionalNavigation oculte Navigation genérica
 - Probar que TravelerHeader aparezca correctamente
 

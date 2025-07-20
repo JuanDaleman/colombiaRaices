@@ -17,14 +17,16 @@ Se implementó completamente la integración backend para la **creación de expe
 
 ```jsx
 // Nuevo campo agregado:
-image_url: initialData?.image_url || ''
+image_url: initialData?.image_url || "";
 
 // Validación implementada:
 if (formData.image_url.trim()) {
-  const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-  const isValidImageUrl = urlPattern.test(formData.image_url) || 
-                          formData.image_url.startsWith('./images/') ||
-                          formData.image_url.startsWith('/images/');
+  const urlPattern =
+    /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+  const isValidImageUrl =
+    urlPattern.test(formData.image_url) ||
+    formData.image_url.startsWith("./images/") ||
+    formData.image_url.startsWith("/images/");
 }
 ```
 
@@ -44,7 +46,7 @@ const experienceToCreate = {
   is_active: 0,
   // Asegurar timestamps
   created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString()
+  updated_at: new Date().toISOString(),
 };
 ```
 
@@ -125,10 +127,14 @@ const completeExperienceData = {
 };
 
 // Llamar al API
-const result = await window.electronAPI.experiences.create(completeExperienceData);
+const result = await window.electronAPI.experiences.create(
+  completeExperienceData
+);
 
 if (result.success) {
-  alert('¡Experiencia enviada para revisión! Será publicada una vez sea aprobada por el administrador.');
+  alert(
+    "¡Experiencia enviada para revisión! Será publicada una vez sea aprobada por el administrador."
+  );
 }
 ```
 
@@ -137,16 +143,19 @@ if (result.success) {
 ### **Flujo de Creación de Experiencia:**
 
 1. **Operador llena formulario** ✅
+
    - Todos los campos requeridos validados
    - Campo imagen opcional funcional
    - Validación de datos robusta
 
 2. **Sistema crea experiencia pendiente** ✅
+
    - `is_active = 0` (pendiente de aprobación)
    - operator_id automático desde sesión
    - Timestamps automáticos
 
 3. **Confirmación al operador** ✅
+
    - Mensaje claro de status pendiente
    - Redirección al dashboard
 
@@ -165,36 +174,39 @@ if (result.success) {
 ## 🔄 NEXT STEPS - SPRINT 9 CONTINUACIÓN
 
 ### **TAREA 6: PÁGINA GESTIONAR EXPERIENCIAS**
-- [ ] Crear página `/manage-experiences` 
+
+- [ ] Crear página `/manage-experiences`
 - [ ] Lista de experiencias del operador con status
 - [ ] Botones editar/eliminar por experiencia
 - [ ] Filtros por estado (pendiente/aprobada)
 
 ### **TAREA 7: PANEL ADMINISTRADOR**
+
 - [ ] Endpoint para listar experiencias pendientes
 - [ ] Funcionalidad aprobar/rechazar experiencias
 - [ ] Vista administrador para gestión
 
 ### **TAREA 8: NOTIFICACIONES**
+
 - [ ] Sistema de notificaciones operador
 - [ ] Alertas de aprobación/rechazo
 - [ ] Estado en tiempo real
 
 ## 📊 ESTADO ACTUAL
 
-| Funcionalidad | Status | Observaciones |
-|---------------|--------|---------------|
-| Formulario experiencia | ✅ **COMPLETO** | Con validación robusta |
-| Campo imagen URL | ✅ **COMPLETO** | Validación y valor por defecto |
-| Flujo aprobación | ✅ **COMPLETO** | is_active = 0 para nuevas |
-| API creación | ✅ **COMPLETO** | Backend totalmente funcional |
-| API operador | ✅ **COMPLETO** | Incluye experiencias pendientes |
-| Frontend integration | ✅ **COMPLETO** | Llamadas reales al backend |
-| Manejo errores | ✅ **COMPLETO** | Feedback completo al usuario |
+| Funcionalidad          | Status          | Observaciones                   |
+| ---------------------- | --------------- | ------------------------------- |
+| Formulario experiencia | ✅ **COMPLETO** | Con validación robusta          |
+| Campo imagen URL       | ✅ **COMPLETO** | Validación y valor por defecto  |
+| Flujo aprobación       | ✅ **COMPLETO** | is_active = 0 para nuevas       |
+| API creación           | ✅ **COMPLETO** | Backend totalmente funcional    |
+| API operador           | ✅ **COMPLETO** | Incluye experiencias pendientes |
+| Frontend integration   | ✅ **COMPLETO** | Llamadas reales al backend      |
+| Manejo errores         | ✅ **COMPLETO** | Feedback completo al usuario    |
 
 ## 🎯 RESULTADO FINAL
 
-**¡TAREA 5 100% COMPLETADA!** 
+**¡TAREA 5 100% COMPLETADA!**
 
 La integración backend para experiencias está **completamente funcional**. Los operadores pueden crear experiencias que quedan pendientes de aprobación, tienen validación robusta, manejo de imágenes y feedback completo al usuario. El sistema está listo para continuar con las siguientes tareas del Sprint 9.
 

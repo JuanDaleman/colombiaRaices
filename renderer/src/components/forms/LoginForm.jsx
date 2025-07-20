@@ -65,10 +65,11 @@ const LoginForm = ({ onSuccess, onCancel }) => {
     }
 
     try {
-      const result = await login(formData.email, formData.password);
-        if (result.success) {
+      const result = await login(formData.email, formData.password);      if (result.success) {
         // Redirect based on user type
-        if (result.user.userType === 'operador') {
+        if (result.user.userType === 'admin') {
+          navigate(ROUTES.ADMIN_DASHBOARD);
+        } else if (result.user.userType === 'operador') {
           navigate(ROUTES.OPERATOR_DASHBOARD);
         } else {
           navigate(ROUTES.TRAVELER_DASHBOARD);

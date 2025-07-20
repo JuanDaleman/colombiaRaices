@@ -5,13 +5,15 @@
 Las reglas de negocio estaban incorrectamente implementadas:
 
 ### **❌ ANTES (Incorrecto)**
+
 - `is_active = 0` = "eliminado" (soft delete)
 - `is_active = 1` = "activo"
 - "Mis Experiencias" solo mostraba experiencias aprobadas
 - Eliminación usaba soft delete (`UPDATE experiences SET is_active = 0`)
 
 ### **✅ DESPUÉS (Correcto)**
-- `is_active = 0` = "pendiente de aprobación" 
+
+- `is_active = 0` = "pendiente de aprobación"
 - `is_active = 1` = "aprobado y visible a viajeros"
 - "Mis Experiencias" muestra TODAS las experiencias del operador
 - Eliminación usa hard delete (`DELETE FROM experiences`)
@@ -70,7 +72,7 @@ async deleteExperience(experienceId, operatorId, isAdmin = false) {
       operatorId,
       isAdmin
     );
-    
+
     return {
       success: true,
       message: 'Experience permanently deleted'  // ✅ Mensaje actualizado
@@ -113,26 +115,31 @@ async hardDelete(id) {
 ## 🔄 **FLUJO DE NEGOCIO CORRECTO**
 
 ### **1. Creación de Experiencia**
+
 ```
 Operador crea experiencia → is_active = 0 (pendiente) → Visible en "Mis Experiencias"
 ```
 
 ### **2. Aprobación de Experiencia**
+
 ```
 Admin aprueba → is_active = 1 (aprobada) → Visible para viajeros + en "Mis Experiencias"
 ```
 
 ### **3. Eliminación de Experiencia**
+
 ```
 Operador elimina → DELETE FROM experiences → Eliminada permanentemente
 ```
 
 ### **4. Vista "Mis Experiencias"**
+
 ```
 findAllByOperator() → Muestra TODAS (pendientes + aprobadas) → Sin filtro is_active
 ```
 
 ### **5. Vista Pública (Viajeros)**
+
 ```
 findWithCommunity() → Solo aprobadas (is_active = 1) → Con filtro is_active
 ```
@@ -142,18 +149,20 @@ findWithCommunity() → Solo aprobadas (is_active = 1) → Con filtro is_active
 ## 📊 **VERIFICACIÓN DE ESTADOS**
 
 ### **Base de Datos**
-| Estado | is_active | Descripción | Visible en "Mis Experiencias" | Visible para Viajeros |
-|--------|-----------|-------------|-------------------------------|----------------------|
-| Pendiente | 0 | Esperando aprobación | ✅ SÍ | ❌ NO |
-| Aprobada | 1 | Publicada y activa | ✅ SÍ | ✅ SÍ |
-| Eliminada | - | Registro borrado | ❌ NO | ❌ NO |
+
+| Estado    | is_active | Descripción          | Visible en "Mis Experiencias" | Visible para Viajeros |
+| --------- | --------- | -------------------- | ----------------------------- | --------------------- |
+| Pendiente | 0         | Esperando aprobación | ✅ SÍ                         | ❌ NO                 |
+| Aprobada  | 1         | Publicada y activa   | ✅ SÍ                         | ✅ SÍ                 |
+| Eliminada | -         | Registro borrado     | ❌ NO                         | ❌ NO                 |
 
 ### **Interfaz de Usuario**
+
 ```javascript
 // ✅ Badge de estado correcto (ManageExperiencesPage.jsx)
 const getStatusBadge = (isActive) => {
-  const status = isActive ? 'Aprobada' : 'Pendiente';
-  const color = isActive ? '#28a745' : '#ffc107';
+  const status = isActive ? "Aprobada" : "Pendiente";
+  const color = isActive ? "#28a745" : "#ffc107";
   // ...
 };
 ```
@@ -163,6 +172,7 @@ const getStatusBadge = (isActive) => {
 ## 🧪 **TESTING**
 
 ### **Flujo de Prueba Completo**
+
 1. **Crear experiencia** → Estado: Pendiente (is_active = 0)
 2. **Ver en "Mis Experiencias"** → ✅ Aparece con badge "Pendiente"
 3. **Admin aprueba** → Estado: Aprobada (is_active = 1)
@@ -177,21 +187,25 @@ const getStatusBadge = (isActive) => {
 ## ✅ **BENEFICIOS DE LA IMPLEMENTACIÓN**
 
 ### **1. Claridad de Estados**
+
 - `is_active = 0` claramente significa "pendiente de aprobación"
 - `is_active = 1` claramente significa "aprobado para público"
 - Eliminación es definitiva y clara
 
 ### **2. Gestión Completa para Operadores**
+
 - Ven todas sus experiencias (pendientes y aprobadas)
 - Estado visual claro con badges
 - Eliminación real sin confusión
 
 ### **3. Seguridad de Datos**
+
 - Hard delete previene acumulación de registros "fantasma"
 - Validación de permisos antes de eliminar
 - Integridad referencial mantenida
 
 ### **4. Experiencia de Usuario Mejorada**
+
 - Flujo lógico y predecible
 - Estados claros y comprensibles
 - Eliminación definitiva como esperan los usuarios
@@ -201,14 +215,17 @@ const getStatusBadge = (isActive) => {
 ## 🔗 **ARCHIVOS MODIFICADOS**
 
 1. **`main/services/ExperienceService.js`**
+
    - ✅ Agregado método `deleteExperience()` con hard delete
    - ✅ Validación de permisos y existencia
 
 2. **`main/controllers/ExperienceController.js`**
+
    - ✅ Modificado `deleteExperience()` para usar hard delete
    - ✅ Actualizado mensaje de respuesta
 
 3. **`main/database/models/ExperienceModel.js`**
+
    - ✅ Ya corregido: `findAllByOperator()` sin filtro is_active
 
 4. **`renderer/src/pages/operator/ManageExperiencesPage.jsx`**
@@ -219,6 +236,7 @@ const getStatusBadge = (isActive) => {
 ## 🏆 **ESTADO FINAL**
 
 ### **✅ COMPLETADO**
+
 - [x] Reglas de negocio implementadas correctamente
 - [x] Hard delete funcional
 - [x] "Mis Experiencias" muestra todas las experiencias
@@ -227,6 +245,7 @@ const getStatusBadge = (isActive) => {
 - [x] Compilación exitosa sin errores
 
 ### **🎯 LISTO PARA TESTING**
+
 La implementación está lista para pruebas completas del flujo:
 **Crear → Aprobar → Visualizar → Eliminar**
 

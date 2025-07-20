@@ -1,8 +1,8 @@
-// filepath: e:\ColombiaRaices\renderer\src\components\experiences\ExperienceCard.jsx
 // Componente de tarjeta para experiencias turísticas
 import React, { useState } from 'react';
 import { EXPERIENCE_TYPES } from '../../utils/constants';
 import { formatCurrency } from '../../utils/helpers';
+import SimpleMap from '../maps/SimpleMap';
 
 const ExperienceCard = ({ experience }) => {
   const [showModal, setShowModal] = useState(false);
@@ -32,16 +32,14 @@ const ExperienceCard = ({ experience }) => {
     if (name.includes('artesanía') || name.includes('arte')) return '🎨';
     if (name.includes('música') || name.includes('danza')) return '🎵';
     return '✨';
-  };
-
-  const experienceTitle = experience.nombre || experience.title;
+  };  const experienceTitle = experience.nombre || experience.title;
   const experienceDescription = experience.descripcion || experience.description;
   const experienceType = experience.tipo || experience.type;
   const experiencePrice = experience.precio || experience.price;
   const experienceLocation = experience.ubicacion || experience.community_name;
   const experienceRegion = experience.community_region;
   const experienceDuration = experience.duracion_horas || experience.duration;
-  const experienceMaxParticipants = experience.max_participants || experience.maxParticipants;  return (
+  const experienceMaxParticipants = experience.max_participants || experience.maxParticipants;return (
     <div style={{
       backgroundColor: 'white',
       borderRadius: '12px',
@@ -106,9 +104,7 @@ const ExperienceCard = ({ experience }) => {
           }}>
             {experienceType}
           </span>
-        </div>
-
-        {/* Descripción */}
+        </div>        {/* Descripción */}
         <p style={{ 
           color: '#666',
           marginBottom: '16px',
@@ -120,7 +116,7 @@ const ExperienceCard = ({ experience }) => {
           overflow: 'hidden'
         }}>
           {experienceDescription}
-        </p>        {/* Información básica */}
+        </p>{/* Información básica */}
         <div style={{ marginBottom: '16px' }}>
           {/* Ubicación y duración */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -134,19 +130,20 @@ const ExperienceCard = ({ experience }) => {
               <span style={{ marginRight: '4px' }}>⏱️</span>
               <span>{experienceDuration}h</span>
             </div>
-          </div>
-
-          {/* Participantes y rating */}
+          </div>          {/* Participantes, rating y mapa */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', color: '#666', fontSize: '0.85rem' }}>
               <span style={{ marginRight: '4px' }}>👥</span>
               <span>Hasta {experienceMaxParticipants || 'N/A'}</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <span style={{ color: '#fbbf24', marginRight: '4px' }}>⭐</span>
-              <span style={{ color: '#666', fontSize: '0.8rem' }}>
-                {experience.rating || '4.5'}
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ color: '#fbbf24', marginRight: '4px' }}>⭐</span>
+                <span style={{ color: '#666', fontSize: '0.8rem' }}>
+                  {experience.rating || '4.5'}
+                </span>
+              </div>
+              <SimpleMap experience={experience} variant="small" />
             </div>
           </div>
         </div>        
@@ -316,18 +313,22 @@ const ExperienceCard = ({ experience }) => {
                 lineHeight: '1.3'
               }}>
                 {experienceTitle}
-              </h2>
-
-              {/* Ubicación */}
+              </h2>              {/* Ubicación */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
+                justifyContent: 'space-between',
                 color: '#666',
                 fontSize: '0.9rem',
                 marginBottom: '16px'
               }}>
-                <span style={{ marginRight: '6px' }}>📍</span>
-                <span>{experienceLocation}{experienceRegion && `, ${experienceRegion}`}</span>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ marginRight: '6px' }}>📍</span>
+                  <span>{experienceLocation}{experienceRegion && `, ${experienceRegion}`}</span>
+                </div>                <SimpleMap 
+                  experience={experience}
+                  variant="button"
+                />
               </div>
 
               {/* Descripción */}
@@ -397,7 +398,11 @@ const ExperienceCard = ({ experience }) => {
                 }}>
                   Ofrecida por <strong>{experienceLocation}</strong>
                 </div>
-              </div>
+              </div>              {/* Botón de mapa */}
+              <SimpleMap
+                experience={experience}
+                variant="button"
+              />
 
               {/* Botón de reserva */}
               <button
@@ -411,7 +416,8 @@ const ExperienceCard = ({ experience }) => {
                   fontWeight: '600',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
-                  width: '100%'
+                  width: '100%',
+                  marginTop: '8px'
                 }}
                 onMouseOver={(e) => {
                   e.target.style.backgroundColor = '#059669';

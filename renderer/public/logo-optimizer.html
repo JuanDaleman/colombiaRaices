@@ -71,32 +71,45 @@
         }
     </style>
 </head>
-<body>
-    <div class="container">
+<body>    <div class="container">
         <h1 style="text-align: center; color: #03222b;">🛠️ Optimizador de Logo Colombia Raíces</h1>
         
         <div id="status" class="status" style="display: none;"></div>
         
         <div class="logo-preview">
             <div class="logo-size">
-                <h3>Pequeño (64x64)</h3>
-                <img id="logo-small" alt="Logo pequeño" width="64" height="64">
+                <h3>Icono 16x16</h3>
+                <img id="logo-16" alt="Icono pequeño" width="16" height="16">
                 <br>
-                <button class="download-btn" onclick="downloadLogo('small', 64)">Descargar</button>
+                <button class="download-btn" onclick="downloadLogo('16', 16)">Descargar ICO</button>
             </div>
             
             <div class="logo-size">
-                <h3>Mediano (128x128)</h3>
-                <img id="logo-medium" alt="Logo mediano" width="128" height="128">
+                <h3>Icono 32x32</h3>
+                <img id="logo-32" alt="Icono mediano" width="32" height="32">
                 <br>
-                <button class="download-btn" onclick="downloadLogo('medium', 128)">Descargar</button>
+                <button class="download-btn" onclick="downloadLogo('32', 32)">Descargar ICO</button>
             </div>
             
             <div class="logo-size">
-                <h3>Grande (256x256)</h3>
-                <img id="logo-large" alt="Logo grande" width="256" height="256">
+                <h3>Icono 64x64</h3>
+                <img id="logo-64" alt="Logo pequeño" width="64" height="64">
                 <br>
-                <button class="download-btn" onclick="downloadLogo('large', 256)">Descargar</button>
+                <button class="download-btn" onclick="downloadLogo('64', 64)">Descargar PNG</button>
+            </div>
+            
+            <div class="logo-size">
+                <h3>Icono 128x128</h3>
+                <img id="logo-128" alt="Logo mediano" width="128" height="128">
+                <br>
+                <button class="download-btn" onclick="downloadLogo('128', 128)">Descargar PNG</button>
+            </div>
+            
+            <div class="logo-size">
+                <h3>Icono 256x256</h3>
+                <img id="logo-256" alt="Logo grande" width="256" height="256">
+                <br>
+                <button class="download-btn" onclick="downloadLogo('256', 256)">Descargar PNG</button>
             </div>
         </div>
         
@@ -108,14 +121,14 @@
                 🔄 Procesar Logo
             </button>
         </div>
-        
-        <div style="margin-top: 30px;">
-            <h3>Instrucciones:</h3>
+          <div style="margin-top: 30px;">
+            <h3>Instrucciones para Iconos de App:</h3>
             <ol>
                 <li>Haz clic en "Procesar Logo" para optimizar el logo</li>
-                <li>Descarga la versión "Pequeño (64x64)" para uso en la esquina</li>
-                <li>Guarda el archivo como <code>LogoColombiaRaicesCircular_small.png</code></li>
-                <li>Actualiza el código para usar la versión optimizada</li>
+                <li>Descarga todos los tamaños de iconos (16x16, 32x32, 64x64, 128x128, 256x256)</li>
+                <li>Guarda los archivos en la carpeta <code>assets/icons/</code></li>
+                <li>Renombra el archivo de 256x256 como <code>icon.png</code></li>
+                <li>Los iconos pequeños (16x16, 32x32) úsalos para favicon y taskbar</li>
             </ol>
         </div>
     </div>
@@ -128,9 +141,7 @@
             status.className = `status ${type}`;
             status.textContent = message;
             status.style.display = 'block';
-        }
-
-        function processLogo() {
+        }        function processLogo() {
             showStatus('🔄 Procesando logo...', 'success');
             
             const img = new Image();
@@ -139,17 +150,28 @@
             img.onload = function() {
                 showStatus('✅ Logo procesado exitosamente', 'success');
                 
-                // Crear versiones optimizadas
-                createOptimizedVersion(img, 64, 'logo-small');
-                createOptimizedVersion(img, 128, 'logo-medium');
-                createOptimizedVersion(img, 256, 'logo-large');
+                // Crear versiones optimizadas para iconos de app
+                createOptimizedVersion(img, 16, 'logo-16');
+                createOptimizedVersion(img, 32, 'logo-32');
+                createOptimizedVersion(img, 64, 'logo-64');
+                createOptimizedVersion(img, 128, 'logo-128');
+                createOptimizedVersion(img, 256, 'logo-256');
             };
             
             img.onerror = function() {
                 showStatus('❌ Error cargando el logo. Verifica que esté en la ruta correcta.', 'error');
             };
             
-            img.src = '/images/LogoColombiaRaicesCircular.png';
+            // Intentar cargar el logo circular primero, luego el logo sin fondo
+            img.src = './images/LogoColombiaRaicesCircular.png';
+            
+            img.onerror = function() {
+                // Si falla el circular, intentar con el logo sin fondo
+                img.src = './images/LogoColombiaRaicesNoFondo.png';
+                img.onerror = function() {
+                    showStatus('❌ No se pudo cargar ningún logo. Verifica las rutas.', 'error');
+                };
+            };
         }
 
         function createOptimizedVersion(sourceImg, size, targetId) {
@@ -172,9 +194,7 @@
             const targetImg = document.getElementById(targetId);
             targetImg.src = optimizedDataURL;
             targetImg.dataset.dataUrl = optimizedDataURL;
-        }
-
-        function downloadLogo(sizeName, size) {
+        }        function downloadLogo(sizeName, size) {
             const img = document.getElementById(`logo-${sizeName}`);
             const dataUrl = img.dataset.dataUrl;
             
@@ -183,13 +203,17 @@
                 return;
             }
             
-            // Crear enlace de descarga
+            // Crear enlace de descarga con nombres específicos para iconos
             const link = document.createElement('a');
-            link.download = `LogoColombiaRaicesCircular_${sizeName}.png`;
+            if (sizeName === '256') {
+                link.download = 'icon.png';  // Icono principal para Electron
+            } else {
+                link.download = `icon-${sizeName}x${sizeName}.png`;
+            }
             link.href = dataUrl;
             link.click();
             
-            showStatus(`📥 Descargando logo ${sizeName} (${size}x${size})`, 'success');
+            showStatus(`📥 Descargando icono ${sizeName}x${sizeName}`, 'success');
         }
 
         // Procesar automáticamente al cargar la página

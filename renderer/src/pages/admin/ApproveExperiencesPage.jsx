@@ -2,17 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TravelerHeader from '../../components/traveler/TravelerHeader';
 import { ROUTES } from '../../utils/constants';
+import useApproval from '../../hooks/useApproval';
+import { 
+  formatApprovalStatus, 
+  generateApprovalStats, 
+  extractExperienceSummary 
+} from '../../utils/approval';
 
 const ApproveExperiencesPage = () => {
   const navigate = useNavigate();
   const [pendingExperiences, setPendingExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [stats, setStats] = useState(null);
+  
+  // Hook personalizado para aprobaciones
+  const { 
+    approveExperience, 
+    rejectExperience, 
+    isProcessing, 
+    validateAdminPermissions 
+  } = useApproval();
 
   useEffect(() => {
+    // Verificar permisos al cargar
+    if (!validateAdminPermissions()) {
+      setError('No tienes permisos de administrador para acceder a esta página');
+      return;
+    }
+    
     loadPendingExperiences();
-  }, []);
-  const loadPendingExperiences = async () => {
+  }, []);  const loadPendingExperiences = async () => {
     setLoading(true);
     setError(null);
     
@@ -22,8 +42,14 @@ const ApproveExperiencesPage = () => {
         const result = await window.electronAPI.experiences.getPending();
         
         if (result.success) {
-          setPendingExperiences(result.experiences || []);
-          console.log('Experiencias pendientes cargadas:', result.experiences?.length || 0);
+          const experiences = result.experiences || [];
+          setPendingExperiences(experiences);
+          
+          // Generar estadísticas
+          const approvalStats = generateApprovalStats(experiences);
+          setStats(approvalStats);
+          
+          console.log('Experiencias pendientes cargadas:', experiences.length);
         } else {
           throw new Error(result.error || 'Error al cargar experiencias pendientes');
         }
@@ -31,6 +57,7 @@ const ApproveExperiencesPage = () => {
         // Fallback para desarrollo
         console.warn('ElectronAPI no disponible, usando datos mock');
         setPendingExperiences([]);
+        setStats(generateApprovalStats([]));
       }
     } catch (error) {
       console.error('Error cargando experiencias pendientes:', error);
@@ -39,70 +66,34 @@ const ApproveExperiencesPage = () => {
       setLoading(false);
     }
   };
-
-  const handleApprove = async (experienceId) => {
-    const confirmApprove = window.confirm('¿Estás seguro de que quieres aprobar esta experiencia?');
-    
-    if (!confirmApprove) return;
-
-    try {
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      
-      if (window.electronAPI && window.electronAPI.experiences) {
-        const result = await window.electronAPI.experiences.update({
-          experienceId,
-          updateData: { is_active: 1 }, // Aprobar = is_active = 1
-          operatorId: userData.id,
-          isAdmin: true // Importante: marcar como admin
-        });
-        
-        if (result.success) {
-          alert('✅ Experiencia aprobada exitosamente');
-          // Recargar la lista
-          loadPendingExperiences();
-        } else {
-          throw new Error(result.error || 'Error al aprobar experiencia');
-        }
-      } else {
-        console.warn('ElectronAPI no disponible, simulando aprobación');
-        alert('Experiencia aprobada (modo desarrollo)');
+  const handleApprove = async (experience) => {
+    const result = await approveExperience(experience, 
+      // onSuccess
+      () => {
+        loadPendingExperiences(); // Recargar lista
+      },
+      // onError  
+      (error) => {
+        console.error('Error en aprobación:', error);
       }
-    } catch (error) {
-      console.error('Error aprobando experiencia:', error);
-      alert(`Error al aprobar experiencia: ${error.message}`);
-    }
+    );
+    
+    return result;
   };
 
-  const handleReject = async (experienceId) => {
-    const confirmReject = window.confirm('¿Estás seguro de que quieres rechazar y eliminar esta experiencia?\n\nEsta acción no se puede deshacer.');
-    
-    if (!confirmReject) return;
-
-    try {
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      
-      if (window.electronAPI && window.electronAPI.experiences) {
-        const result = await window.electronAPI.experiences.delete({
-          experienceId,
-          operatorId: userData.id,
-          isAdmin: true // Importante: marcar como admin
-        });
-        
-        if (result.success) {
-          alert('❌ Experiencia rechazada y eliminada');
-          // Recargar la lista
-          loadPendingExperiences();
-        } else {
-          throw new Error(result.error || 'Error al rechazar experiencia');
-        }
-      } else {
-        console.warn('ElectronAPI no disponible, simulando rechazo');
-        alert('Experiencia rechazada (modo desarrollo)');
+  const handleReject = async (experience) => {
+    const result = await rejectExperience(experience,
+      // onSuccess
+      () => {
+        loadPendingExperiences(); // Recargar lista
+      },
+      // onError
+      (error) => {
+        console.error('Error en rechazo:', error);
       }
-    } catch (error) {
-      console.error('Error rechazando experiencia:', error);
-      alert(`Error al rechazar experiencia: ${error.message}`);
-    }
+    );
+    
+    return result;
   };
 
   if (loading) {
@@ -171,6 +162,76 @@ const ApproveExperiencesPage = () => {
           }}>
             Revisa y aprueba las experiencias enviadas por los operadores
           </p>
+
+          {/* Estadísticas de aprobación */}
+          {stats && stats.total > 0 && (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '15px',
+              marginBottom: '20px'
+            }}>
+              <div style={{
+                backgroundColor: '#e7f3ff',
+                padding: '15px',
+                borderRadius: '8px',
+                textAlign: 'center',
+                border: '1px solid #b3d7ff'
+              }}>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#0066cc' }}>
+                  {stats.total}
+                </div>
+                <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                  Experiencias Pendientes
+                </div>
+              </div>
+              
+              <div style={{
+                backgroundColor: '#f0f9ff',
+                padding: '15px',
+                borderRadius: '8px',
+                textAlign: 'center',
+                border: '1px solid #bfdbfe'
+              }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#0369a1' }}>
+                  ${stats.averagePrice?.toLocaleString()} COP
+                </div>
+                <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                  Precio Promedio
+                </div>
+              </div>
+              
+              <div style={{
+                backgroundColor: '#f0fdf4',
+                padding: '15px',
+                borderRadius: '8px',
+                textAlign: 'center',
+                border: '1px solid #bbf7d0'
+              }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#059669' }}>
+                  {Object.keys(stats.byType).length}
+                </div>
+                <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                  Tipos de Experiencia
+                </div>
+              </div>
+              
+              <div style={{
+                backgroundColor: '#fffbeb',
+                padding: '15px',
+                borderRadius: '8px',
+                textAlign: 'center',
+                border: '1px solid #fde68a'
+              }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#d97706' }}>
+                  {Object.keys(stats.byOperator).length}
+                </div>
+                <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                  Operadores Únicos
+                </div>
+              </div>
+            </div>
+          )}
 
           {error && (
             <div style={{
@@ -373,53 +434,62 @@ const ApproveExperiencesPage = () => {
                     <div style={{
                       display: 'flex',
                       gap: '10px'
-                    }}>
-                      <button
-                        onClick={() => handleApprove(experience.id)}
+                    }}>                      <button
+                        onClick={() => handleApprove(experience)}
+                        disabled={isProcessing}
                         style={{
                           flex: 1,
                           padding: '12px',
-                          backgroundColor: '#28a745',
+                          backgroundColor: isProcessing ? '#6c757d' : '#28a745',
                           color: 'white',
                           border: 'none',
                           borderRadius: '5px',
                           fontSize: '0.9rem',
                           fontWeight: 'bold',
-                          cursor: 'pointer',
+                          cursor: isProcessing ? 'not-allowed' : 'pointer',
                           transition: 'background-color 0.2s'
                         }}
                         onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = '#218838';
+                          if (!isProcessing) {
+                            e.target.style.backgroundColor = '#218838';
+                          }
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = '#28a745';
+                          if (!isProcessing) {
+                            e.target.style.backgroundColor = '#28a745';
+                          }
                         }}
                       >
-                        ✅ Aprobar
+                        {isProcessing ? '⏳ Procesando...' : '✅ Aprobar'}
                       </button>
                       
                       <button
-                        onClick={() => handleReject(experience.id)}
+                        onClick={() => handleReject(experience)}
+                        disabled={isProcessing}
                         style={{
                           flex: 1,
                           padding: '12px',
-                          backgroundColor: '#dc3545',
+                          backgroundColor: isProcessing ? '#6c757d' : '#dc3545',
                           color: 'white',
                           border: 'none',
                           borderRadius: '5px',
                           fontSize: '0.9rem',
                           fontWeight: 'bold',
-                          cursor: 'pointer',
+                          cursor: isProcessing ? 'not-allowed' : 'pointer',
                           transition: 'background-color 0.2s'
                         }}
                         onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = '#c82333';
+                          if (!isProcessing) {
+                            e.target.style.backgroundColor = '#c82333';
+                          }
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = '#dc3545';
+                          if (!isProcessing) {
+                            e.target.style.backgroundColor = '#dc3545';
+                          }
                         }}
                       >
-                        ❌ Rechazar
+                        {isProcessing ? '⏳ Procesando...' : '❌ Rechazar'}
                       </button>
                     </div>
                   </div>

@@ -118,10 +118,11 @@ class ReservationModel extends BaseModel {
     `;
     
     return await this.db.all(sql, [days]);
-  }
-
-  // Verificar disponibilidad
+  }  // Verificar disponibilidad
   async checkAvailability(experienceId, date, participants) {
+    // Ensure date is in consistent format (YYYY-MM-DD)
+    const dateStr = date instanceof Date ? date.toISOString().split('T')[0] : date;
+    
     const sql = `
       SELECT e.max_participants,
              COALESCE(SUM(r.participants), 0) as reserved_participants
@@ -133,7 +134,7 @@ class ReservationModel extends BaseModel {
       GROUP BY e.id
     `;
     
-    const result = await this.db.get(sql, [date, experienceId]);
+    const result = await this.db.get(sql, [dateStr, experienceId]);
     
     if (!result) {
       return { available: false, reason: 'Experience not found' };
@@ -199,7 +200,6 @@ class ReservationModel extends BaseModel {
       totalRevenue: revenue.total_revenue || 0
     };
   }
-
   // Obtener reservas por mes
   async getMonthlyStats(year) {
     const sql = `
@@ -214,6 +214,34 @@ class ReservationModel extends BaseModel {
     `;
     
     return await this.db.all(sql, [year.toString()]);
+  }
+
+  // Obtener estadísticas generales del sistema
+  async getStats() {
+    const sql = `
+      SELECT 
+        COUNT(*) as total_reservations,
+        COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_reservations,
+        COUNT(CASE WHEN status = 'confirmed' THEN 1 END) as confirmed_reservations,
+        COUNT(CASE WHEN status = 'cancelled' THEN 1 END) as cancelled_reservations,
+        COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_reservations,
+        COALESCE(SUM(total_price), 0) as total_revenue,
+        COALESCE(AVG(total_price), 0) as average_reservation_value,
+        COALESCE(SUM(participants), 0) as total_participants
+      FROM ${this.tableName}
+    `;
+    
+    const result = await this.db.get(sql);
+    return result || {
+      total_reservations: 0,
+      pending_reservations: 0,
+      confirmed_reservations: 0,
+      cancelled_reservations: 0,
+      completed_reservations: 0,
+      total_revenue: 0,
+      average_reservation_value: 0,
+      total_participants: 0
+    };
   }
 }
 

@@ -27,15 +27,7 @@
     "icons:replace": "bash scripts/replace-emojis.sh",
     "build:desktop": "cd renderer && npx webpack --config webpack.config.js --mode production",
     "copy:assets": "mkdir -p renderer/dist/images && cp renderer/public/images/*.png renderer/dist/images/",
-    "desktop:prepare": "npm run copy:assets && npm run build:desktop",
-    "desktop:run": "npm run desktop:prepare && npm start"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/tests/**/*.test.js"
-    ],
-    "verbose": true
+    "desktop:prepare": "npm run copy:assets && npm run build:desktop",    "desktop:run": "npm run desktop:prepare && npm start"
   },
   "keywords": [
     "turismo",

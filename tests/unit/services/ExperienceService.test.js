@@ -283,7 +283,6 @@ describe('ExperienceService', () => {
   // ============================================
   // 5. TESTS DE TRANSFORMACIÓN DE DATOS
   // ============================================
-
   describe('formatExperienceForResponse', () => {
     it('should format experience data correctly', () => {
       const rawExperience = {
@@ -300,7 +299,11 @@ describe('ExperienceService', () => {
         community_region: 'Santander',
         created_at: '2024-01-01T00:00:00.000Z',
         updated_at: '2024-01-01T00:00:00.000Z',
-        is_active: 1
+        is_active: 1,
+        image_url: null,
+        specific_location: null,
+        latitude: null,
+        longitude: null
       };
 
       const result = experienceService.formatExperienceForResponse(rawExperience);
@@ -313,13 +316,21 @@ describe('ExperienceService', () => {
         price: 150000,
         duration: 8,
         maxParticipants: 12,
+        imageUrl: null,
+        location: 'Barichara, Santander',
+        specificLocation: null,
+        latitude: null,
+        longitude: null,
         community: {
           id: 1,
           name: 'Barichara',
           region: 'Santander'
         },
         operatorId: 1,
-        isActive: true
+        isActive: true,
+        status: 'approved',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z'
       });
     });
   });

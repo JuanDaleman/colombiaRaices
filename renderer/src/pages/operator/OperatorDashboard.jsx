@@ -141,7 +141,7 @@ const OperatorDashboard = () => {
             Actualiza tu información personal y contraseña
           </p>          <button 
             style={buttonStyle}
-            onClick={() => navigate(ROUTES.PROFILE)}
+            onClick={() => navigate(ROUTES.OPERATOR_PROFILE)}
             onMouseOver={(e) => e.target.style.backgroundColor = '#f2c832'}
             onMouseOut={(e) => e.target.style.backgroundColor = COLORS.primary}
           >

@@ -12,9 +12,14 @@ export const ROUTES = {
   PUBLISH_EXPERIENCE: '/publish-experience',
   MANAGE_EXPERIENCES: '/manage-experiences',
   EDIT_EXPERIENCE: '/edit-experience',
-  OPERATOR_RESERVATIONS: '/operator-reservations',
+  OPERATOR_RESERVATIONS: '/operator-reservations',  ADMIN_DASHBOARD: '/admin-dashboard',
+  APPROVE_EXPERIENCES: '/approve-experiences',
   PROFILE: '/profile',
+  OPERATOR_PROFILE: '/operator-profile',
   COMMUNITY_PROFILE: '/community-profile',
+  // Rutas específicas de reservas
+  MAKE_RESERVATION: '/make-reservation',
+  RESERVATION_HISTORY: '/reservation-history',
 };
 
 export const USER_TYPES = {

@@ -151,14 +151,13 @@ describe('AuthService', () => {
       expect(token1).not.toBe(token2);
     });
   });
-
   describe('validateUserData', () => {
     it('should validate complete user data', () => {
       const userData = {
         name: 'Juan Pérez',
         email: 'juan@colombia.com',
         password: 'Colombia123!',
-        role: 'traveler'
+        userType: 'viajero'
       };
       
       const result = authService.validateUserData(userData);
