@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
-// Importar páginas
+// Importar páginas principales
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ExperiencesPage from './pages/ExperiencesPage';
@@ -15,8 +15,18 @@ import ManageExperiencesPage from './pages/operator/ManageExperiencesPage';
 import EditExperiencePage from './pages/operator/EditExperiencePage';
 import OperatorReservationsPage from './pages/operator/OperatorReservationsPage';
 
+// Importar páginas de admin
+import AdminDashboard from './pages/admin/AdminDashboard';
+import ApproveExperiencesPage from './pages/admin/ApproveExperiencesPage';
+
+// Importar páginas de reservas directamente (temporalmente sin lazy loading)
+import MakeReservationPage from './pages/traveler/MakeReservationPage';
+import ReservationHistoryPage from './pages/traveler/ReservationHistoryPage';
+
 // Importar constantes centralizadas
 import { ROUTES } from './utils/constants';
+import LazyLoadingSpinner from './components/common/LazyLoadingSpinner';
+import ReservationErrorBoundary from './components/reservations/ReservationErrorBoundary';
 
 // Función global para navegar a home y hacer scroll a sección
 const navigateAndScroll = (navigate, sectionId) => {
@@ -1080,7 +1090,12 @@ const ConditionalNavigation = () => {
     ROUTES.OPERATOR_RESERVATIONS,
     ROUTES.EXPERIENCES,
     ROUTES.COMMUNITIES,
-    ROUTES.RESERVATIONS
+    ROUTES.RESERVATIONS,
+    ROUTES.MAKE_RESERVATION,
+    ROUTES.RESERVATION_HISTORY,
+    // Rutas de admin
+    ROUTES.ADMIN_DASHBOARD,
+    ROUTES.APPROVE_EXPERIENCES
   ];
   
   // Para HashRouter, verificar tanto pathname como hash
@@ -1109,14 +1124,24 @@ function App() {  return (
         <main><Routes>
             <Route path={ROUTES.HOME} element={<HomePage />} />
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-            <Route path={ROUTES.REGISTER} element={<RegisterPage />} />            <Route path={ROUTES.EXPERIENCES} element={<ExperiencesPage />} />
+            <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+              <Route path={ROUTES.EXPERIENCES} element={<ExperiencesPage />} />
             <Route path={ROUTES.COMMUNITIES} element={<CommunitiesPage />} />
-            <Route path={ROUTES.RESERVATIONS} element={<ReservationsPage />} />            <Route path={ROUTES.DASHBOARD} element={<UnderConstructionPage pageName="Dashboard" />} />            <Route path={ROUTES.TRAVELER_DASHBOARD} element={<TravelerDashboard />} />
+            <Route path={ROUTES.RESERVATIONS} element={<ReservationsPage />} />            {/* Rutas específicas de reservas con lazy loading y error boundary */}            <Route path={ROUTES.MAKE_RESERVATION} element={<MakeReservationPage />} />
+            <Route path={ROUTES.RESERVATION_HISTORY} element={<ReservationHistoryPage />} />
+            
+            <Route path={ROUTES.DASHBOARD} element={<UnderConstructionPage pageName="Dashboard" />} />
+            
+            <Route path={ROUTES.TRAVELER_DASHBOARD} element={<TravelerDashboard />} />
             <Route path={ROUTES.OPERATOR_DASHBOARD} element={<OperatorDashboard />} />
             <Route path={ROUTES.PUBLISH_EXPERIENCE} element={<PublishExperiencePage />} />
             <Route path={ROUTES.MANAGE_EXPERIENCES} element={<ManageExperiencesPage />} />
             <Route path={`${ROUTES.EDIT_EXPERIENCE}/:experienceId`} element={<EditExperiencePage />} />
             <Route path={ROUTES.OPERATOR_RESERVATIONS} element={<OperatorReservationsPage />} />
+            
+            {/* Rutas de admin */}
+            <Route path={ROUTES.ADMIN_DASHBOARD} element={<AdminDashboard />} />
+            <Route path={ROUTES.APPROVE_EXPERIENCES} element={<ApproveExperiencesPage />} />
           </Routes>
         </main>
       </div>
