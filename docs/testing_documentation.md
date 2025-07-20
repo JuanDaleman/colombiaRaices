@@ -10,15 +10,15 @@ El proyecto Colombia Raíces implementa una **estrategia de testing robusta** ba
 
 ### 🎯 Métricas Generales
 
-| Métrica | Valor |
-|---------|-------|
-| **Total de archivos de test** | 16 archivos |
-| **Pruebas unitarias** | 10 archivos |
-| **Pruebas de integración** | 4 archivos |
-| **Archivos de helpers** | 2 archivos |
+| Métrica                          | Valor                     |
+| -------------------------------- | ------------------------- |
+| **Total de archivos de test**    | 16 archivos               |
+| **Pruebas unitarias**            | 10 archivos               |
+| **Pruebas de integración**       | 4 archivos                |
+| **Archivos de helpers**          | 2 archivos                |
 | **Cobertura mínima configurada** | 70% en todas las métricas |
-| **Timeout de pruebas** | 10,000ms |
-| **Framework principal** | Jest |
+| **Timeout de pruebas**           | 10,000ms                  |
+| **Framework principal**          | Jest                      |
 
 ---
 
@@ -55,22 +55,23 @@ tests/
 
 ```javascript
 module.exports = {
-  testEnvironment: 'node',
-  testMatch: ['**/tests/**/*.test.js'],
-  setupFilesAfterEnv: ['<rootDir>/tests/helpers/testSetup.js'],
-  collectCoverageFrom: ['main/**/*.js'],
+  testEnvironment: "node",
+  testMatch: ["**/tests/**/*.test.js"],
+  setupFilesAfterEnv: ["<rootDir>/tests/helpers/testSetup.js"],
+  collectCoverageFrom: ["main/**/*.js"],
   coverageThreshold: {
-    global: { branches: 70, functions: 70, lines: 70, statements: 70 }
+    global: { branches: 70, functions: 70, lines: 70, statements: 70 },
   },
-  testTimeout: 10000
-}
+  testTimeout: 10000,
+};
 ```
 
 ### Base de Datos de Testing
 
 **Archivo:** `tests/helpers/testDatabase.js`
+
 - **Propósito**: Simula SQLite en memoria para tests
-- **Características**: 
+- **Características**:
   - Tablas completas (users, communities, experiences, reservations)
   - Datos de prueba realistas
   - Limpieza automática entre tests
@@ -85,9 +86,11 @@ module.exports = {
 ### 1.1 Controllers (1 archivo)
 
 #### `tests/unit/controllers/ReservationController.test.js`
+
 **Propósito**: Validación de la API de reservas
 
 **Cobertura**:
+
 - ✅ Instanciación del controlador
 - ✅ Validación de datos de reserva
 - ✅ Cálculo de precios de servicios adicionales
@@ -96,9 +99,13 @@ module.exports = {
 - ✅ Estructuras de respuesta consistentes
 
 **Casos de prueba destacados**:
+
 ```javascript
-test('should calculate service price and return success structure', async () => {
-  const result = await reservationController.calculateServicePrice('guide', 100000);
+test("should calculate service price and return success structure", async () => {
+  const result = await reservationController.calculateServicePrice(
+    "guide",
+    100000
+  );
   expect(result.success).toBe(true);
   expect(result.price).toBe(20000); // 20% del precio base
 });
@@ -107,10 +114,12 @@ test('should calculate service price and return success structure', async () => 
 ### 1.2 Services (4 archivos)
 
 #### `tests/unit/services/ReservationService.test.js`
+
 **Enfoque TDD**: Tests escritos ANTES de implementar el servicio
 **Propósito**: Lógica de negocio de reservas
 
 **Funcionalidades probadas**:
+
 - 🔹 **Validación de datos** (campos requeridos, tipos, rangos)
 - 🔹 **Disponibilidad** (capacidad, fechas, conflictos)
 - 🔹 **Cálculos de precio** (base, servicios, descuentos)
@@ -121,16 +130,17 @@ test('should calculate service price and return success structure', async () => 
 - 🔹 **Consultas complejas** (por usuario, por experiencia, estadísticas)
 
 **Ejemplo de test TDD**:
+
 ```javascript
-describe('validateReservationData - TDD RED Phase', () => {
-  it('should validate required fields correctly', () => {
+describe("validateReservationData - TDD RED Phase", () => {
+  it("should validate required fields correctly", () => {
     const validData = {
       experience_id: 1,
       user_id: 1,
-      reservation_date: '2025-08-15',
-      participants: 2
+      reservation_date: "2025-08-15",
+      participants: 2,
     };
-    
+
     const result = reservationService.validateReservationData(validData);
     expect(result.isValid).toBe(true);
   });
@@ -138,9 +148,11 @@ describe('validateReservationData - TDD RED Phase', () => {
 ```
 
 #### `tests/unit/services/ExperienceService.test.js`
+
 **Propósito**: Lógica de experiencias turísticas
 
 **Funcionalidades clave**:
+
 - ✅ Validación de datos de experiencia (título, descripción, precio, duración)
 - ✅ Filtros de búsqueda (precio, duración, tipo, región)
 - ✅ Cálculos de disponibilidad
@@ -148,23 +160,30 @@ describe('validateReservationData - TDD RED Phase', () => {
 - ✅ Formateo de respuestas
 
 #### `tests/unit/services/ExperienceService.basic.test.js`
+
 **Propósito**: Tests básicos de funcionalidad esencial
 
 **Casos simples**:
+
 ```javascript
-test('should calculate total price correctly', () => {
+test("should calculate total price correctly", () => {
   const experience = { price: 100000 };
   const participants = 3;
-  
-  const result = experienceService.calculateTotalPrice(experience, participants);
+
+  const result = experienceService.calculateTotalPrice(
+    experience,
+    participants
+  );
   expect(result).toBe(300000);
 });
 ```
 
 #### `tests/unit/services/AuthService.test.js`
+
 **Propósito**: Validación de autenticación y contraseñas
 
 **Validaciones implementadas**:
+
 - 🔐 **Longitud mínima**: 8 caracteres
 - 🔐 **Complejidad**: Mayúsculas, minúsculas, números, símbolos
 - 🔐 **Hash de contraseñas**: bcrypt con salt rounds
@@ -173,9 +192,11 @@ test('should calculate total price correctly', () => {
 ### 1.3 Hooks React (1 archivo)
 
 #### `tests/unit/hooks/useApproval.test.js`
+
 **Propósito**: Hook para aprobación de experiencias por administradores
 
 **Funcionalidades avanzadas**:
+
 - 🎛️ **Estados de procesamiento** (loading, success, error)
 - 🎛️ **Validación de permisos** de administrador
 - 🎛️ **Confirmaciones de usuario** (aprobar/rechazar)
@@ -185,15 +206,16 @@ test('should calculate total price correctly', () => {
 - 🎛️ **Integración con localStorage** para persistencia
 
 **Test de flujo completo**:
+
 ```javascript
-test('debe aprobar experiencia exitosamente', async () => {
+test("debe aprobar experiencia exitosamente", async () => {
   window.confirm.mockReturnValue(true);
   mockElectronAPI.experiences.update.mockResolvedValue({
-    success: true
+    success: true,
   });
-  
+
   const result = await hook.approveExperience(mockExperience);
-  
+
   expect(result.success).toBe(true);
   expect(mockElectronAPI.experiences.update).toHaveBeenCalled();
 });
@@ -202,9 +224,11 @@ test('debe aprobar experiencia exitosamente', async () => {
 ### 1.4 Utils (4 archivos)
 
 #### `tests/unit/utils/approval.test.js`
+
 **Propósito**: Utilidades para el sistema de aprobaciones
 
 **Herramientas probadas**:
+
 - 📊 **Formateo de estados** (pendiente, aprobado, rechazado)
 - 📊 **Validación de permisos** de administrador
 - 📊 **Generación de confirmaciones** personalizadas
@@ -214,34 +238,40 @@ test('debe aprobar experiencia exitosamente', async () => {
 - 📊 **Validación de experiencias** para aprobación
 
 #### `tests/unit/utils/AuthObserver.test.js`
+
 **Propósito**: Patrón Observer para eventos de autenticación
 
 **Eventos soportados**:
+
 ```javascript
 const AUTH_EVENTS = {
-  USER_LOGIN: 'user_login',
-  USER_LOGOUT: 'user_logout',
-  USER_REGISTER: 'user_register',
-  PASSWORD_CHANGE: 'password_change',
-  LOGIN_ATTEMPT: 'login_attempt',
-  LOGIN_FAILED: 'login_failed',
-  SESSION_EXPIRED: 'session_expired'
+  USER_LOGIN: "user_login",
+  USER_LOGOUT: "user_logout",
+  USER_REGISTER: "user_register",
+  PASSWORD_CHANGE: "password_change",
+  LOGIN_ATTEMPT: "login_attempt",
+  LOGIN_FAILED: "login_failed",
+  SESSION_EXPIRED: "session_expired",
 };
 ```
 
 **Tests de Observer pattern**:
+
 - 🔄 **Suscripción/Desuscripción** de eventos
 - 🔄 **Notificación múltiple** a observadores
 - 🔄 **Manejo de errores** en callbacks
 - 🔄 **Singleton pattern** para instancia global
 
 #### `tests/unit/utils/approval-simple.test.js`
+
 **Propósito**: Tests simplificados de aprobaciones
 
 #### `tests/unit/utils/basic.test.js`
+
 **Propósito**: Test básico de configuración
+
 ```javascript
-test('basic math test', () => {
+test("basic math test", () => {
   expect(1 + 1).toBe(2);
 });
 ```
@@ -253,21 +283,25 @@ test('basic math test', () => {
 ### 2.1 Sistema de Reservas
 
 #### `tests/integration/reservations_integration.test.js`
+
 **Propósito**: Flujo completo de reservas end-to-end
 
 **Workflows probados**:
 
 1. **Flujo completo de reserva**:
+
    ```
    Validación → Disponibilidad → Estimación → Creación → Confirmación → Detalles
    ```
 
 2. **Gestión de capacidad y disponibilidad**:
+
    - ✅ Límites de capacidad por experiencia
    - ✅ Reservas concurrentes
    - ✅ Validación de fechas
 
 3. **Pricing y servicios complejos**:
+
    - ✅ Escenarios de precios múltiples
    - ✅ Combinaciones de servicios
    - ✅ Descuentos por grupo (8+ participantes)
@@ -280,48 +314,61 @@ test('basic math test', () => {
    - ✅ Usuarios no existentes
 
 **Ejemplo de test de integración**:
+
 ```javascript
-it('should complete full reservation process', async () => {
+it("should complete full reservation process", async () => {
   // Step 1: Validar datos
-  const validation = await reservationController.validateReservationData(reservationData);
+  const validation = await reservationController.validateReservationData(
+    reservationData
+  );
   expect(validation.success).toBe(true);
-  
+
   // Step 2: Verificar disponibilidad
-  const availability = await reservationController.validateAvailability(/*...*/);
+  const availability =
+    await reservationController.validateAvailability(/*...*/);
   expect(availability.availability.isAvailable).toBe(true);
-  
+
   // Step 3: Calcular estimación
-  const estimate = await reservationController.calculateReservationEstimate(/*...*/);
+  const estimate =
+    await reservationController.calculateReservationEstimate(/*...*/);
   expect(estimate.estimate.finalTotal).toBeGreaterThan(0);
-  
+
   // Step 4: Crear reserva
-  const creation = await reservationController.createReservationEstimate(/*...*/);
-  expect(creation.reservation.status).toBe('pending');
-  
+  const creation =
+    await reservationController.createReservationEstimate(/*...*/);
+  expect(creation.reservation.status).toBe("pending");
+
   // Step 5: Confirmar reserva
-  const confirmation = await reservationController.confirmReservation(reservationId);
-  expect(confirmation.reservation.status).toBe('confirmed');
+  const confirmation = await reservationController.confirmReservation(
+    reservationId
+  );
+  expect(confirmation.reservation.status).toBe("confirmed");
 });
 ```
 
 #### `tests/integration/reservations_integration_simplified.test.js`
+
 **Propósito**: Tests de integración simplificados y más rápidos
 
 **Enfoque**:
+
 - 🎯 **Casos básicos** más comunes
 - 🎯 **Validación de APIs** principales
 - 🎯 **Consistencia de datos** entre controlador y servicio
 - 🎯 **Manejo de errores** estándar
 
 #### `tests/integration/reservations_basic_integration.test.js`
+
 **Propósito**: Tests mínimos de integración
 
 ### 2.2 Autenticación E2E
 
 #### `tests/integration/sprint6_auth_test.js`
+
 **Propósito**: Tests end-to-end del sistema de autenticación
 
 **Funcionalidades probadas**:
+
 - 🔐 **Login y registro** de usuarios
 - 🔐 **Navegación entre dashboards** (viajero/operador)
 - 🔐 **Validación de formularios**
@@ -329,15 +376,18 @@ it('should complete full reservation process', async () => {
 - 🔐 **Flujo completo de navegación**
 
 **Test con Playwright/Puppeteer**:
+
 ```javascript
-test('should login operator and redirect to operator dashboard', async ({ page }) => {
+test("should login operator and redirect to operator dashboard", async ({
+  page,
+}) => {
   await page.goto(`${testUrl}/login`);
-  await page.fill('input[name="email"]', 'operador@test.com');
-  await page.fill('input[name="password"]', 'password123');
+  await page.fill('input[name="email"]', "operador@test.com");
+  await page.fill('input[name="password"]', "password123");
   await page.click('button[type="submit"]');
-  
+
   await expect(page).toHaveURL(`${testUrl}/operator-dashboard`);
-  await expect(page.locator('h1')).toContainText('Panel de Operador');
+  await expect(page.locator("h1")).toContainText("Panel de Operador");
 });
 ```
 
@@ -346,9 +396,11 @@ test('should login operator and redirect to operator dashboard', async ({ page }
 ## 3. 🛠️ HELPERS Y CONFIGURACIÓN (2 archivos)
 
 ### 3.1 `tests/helpers/testSetup.js`
+
 **Propósito**: Configuración global de tests
 
 **Características**:
+
 - 🔧 **Base de datos de prueba** en memoria
 - 🔧 **Limpieza automática** entre tests
 - 🔧 **Singleton patching** de Database
@@ -356,9 +408,11 @@ test('should login operator and redirect to operator dashboard', async ({ page }
 - 🔧 **Setup y teardown** globales
 
 ### 3.2 `tests/helpers/testDatabase.js`
+
 **Propósito**: Simulación completa de SQLite
 
 **Funcionalidades**:
+
 - 💾 **Creación de tablas** idénticas a producción
 - 💾 **Inserción de datos** de prueba
 - 💾 **Transacciones aisladas**
@@ -369,6 +423,7 @@ test('should login operator and redirect to operator dashboard', async ({ page }
 ## 📊 CASOS DE USO ESPECÍFICOS PROBADOS
 
 ### Sistema de Precios y Servicios
+
 ```javascript
 // Servicios adicionales con porcentajes exactos
 const servicePercentages = {
@@ -386,24 +441,26 @@ const groupDiscounts = {
 ```
 
 ### Validaciones de Datos
+
 ```javascript
 // Validación completa de reservas
 const validationRules = {
-  experience_id: 'required|integer',
-  user_id: 'required|integer', 
-  reservation_date: 'required|date|future',
-  participants: 'required|integer|min:1|max:100',
-  additional_services: 'array|optional'
+  experience_id: "required|integer",
+  user_id: "required|integer",
+  reservation_date: "required|date|future",
+  participants: "required|integer|min:1|max:100",
+  additional_services: "array|optional",
 };
 ```
 
 ### Estados de Reserva
+
 ```javascript
 const reservationStates = [
-  'pending',    // Reserva creada, esperando confirmación
-  'confirmed',  // Reserva confirmada y pagada  
-  'cancelled',  // Reserva cancelada
-  'completed'   // Experiencia ya realizada
+  "pending", // Reserva creada, esperando confirmación
+  "confirmed", // Reserva confirmada y pagada
+  "cancelled", // Reserva cancelada
+  "completed", // Experiencia ya realizada
 ];
 ```
 
@@ -414,14 +471,16 @@ const reservationStates = [
 ### Red-Green-Refactor Cycle
 
 1. **🔴 RED**: Escribir test que falle
+
 ```javascript
-it('should calculate group discount for 10 participants', () => {
+it("should calculate group discount for 10 participants", () => {
   const result = reservationService.calculateGroupDiscount(10);
   expect(result).toBe(10); // Test falla: método no existe
 });
 ```
 
 2. **🟢 GREEN**: Implementar código mínimo
+
 ```javascript
 calculateGroupDiscount(participants) {
   if (participants >= 10) return 10;
@@ -430,10 +489,11 @@ calculateGroupDiscount(participants) {
 ```
 
 3. **♻️ REFACTOR**: Mejorar implementación
+
 ```javascript
 calculateGroupDiscount(participants) {
   if (participants >= 15) return 15;
-  if (participants >= 8) return 10; 
+  if (participants >= 8) return 10;
   return 0;
 }
 ```
@@ -443,6 +503,7 @@ calculateGroupDiscount(participants) {
 ## 🚀 COMANDOS DE EJECUCIÓN
 
 ### Tests Básicos
+
 ```bash
 npm test                    # Ejecutar todos los tests
 npm run test:unit          # Solo pruebas unitarias
@@ -451,12 +512,14 @@ npm test -- --watch       # Modo watch para desarrollo
 ```
 
 ### Tests con Cobertura
+
 ```bash
 npm test -- --coverage              # Generar reporte de cobertura
 npm test -- --coverage --watchAll   # Cobertura en tiempo real
 ```
 
 ### Tests Específicos
+
 ```bash
 npm test ReservationService         # Solo ReservationService
 npm test -- tests/integration/     # Solo integración
@@ -468,6 +531,7 @@ npm test -- --testPathPattern=unit # Solo unitarios
 ## 📈 MÉTRICAS DE CALIDAD
 
 ### Cobertura Configurada
+
 ```javascript
 coverageThreshold: {
   global: {
@@ -480,6 +544,7 @@ coverageThreshold: {
 ```
 
 ### Performance
+
 - ⚡ **Timeout**: 10 segundos por test
 - ⚡ **Base de datos**: En memoria (SQLite)
 - ⚡ **Paralelización**: Automática con Jest
@@ -490,12 +555,13 @@ coverageThreshold: {
 ## 🔄 PATRÓN OBSERVER DOCUMENTADO
 
 ### Implementación en AuthObserver
+
 ```javascript
 class AuthObserver {
   constructor() {
     this.observers = new Map();
   }
-  
+
   subscribe(event, callback) {
     const id = crypto.randomUUID();
     if (!this.observers.has(event)) {
@@ -504,14 +570,14 @@ class AuthObserver {
     this.observers.get(event).set(id, callback);
     return id;
   }
-  
+
   notify(event, data) {
     if (this.observers.has(event)) {
-      this.observers.get(event).forEach(callback => {
+      this.observers.get(event).forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
-          console.error('Observer callback error:', error);
+          console.error("Observer callback error:", error);
         }
       });
     }
@@ -520,8 +586,9 @@ class AuthObserver {
 ```
 
 **Eventos implementados**:
+
 - `user_login` - Usuario inicia sesión
-- `user_logout` - Usuario cierra sesión  
+- `user_logout` - Usuario cierra sesión
 - `user_register` - Nuevo usuario registrado
 - `password_change` - Cambio de contraseña
 - `login_attempt` - Intento de login
@@ -529,10 +596,11 @@ class AuthObserver {
 - `session_expired` - Sesión expirada
 
 **Usage en tests**:
+
 ```javascript
 const authObserver = getAuthObserver();
 authObserver.subscribe(AUTH_EVENTS.USER_LOGIN, (userData) => {
-  console.log('User logged in:', userData);
+  console.log("User logged in:", userData);
 });
 ```
 
@@ -541,34 +609,37 @@ authObserver.subscribe(AUTH_EVENTS.USER_LOGIN, (userData) => {
 ## 🔧 MOCKING Y STUBBING
 
 ### ElectronAPI Mocking
+
 ```javascript
 const mockElectronAPI = {
   experiences: {
     update: jest.fn(),
     getAll: jest.fn(),
-    getById: jest.fn()
+    getById: jest.fn(),
   },
   reservations: {
     create: jest.fn(),
-    validate: jest.fn()
-  }
+    validate: jest.fn(),
+  },
 };
 
 global.window = { electronAPI: mockElectronAPI };
 ```
 
 ### LocalStorage Mocking
+
 ```javascript
 const localStorageMock = {
   getItem: jest.fn(),
-  setItem: jest.fn(), 
+  setItem: jest.fn(),
   removeItem: jest.fn(),
-  clear: jest.fn()
+  clear: jest.fn(),
 };
 global.localStorage = localStorageMock;
 ```
 
 ### Database Mocking
+
 ```javascript
 // Reemplazar singleton de Database con TestDatabase
 Database.db = testDb.db;
@@ -583,17 +654,20 @@ Database.all = testDb.all.bind(testDb);
 
 ### Fortalezas del Sistema de Testing
 
-1. **📊 Cobertura Completa**: 
+1. **📊 Cobertura Completa**:
+
    - Funcionalidades críticas 100% cubiertas
    - Casos edge contemplados
    - Flujos complejos probados
 
 2. **🏗️ Arquitectura Sólida**:
+
    - TDD desde el diseño
    - Separación clara unit/integration
    - Helpers reutilizables
 
 3. **🔧 Tooling Avanzado**:
+
    - Jest configurado profesionalmente
    - Mocking comprehensivo
    - Base de datos de prueba realista

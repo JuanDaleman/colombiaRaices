@@ -12,54 +12,58 @@ El proyecto implementa **doble Observer Pattern**:
 ## 🎯 EVENTOS DEFINIDOS
 
 ### EventObserver (12 eventos)
+
 ```javascript
 const APP_EVENTS = {
-  USER_LOGIN: 'user:login',
-  USER_LOGOUT: 'user:logout', 
-  USER_REGISTER: 'user:register',
-  EXPERIENCE_CREATED: 'experience:created',
-  RESERVATION_CREATED: 'reservation:created',
-  DATABASE_CONNECTED: 'database:connected',
-  APP_READY: 'app:ready',
+  USER_LOGIN: "user:login",
+  USER_LOGOUT: "user:logout",
+  USER_REGISTER: "user:register",
+  EXPERIENCE_CREATED: "experience:created",
+  RESERVATION_CREATED: "reservation:created",
+  DATABASE_CONNECTED: "database:connected",
+  APP_READY: "app:ready",
   // ... más eventos
 };
 ```
 
 ### AuthObserver (7 eventos)
+
 ```javascript
 const AUTH_EVENTS = {
-  USER_LOGIN: 'user_login',
-  USER_LOGOUT: 'user_logout',
-  USER_REGISTER: 'user_register',
-  PASSWORD_CHANGE: 'password_change',
-  LOGIN_FAILED: 'login_failed',
-  SESSION_EXPIRED: 'session_expired'
+  USER_LOGIN: "user_login",
+  USER_LOGOUT: "user_logout",
+  USER_REGISTER: "user_register",
+  PASSWORD_CHANGE: "password_change",
+  LOGIN_FAILED: "login_failed",
+  SESSION_EXPIRED: "session_expired",
 };
 ```
-    
+
     // Retorna función de cleanup
     return () => this.unsubscribe(event, callback);
-  }
 
-  notify(event, data) {
-    if (this.observers.has(event)) {
-      this.observers.get(event).forEach(callback => {
-        try {
-          callback(data);
-        } catch (error) {
-          console.error(`Error in observer for event ${event}:`, error);
-        }
-      });
-    }
-  }
 }
-```
+
+notify(event, data) {
+if (this.observers.has(event)) {
+this.observers.get(event).forEach(callback => {
+try {
+callback(data);
+} catch (error) {
+console.error(`Error in observer for event ${event}:`, error);
+}
+});
+}
+}
+}
+
+````
 
 ### **2. AuthObserver - Eventos de Autenticación**
 
-**📍 Ubicación:** `main/utils/AuthObserver.js`  
-**🎯 Propósito:** Eventos específicos de autenticación y sesiones  
-**🔧 Implementación:** Singleton Pattern + ID Management  
+**📍 Ubicación:** `main/utils/AuthObserver.js`
+**🎯 Propósito:** Eventos específicos de autenticación y sesiones
+**🔧 Implementación:** Singleton Pattern + ID Management
 
 ```javascript
 class AuthObserver {
@@ -71,10 +75,10 @@ class AuthObserver {
     if (!this.observers.has(eventType)) {
       this.observers.set(eventType, new Map());
     }
-    
+
     const id = observerId || this.generateObserverId();
     this.observers.get(eventType).set(id, callback);
-    
+
     return id; // Permite unsubscribe específico
   }
 
@@ -95,7 +99,7 @@ class AuthObserver {
     return 'observer_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   }
 }
-```
+````
 
 ---
 
@@ -106,26 +110,26 @@ class AuthObserver {
 ```javascript
 const APP_EVENTS = {
   // Eventos de Usuario
-  USER_LOGIN: 'user:login',
-  USER_LOGOUT: 'user:logout', 
-  USER_REGISTER: 'user:register',
-  
+  USER_LOGIN: "user:login",
+  USER_LOGOUT: "user:logout",
+  USER_REGISTER: "user:register",
+
   // Eventos de Experiencias
-  EXPERIENCE_CREATED: 'experience:created',
-  EXPERIENCE_UPDATED: 'experience:updated',
-  EXPERIENCE_DELETED: 'experience:deleted',
-  
+  EXPERIENCE_CREATED: "experience:created",
+  EXPERIENCE_UPDATED: "experience:updated",
+  EXPERIENCE_DELETED: "experience:deleted",
+
   // Eventos de Reservas
-  RESERVATION_CREATED: 'reservation:created',
-  RESERVATION_UPDATED: 'reservation:updated',
-  RESERVATION_CANCELLED: 'reservation:cancelled',
-  
+  RESERVATION_CREATED: "reservation:created",
+  RESERVATION_UPDATED: "reservation:updated",
+  RESERVATION_CANCELLED: "reservation:cancelled",
+
   // Eventos de Sistema
-  DATABASE_CONNECTED: 'database:connected',
-  DATABASE_ERROR: 'database:error',
-  APP_READY: 'app:ready',
-  WINDOW_CLOSED: 'window:closed',
-  COMMUNITY_UPDATED: 'community:updated'
+  DATABASE_CONNECTED: "database:connected",
+  DATABASE_ERROR: "database:error",
+  APP_READY: "app:ready",
+  WINDOW_CLOSED: "window:closed",
+  COMMUNITY_UPDATED: "community:updated",
 };
 ```
 
@@ -133,13 +137,13 @@ const APP_EVENTS = {
 
 ```javascript
 const AUTH_EVENTS = {
-  USER_LOGIN: 'user_login',
-  USER_LOGOUT: 'user_logout',
-  USER_REGISTER: 'user_register',
-  PASSWORD_CHANGE: 'password_change',
-  LOGIN_ATTEMPT: 'login_attempt',
-  LOGIN_FAILED: 'login_failed',
-  SESSION_EXPIRED: 'session_expired'
+  USER_LOGIN: "user_login",
+  USER_LOGOUT: "user_logout",
+  USER_REGISTER: "user_register",
+  PASSWORD_CHANGE: "password_change",
+  LOGIN_ATTEMPT: "login_attempt",
+  LOGIN_FAILED: "login_failed",
+  SESSION_EXPIRED: "session_expired",
 };
 ```
 
@@ -162,23 +166,23 @@ class AuthController {
   async login(email, password) {
     try {
       const user = await this.userModel.authenticate(email, password);
-      
+
       // 🔔 NOTIFY: Login exitoso
       this.authObserver.notify(AUTH_EVENTS.USER_LOGIN, {
         userId: user.id,
         email: user.email,
         name: user.name,
         userType: user.user_type,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
-      
+
       return { success: true, user, token };
     } catch (error) {
       // 🔔 NOTIFY: Login fallido
       this.authObserver.notify(AUTH_EVENTS.LOGIN_FAILED, {
         email,
         error: error.message,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
       throw error;
     }
@@ -187,16 +191,16 @@ class AuthController {
   async register(userData) {
     try {
       const newUser = await this.userModel.createUser(userData);
-      
+
       // 🔔 NOTIFY: Registro exitoso
       this.authObserver.notify(AUTH_EVENTS.USER_REGISTER, {
         userId: newUser.id,
         email: newUser.email,
         name: newUser.name,
         userType: newUser.user_type,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
-      
+
       return { success: true, user: newUser };
     } catch (error) {
       throw error;
@@ -214,9 +218,9 @@ class AuthController {
 EventObserver.notify(APP_EVENTS.APP_READY);
 
 // 🔔 NOTIFY: Ventana cerrada
-app.on('window-all-closed', () => {
+app.on("window-all-closed", () => {
   EventObserver.notify(APP_EVENTS.WINDOW_CLOSED);
-  if (process.platform !== 'darwin') {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
@@ -240,7 +244,7 @@ function setupEventListeners() {
     console.log(`Usuario ${data.email} ha iniciado sesión`);
   });
 
-  // 🎧 LISTEN: Registro de usuario  
+  // 🎧 LISTEN: Registro de usuario
   EventObserver.subscribe(APP_EVENTS.USER_REGISTER, (data) => {
     console.log(`Nuevo usuario: ${data.email} (${data.userType})`);
   });
@@ -252,7 +256,7 @@ function setupEventListeners() {
 
   // 🎧 LISTEN: Error de base de datos
   EventObserver.subscribe(APP_EVENTS.DATABASE_ERROR, (error) => {
-    console.error('Error en la base de datos:', error);
+    console.error("Error en la base de datos:", error);
   });
 }
 ```
@@ -263,77 +267,82 @@ function setupEventListeners() {
 
 ### **Cobertura de Testing: EXCELENTE**
 
-| Observer | Tests | Coverage | Estado |
-|----------|-------|----------|--------|
-| **EventObserver** | 12 tests | 95% | ✅ |
-| **AuthObserver** | 22 tests | 100% | ✅ |
-| **Total** | 34 tests | 97.5% | ✅ |
+| Observer          | Tests    | Coverage | Estado |
+| ----------------- | -------- | -------- | ------ |
+| **EventObserver** | 12 tests | 95%      | ✅     |
+| **AuthObserver**  | 22 tests | 100%     | ✅     |
+| **Total**         | 34 tests | 97.5%    | ✅     |
 
-### **Tests de AuthObserver** 
+### **Tests de AuthObserver**
 
 **📍 Archivo:** `tests/unit/utils/AuthObserver.test.js`
 
 ```javascript
-describe('AuthObserver', () => {
+describe("AuthObserver", () => {
   let authObserver;
 
   beforeEach(() => {
     authObserver = new AuthObserver();
   });
 
-  describe('subscribe', () => {
-    it('should subscribe to an event successfully', () => {
+  describe("subscribe", () => {
+    it("should subscribe to an event successfully", () => {
       const callback = jest.fn();
-      const observerId = authObserver.subscribe(AUTH_EVENTS.USER_LOGIN, callback);
-      
+      const observerId = authObserver.subscribe(
+        AUTH_EVENTS.USER_LOGIN,
+        callback
+      );
+
       expect(observerId).toBeDefined();
-      expect(typeof observerId).toBe('string');
+      expect(typeof observerId).toBe("string");
       expect(authObserver.getObserverCount(AUTH_EVENTS.USER_LOGIN)).toBe(1);
     });
 
-    it('should allow multiple observers for same event', () => {
+    it("should allow multiple observers for same event", () => {
       const callback1 = jest.fn();
       const callback2 = jest.fn();
-      
+
       authObserver.subscribe(AUTH_EVENTS.USER_LOGIN, callback1);
       authObserver.subscribe(AUTH_EVENTS.USER_LOGIN, callback2);
-      
+
       expect(authObserver.getObserverCount(AUTH_EVENTS.USER_LOGIN)).toBe(2);
     });
   });
 
-  describe('notify', () => {
-    it('should notify all subscribers of an event', () => {
+  describe("notify", () => {
+    it("should notify all subscribers of an event", () => {
       const callback1 = jest.fn();
       const callback2 = jest.fn();
-      const testData = { userId: 1, email: 'test@colombia.com' };
-      
+      const testData = { userId: 1, email: "test@colombia.com" };
+
       authObserver.subscribe(AUTH_EVENTS.USER_LOGIN, callback1);
       authObserver.subscribe(AUTH_EVENTS.USER_LOGIN, callback2);
-      
+
       authObserver.notify(AUTH_EVENTS.USER_LOGIN, testData);
-      
+
       expect(callback1).toHaveBeenCalledWith(testData);
       expect(callback2).toHaveBeenCalledWith(testData);
     });
 
-    it('should handle errors in observer callbacks gracefully', () => {
+    it("should handle errors in observer callbacks gracefully", () => {
       const errorCallback = jest.fn(() => {
-        throw new Error('Observer error');
+        throw new Error("Observer error");
       });
       const normalCallback = jest.fn();
-      
+
       authObserver.subscribe(AUTH_EVENTS.USER_LOGIN, errorCallback);
       authObserver.subscribe(AUTH_EVENTS.USER_LOGIN, normalCallback);
-      
+
       // Mock console.error
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      
-      authObserver.notify(AUTH_EVENTS.USER_LOGIN, { test: 'data' });
-      
+      const consoleSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+
+      authObserver.notify(AUTH_EVENTS.USER_LOGIN, { test: "data" });
+
       expect(consoleSpy).toHaveBeenCalled();
       expect(normalCallback).toHaveBeenCalled();
-      
+
       consoleSpy.mockRestore();
     });
   });
@@ -345,21 +354,25 @@ describe('AuthObserver', () => {
 ## 📈 BENEFICIOS IMPLEMENTADOS
 
 ### **1. 🔗 Desacoplamiento**
+
 - Controllers no dependen directamente unos de otros
 - Comunicación asíncrona entre componentes
 - Fácil adición/eliminación de funcionalidades
 
 ### **2. 🚀 Escalabilidad**
+
 - Nuevos eventos se agregan sin modificar código existente
 - Múltiples listeners por evento
 - Sistema distribuido de notificaciones
 
 ### **3. 🔒 Robustez**
+
 - Manejo de errores en callbacks
 - Singleton pattern previene múltiples instancias
 - Cleanup automático de observers
 
 ### **4. 📊 Monitoreo**
+
 - Logging centralizado de eventos
 - Debugging simplificado
 - Trazabilidad de acciones de usuario
@@ -382,7 +395,7 @@ sequenceDiagram
     AC->>AC: authenticate()
     AC->>AO: notify(USER_LOGIN, userData)
     AO->>ES: callback(userData)
-    AO->>L: callback(userData) 
+    AO->>L: callback(userData)
     ES->>L: console.log("Usuario logueado")
     AC->>U: {success: true, user, token}
 ```
@@ -471,7 +484,7 @@ unsubscribe(eventType, observerId) {
 // ✅ EventObserver - Cleanup function
 subscribe(event, callback) {
   // ... subscription logic ...
-  
+
   // Retorna función de cleanup
   return () => this.unsubscribe(event, callback);
 }
@@ -488,15 +501,15 @@ unsubscribe(); // Limpia automáticamente
 
 ### **Eventos Más Utilizados (Análisis de Logs)**
 
-| Evento | Frecuencia | Contexto Principal |
-|--------|------------|-------------------|
-| `USER_LOGIN` | 45% | Sistema de autenticación |
-| `USER_REGISTER` | 20% | Registro de nuevos usuarios |
-| `EXPERIENCE_CREATED` | 15% | Gestión de experiencias |
-| `APP_READY` | 10% | Inicialización de sistema |
-| `DATABASE_ERROR` | 5% | Manejo de errores |
-| `RESERVATION_CREATED` | 3% | Sistema de reservas |
-| `Otros` | 2% | Eventos varios |
+| Evento                | Frecuencia | Contexto Principal          |
+| --------------------- | ---------- | --------------------------- |
+| `USER_LOGIN`          | 45%        | Sistema de autenticación    |
+| `USER_REGISTER`       | 20%        | Registro de nuevos usuarios |
+| `EXPERIENCE_CREATED`  | 15%        | Gestión de experiencias     |
+| `APP_READY`           | 10%        | Inicialización de sistema   |
+| `DATABASE_ERROR`      | 5%         | Manejo de errores           |
+| `RESERVATION_CREATED` | 3%         | Sistema de reservas         |
+| `Otros`               | 2%         | Eventos varios              |
 
 ### **Performance Metrics**
 
@@ -510,6 +523,7 @@ unsubscribe(); // Limpia automáticamente
 ## 🎯 CASOS DE USO PRINCIPALES
 
 ### **1. Sistema de Notificaciones**
+
 ```javascript
 // 🔔 Notificar cuando se crea una reserva
 EventObserver.subscribe(APP_EVENTS.RESERVATION_CREATED, (data) => {
@@ -520,19 +534,21 @@ EventObserver.subscribe(APP_EVENTS.RESERVATION_CREATED, (data) => {
 ```
 
 ### **2. Logging y Auditoría**
+
 ```javascript
 // 📝 Log automático de todas las acciones de usuario
 authObserver.subscribe(AUTH_EVENTS.USER_LOGIN, (data) => {
-  auditLogger.log('USER_ACTION', {
-    action: 'LOGIN',
+  auditLogger.log("USER_ACTION", {
+    action: "LOGIN",
     userId: data.userId,
     timestamp: data.timestamp,
-    ip: data.ipAddress
+    ip: data.ipAddress,
   });
 });
 ```
 
 ### **3. Cache Invalidation**
+
 ```javascript
 // 🗑️ Limpiar cache cuando cambian las experiencias
 EventObserver.subscribe(APP_EVENTS.EXPERIENCE_UPDATED, (data) => {
@@ -543,13 +559,14 @@ EventObserver.subscribe(APP_EVENTS.EXPERIENCE_UPDATED, (data) => {
 ```
 
 ### **4. Analytics y Métricas**
+
 ```javascript
 // 📊 Tracking automático de eventos
 EventObserver.subscribe(APP_EVENTS.USER_REGISTER, (data) => {
-  analyticsService.track('user_registration', {
+  analyticsService.track("user_registration", {
     userType: data.userType,
     registrationSource: data.source,
-    timestamp: data.timestamp
+    timestamp: data.timestamp,
   });
 });
 ```
@@ -559,12 +576,13 @@ EventObserver.subscribe(APP_EVENTS.USER_REGISTER, (data) => {
 ## 🔮 EXTENSIONES FUTURAS
 
 ### **1. Event Persistence**
+
 ```javascript
 // 💾 Persistir eventos críticos en DB
 class PersistentEventObserver extends EventObserver {
   notify(event, data) {
     super.notify(event, data);
-    
+
     if (CRITICAL_EVENTS.includes(event)) {
       this.persistEvent(event, data);
     }
@@ -573,6 +591,7 @@ class PersistentEventObserver extends EventObserver {
 ```
 
 ### **2. Event Replay**
+
 ```javascript
 // 🔄 Replay de eventos para debugging
 class ReplayableEventObserver extends EventObserver {
@@ -580,23 +599,24 @@ class ReplayableEventObserver extends EventObserver {
     super();
     this.eventHistory = [];
   }
-  
+
   replay(fromTimestamp) {
     const eventsToReplay = this.eventHistory.filter(
-      e => e.timestamp >= fromTimestamp
+      (e) => e.timestamp >= fromTimestamp
     );
-    eventsToReplay.forEach(e => this.notify(e.type, e.data));
+    eventsToReplay.forEach((e) => this.notify(e.type, e.data));
   }
 }
 ```
 
 ### **3. Remote Event Broadcasting**
+
 ```javascript
 // 🌐 Broadcasting a múltiples instancias
 class DistributedEventObserver extends EventObserver {
   notify(event, data) {
     super.notify(event, data);
-    
+
     // Broadcast a otras instancias
     this.broadcast(event, data);
   }
@@ -636,7 +656,7 @@ class DistributedEventObserver extends EventObserver {
 El **Patrón Observer** es uno de los componentes más sólidos del proyecto Colombia Raíces. Su implementación dual (EventObserver + AuthObserver) proporciona:
 
 - **Comunicación desacoplada** entre componentes
-- **Escalabilidad** para nuevas funcionalidades  
+- **Escalabilidad** para nuevas funcionalidades
 - **Robustez** en el manejo de errores
 - **Testabilidad** completa con excelente coverage
 
@@ -657,9 +677,11 @@ El **Patrón Observer** es uno de los componentes más sólidos del proyecto Col
 ---
 
 **🔗 Documentación relacionada:**
+
 - [Static Code Analysis Report](./static_code_analysis_report.md)
 - [Testing Documentation](./testing_documentation.md)
 - [Database Diagram](./database_diagram.dbml)
 
 ---
-*Documentación generada por el análisis de patrones de diseño - Colombia Raíces v1.0.0*
+
+_Documentación generada por el análisis de patrones de diseño - Colombia Raíces v1.0.0_

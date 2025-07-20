@@ -2,23 +2,22 @@
 
 ![Colombia Raíces Logo](LogoColombiaRaicesNoFondo.png)
 
-> *"Conectando viajeros con la Colombia auténtica, empoderarando comunidades locales"*
+> _"Conectando viajeros con la Colombia auténtica, empoderarando comunidades locales"_
 
 ---
 
 ## 👥 Equipo de Desarrollo
 
-| Rol | Nombre | Contacto | Especialidad |
-|-----|--------|----------|--------------|
-| **Product Owner** | GitHub Copilot AI | 🤖 AI Assistant | Arquitectura & Desarrollo Full-Stack |
-| **Tech Lead** | Equipo Colombia Raíces | 📧 [Contacto](#-contacto) | Electron, React, SQLite |
-| **UX/UI Designer** | Design Team | 🎨 Design Specialist | Interfaces & Experiencia de Usuario |
+| Rol                | Nombre                         | Contacto                | Especialidad                     |
+| ------------------ | ------------------------------ | ----------------------- | -------------------------------- |
+| **Lead Developer** | Juan Camilo D'Aleman Rodriguez | 👨‍💻 Full-Stack Developer | Electron, React, Node.js, SQLite |
 
 ### 🏢 Organización
 
 **Colombia Raíces Development Team**
+
 - 🌍 **Ubicación**: Colombia, Región Andina
-- 📅 **Fundación**: Julio 2025  
+- 📅 **Fundación**: Julio 2025
 - 🎯 **Misión**: Promover el turismo comunitario sostenible en Colombia
 - 💫 **Visión**: Ser la plataforma líder en turismo comunitario de Latinoamérica
 
@@ -263,22 +262,23 @@ Este proyecto está desarrollado para fines educativos y de demostración. Todos
 **Colombia Raíces - Equipo de Desarrollo**
 
 - 📧 **Email Principal**: colombia.raices.dev@gmail.com
-- 🌐 **Sitio Web**: [colombiaraices.dev](https://colombiaraices.dev) *(Coming Soon)*
-- 📱 **WhatsApp**: +57 300 123 4567 *(Para soporte técnico)*
+- 🌐 **Sitio Web**: [colombiaraices.dev](https://colombiaraices.dev) _(Coming Soon)_
+- 📱 **WhatsApp**: +57 300 123 4567 _(Para soporte técnico)_
 - 💼 **LinkedIn**: [Colombia Raíces Team](https://linkedin.com/company/colombia-raices)
 
 ### 🤝 Contacto por Rol
 
-| Consulta | Contacto | Horario |
-|----------|----------|---------|
-| **Desarrollo Técnico** | tech@colombiaraices.dev | Lun-Vie 8AM-6PM COT |
+| Consulta                  | Contacto                       | Horario             |
+| ------------------------- | ------------------------------ | ------------------- |
+| **Desarrollo Técnico**    | tech@colombiaraices.dev        | Lun-Vie 8AM-6PM COT |
 | **Alianzas Comunitarias** | comunidades@colombiaraices.dev | Lun-Vie 9AM-5PM COT |
-| **Soporte Usuario** | soporte@colombiaraices.dev | Lun-Sáb 8AM-8PM COT |
-| **Prensa y Media** | prensa@colombiaraices.dev | Lun-Vie 9AM-5PM COT |
+| **Soporte Usuario**       | soporte@colombiaraices.dev     | Lun-Sáb 8AM-8PM COT |
+| **Prensa y Media**        | prensa@colombiaraices.dev      | Lun-Vie 9AM-5PM COT |
 
 ### 🗺️ Ubicación
 
 **Oficina Principal**
+
 - 📍 Bogotá D.C., Colombia
 - 🌎 Región: Andina
 - ⏰ Zona Horaria: GMT-5 (COT)
@@ -308,4 +308,4 @@ Crear una plataforma que empodere a las comunidades locales colombianas para com
 
 **Desarrollado con ❤️ para las comunidades de Colombia**
 
-*© 2025 Colombia Raíces Team. Proyecto de código abierto para el desarrollo del turismo comunitario.*
+_© 2025 Colombia Raíces Team. Proyecto de código abierto para el desarrollo del turismo comunitario._
