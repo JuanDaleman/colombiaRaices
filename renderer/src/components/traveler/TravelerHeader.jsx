@@ -1,5 +1,4 @@
 // Header para páginas del viajero con navegación interna
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { COLORS } from '../../constants/colors';

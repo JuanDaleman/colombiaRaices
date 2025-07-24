@@ -1,5 +1,4 @@
 // Componente de layout estándar para páginas de la aplicación
-import React from 'react';
 import TravelerHeader from '../traveler/TravelerHeader';
 import Navigation from '../common/Navigation';
 

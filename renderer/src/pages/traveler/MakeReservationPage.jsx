@@ -1,7 +1,7 @@
 // MakeReservationPage.jsx
 // Vista principal para generar una nueva reserva - Sprint 11 Fixed
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import TravelerHeader from '../../components/traveler/TravelerHeader';
 import ReservationForm from '../../components/reservations/ReservationForm';

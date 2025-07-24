@@ -1,5 +1,5 @@
 // Componente de tarjeta para experiencias turísticas
-import React, { useState } from 'react';
+import { useState } from "react";
 import { EXPERIENCE_TYPES } from '../../utils/constants';
 import { formatCurrency } from '../../utils/helpers';
 import SimpleMap from '../maps/SimpleMap';

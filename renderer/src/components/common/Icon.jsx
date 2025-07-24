@@ -1,6 +1,5 @@
 // Componente Icon base para Colombia Raíces
 // Maneja la visualización consistente de iconos en toda la aplicación
-import React from 'react';
 
 const Icon = ({ 
   name, 

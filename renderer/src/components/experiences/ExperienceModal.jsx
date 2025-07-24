@@ -1,5 +1,4 @@
 // Componente de modal expandido para experiencias turísticas
-import React from 'react';
 import { EXPERIENCE_TYPES } from '../../utils/constants';
 import { formatCurrency } from '../../utils/helpers';
 

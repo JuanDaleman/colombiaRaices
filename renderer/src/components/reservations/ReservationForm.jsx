@@ -1,7 +1,7 @@
 // ReservationForm.jsx
 // Formulario para crear o editar reservas
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { COLORS } from '../../constants/colors';
 import useReservations from '../../hooks/useReservations';
 

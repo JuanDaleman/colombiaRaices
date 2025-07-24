@@ -1,7 +1,6 @@
 // ReservationSummary.jsx
 // Componente para mostrar resumen de reserva
 
-import React from 'react';
 import { COLORS } from '../../constants/colors';
 
 const ReservationSummary = ({ 

@@ -1,5 +1,5 @@
 // Componente de navegación principal
-import React, { useState } from 'react';
+import { useState } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import { ROUTES } from '../../utils/constants';
 import Logo from './Logo';

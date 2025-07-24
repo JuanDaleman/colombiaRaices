@@ -1,4 +1,3 @@
-import React from 'react';
 import { COLORS } from '../../constants/colors';
 
 const LazyLoadingSpinner = ({ pageName = 'página' }) => {

@@ -1,5 +1,5 @@
 // Página de Reservas
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../utils/constants';
 import { formatCurrency, formatDate } from '../utils/helpers';

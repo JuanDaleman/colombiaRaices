@@ -1,7 +1,6 @@
 // ReservationFilters.jsx
 // Filtros para historial y búsqueda de reservas
 
-import React from 'react';
 import { COLORS } from '../../constants/colors';
 
 const ReservationFilters = ({ 

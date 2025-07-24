@@ -1,5 +1,5 @@
 // Página de Comunidades
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import { ROUTES, REGIONS } from '../utils/constants';
 import LoadingSpinner from '../components/common/LoadingSpinner';

@@ -1,7 +1,7 @@
 // Accessibility Testing Component for Phase 3C
 // This component can be used to manually test accessibility features
 
-import React, { useState } from 'react';
+import { useState } from "react";
 
 const AccessibilityTester = () => {
   const [testResults, setTestResults] = useState({});

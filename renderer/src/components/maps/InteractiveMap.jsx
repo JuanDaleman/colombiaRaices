@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 // Importar Leaflet de forma estática para evitar problemas en producción
 let L = null;

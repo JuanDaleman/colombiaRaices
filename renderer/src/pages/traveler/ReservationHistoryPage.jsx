@@ -1,7 +1,7 @@
 // ReservationHistoryPage.jsx
 // Vista principal para historial de reservas
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import TravelerHeader from '../../components/traveler/TravelerHeader';
 import ReservationCard from '../../components/reservations/ReservationCard';

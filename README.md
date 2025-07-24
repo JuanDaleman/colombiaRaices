@@ -8,9 +8,12 @@
 
 ## 👥 Equipo de Desarrollo
 
-| Rol                | Nombre                         | Contacto                | Especialidad                     |
-| ------------------ | ------------------------------ | ----------------------- | -------------------------------- |
-| **Lead Developer** | Juan Camilo D'Aleman Rodriguez | 👨‍💻 Full-Stack Developer | Electron, React, Node.js, SQLite |
+| Rol                | Nombre                           | Contacto                | Especialidad                     |
+| ------------------ | -------------------------------- | ----------------------- | -------------------------------- |
+| **Lead Developer** | Juan Camilo D'Aleman Rodriguez   | 👨‍💻 Full-Stack Developer | Electron, React, Node.js, SQLite |
+| **Developer**      | JORGE ESTEBAN CUADRADO VELASQUEZ | 👨 Developer            | Electron, React, Node.js, SQLite |
+| **Developer**      | JHOAN SMITH YAÑEZ FORERO         | 👨 Developer            | Electron, React, Node.js, SQLite |
+| **Developer**      | JUAN DAVID LADINO TRIANA         | 👨 Developer            | Electron, React, Node.js, SQLite |
 
 ### 🏢 Organización
 

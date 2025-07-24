@@ -1,6 +1,6 @@
 // Componente Logo para Colombia Raíces
 // Maneja diferentes versiones del logo y estados
-import React, { useState } from 'react';
+import { useState } from "react";
 
 const Logo = ({ 
   size = 'medium', 

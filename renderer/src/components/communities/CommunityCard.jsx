@@ -1,5 +1,5 @@
 // Componente de tarjeta para comunidades turísticas
-import React, { useState } from 'react';
+import { useState } from "react";
 import { REGIONS } from '../../utils/constants';
 
 const CommunityCard = ({ community }) => {

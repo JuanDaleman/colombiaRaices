@@ -1,5 +1,4 @@
 // Página de Dashboard
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../utils/constants';
 import { formatCurrency } from '../../utils/helpers';

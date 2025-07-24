@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import { EXPERIENCE_TYPES } from '../../utils/constants';
 
 const ExperienceForm = ({ 

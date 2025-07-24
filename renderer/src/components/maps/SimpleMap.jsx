@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 
 const SimpleMap = ({ experience, variant = 'button' }) => {
   const [showModal, setShowModal] = useState(false);

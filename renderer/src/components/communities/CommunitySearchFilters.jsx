@@ -1,5 +1,4 @@
 // Componente de filtros para búsqueda de comunidades
-import React from 'react';
 import { REGIONS } from '../../utils/constants';
 
 const CommunitySearchFilters = ({ 

@@ -212,12 +212,11 @@ class ExperienceService {
    * @param {Object} rawExperience - Datos raw de la base de datos
    * @returns {Object} - Datos formateados para operadores
    */
-  formatExperienceForOperator(rawExperience) {
-    // Para operadores, mantener los nombres originales de los campos de la BD
-    const specificLocation = rawExperience.specific_location;
-    const communityLocation = rawExperience.community_name && rawExperience.community_region 
-      ? `${rawExperience.community_name}, ${rawExperience.community_region}`
-      : null;
+  formatExperienceForOperator(rawExperience) {    // Para operadores, mantener los nombres originales de los campos de la BD
+    // const specificLocation = rawExperience.specific_location;
+    // const communityLocation = rawExperience.community_name && rawExperience.community_region 
+    //   ? `${rawExperience.community_name}, ${rawExperience.community_region}`
+    //   : null;
     
     return {
       id: rawExperience.id,

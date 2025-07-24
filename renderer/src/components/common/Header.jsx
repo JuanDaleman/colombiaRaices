@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Header = ({ title = 'Colombia Raíces', showAuth = true }) => {
   return (
     <header className="bg-white shadow-lg">

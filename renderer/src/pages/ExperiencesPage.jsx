@@ -1,5 +1,5 @@
 // Página de Experiencias
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useParams, Link } from 'react-router-dom';
 import { ROUTES, EXPERIENCE_TYPES, REGIONS } from '../utils/constants';
 import { formatCurrency } from '../utils/helpers';

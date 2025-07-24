@@ -1,7 +1,6 @@
 // ReservationCard.jsx
 // Card para mostrar información de una reserva
 
-import React from 'react';
 import { COLORS } from '../../constants/colors';
 
 const ReservationCard = ({ 

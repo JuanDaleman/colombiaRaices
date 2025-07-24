@@ -1,5 +1,4 @@
 // Componente reutilizable para filtros de búsqueda de experiencias
-import React from 'react';
 
 const SearchFilters = ({ 
   searchFilters, 

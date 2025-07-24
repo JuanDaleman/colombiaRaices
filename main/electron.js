@@ -82,7 +82,7 @@ function setupIpcHandlers() {
     }
   });
 
-  ipcMain.handle('experiences:pending', async (event) => {
+  ipcMain.handle('experiences:pending', async (_event) => {
     try {
       return await experienceController.getPendingExperiences();
     } catch (error) {
@@ -130,7 +130,7 @@ function setupIpcHandlers() {
     }
   });
 
-  ipcMain.handle('experiences:stats', async (event) => {
+  ipcMain.handle('experiences:stats', async (_event) => {
     try {
       return await experienceController.getExperienceStats();
     } catch (error) {
@@ -260,7 +260,7 @@ function setupIpcHandlers() {
     }
   });
 
-  ipcMain.handle('reservations:stats', async (event) => {
+  ipcMain.handle('reservations:stats', async (_event) => {
     try {
       return await reservationController.getReservationStats();
     } catch (error) {

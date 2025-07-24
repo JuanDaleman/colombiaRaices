@@ -1,8 +1,7 @@
 import React from 'react';
 import { COLORS } from '../../constants/colors';
 
-class ReservationErrorBoundary extends React.Component {
-  constructor(props) {
+class ReservationErrorBoundary extends React.Component {  constructor(props) {
     super(props);
     this.state = { 
       hasError: false,
@@ -10,13 +9,15 @@ class ReservationErrorBoundary extends React.Component {
       errorInfo: null,
       retryCount: 0
     };
+    
+    // Bind methods
+    this.handleRetry = this.handleRetry.bind(this);
   }
 
   static getDerivedStateFromError(error) {
     // Actualizar el estado para mostrar la UI de error
     return { hasError: true };
   }
-
   componentDidCatch(error, errorInfo) {
     // Registrar error para debugging
     console.error('🚨 Reservation Error Boundary:', error, errorInfo);
@@ -29,7 +30,7 @@ class ReservationErrorBoundary extends React.Component {
     // Analytics.trackError('ReservationComponent', error);
   }
 
-  handleRetry = () => {
+  handleRetry() {
     if (this.state.retryCount < 3) {
       this.setState({
         hasError: false,
@@ -43,7 +44,7 @@ class ReservationErrorBoundary extends React.Component {
         window.location.reload();
       }
     }
-  };
+  }
 
   render() {
     if (this.state.hasError) {

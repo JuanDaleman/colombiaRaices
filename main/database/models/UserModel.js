@@ -44,10 +44,8 @@ class UserModel extends BaseModel {
     
     if (!isValidPassword) {
       return null;
-    }
-
-    // Remover hash de contraseña del resultado
-    const { password_hash, ...userWithoutPassword } = user;
+    }    // Remover hash de contraseña del resultado
+    const { password_hash: _password_hash, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
 
@@ -55,11 +53,10 @@ class UserModel extends BaseModel {
   async findByUserType(userType) {
     return await this.findAll({ user_type: userType, is_active: 1 });
   }
-
   // Actualizar perfil (sin contraseña)
   async updateProfile(id, profileData) {
     // Excluir campos sensibles
-    const { password, password_hash, ...safeData } = profileData;
+    const { password: _password, password_hash: _password_hash, ...safeData } = profileData;
     return await this.update(id, safeData);
   }
 
